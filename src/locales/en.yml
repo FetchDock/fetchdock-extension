@@ -1,0 +1,24 @@
+messages:
+  options:
+    initializationFailed: "Failed to initialize options."
+    savedSuccessfully: "Saved successfully."
+    errorSavingSettings: "Error saving settings."
+forms:
+  buttons:
+    save: "Save"
+    import: "Import"
+    export: "Export"
+  options:
+    title: "Extension Options"
+    labels:
+      downloadRouterServerHost: "Download Router Server Host"
+      sendCookies: "Send Cookies"
+      sendUserAgent: "Send User-Agent"
+      sendReferrer: "Send Referer"
+      apiKey: "API Key"
+    help:
+      downloadRouterServerHost: "Specify the host address of the Download Router Server. This server manages download requests and routes them appropriately."
+      sendCookies: "Enable this option to include cookies in requests sent to the Download Router Server. This may be necessary for authenticated download urls."
+      sendUserAgent: "Enable this option to include the User-Agent header in requests sent sent to the Download Router Server. This helps the server identify the client making the request."
+      sendReferrer: "Enable this option to include the Referer header in requests sent to the Download Router Server. This can be useful for tracking the source of download requests."
+      apiKey: "Enter your API key for accessing the Download Router Server. This key is used for authentication and authorization purposes."
