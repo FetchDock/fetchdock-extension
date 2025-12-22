@@ -8,6 +8,8 @@ interface ProtocolMap {
     getDownloadJobs(): DownloadJob[];
     sendDownloadJob(job: DownloadJob): void;
 
+    testApiServiceHost(host: string): string;
+
     // test
     testMessage(msg: string): string;
 }

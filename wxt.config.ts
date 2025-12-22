@@ -5,11 +5,24 @@ export default defineConfig({
   srcDir: 'src',
   modules: [
       '@wxt-dev/module-react',
-      '@wxt-dev/i18n/module'
+      '@wxt-dev/i18n/module',
+      'wxt-module-console-forward',
   ],
+  dev: {
+    server: {
+      port: 5175,
+    }
+  },
+  consoleForward: {
+    enabled: true,
+    levels: ['error', 'warn', 'info', 'debug', 'log'],
+    endpoint: '/api/debug/client-logs',
+    forwardErrors: true,
+  },
   manifest: {
     permissions: [
         "storage",
+        "webRequest",
     ],
     name: "Download Router companion extension",
     description: "Companion extension for Download Router app",

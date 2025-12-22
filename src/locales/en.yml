@@ -1,13 +1,34 @@
 messages:
+  downloadJob:
+    failedToCreate: "Failed to create download job."
+    invalidUrl: "The provided URL is invalid."
+    serverError: "An error occurred on the server."
+    jobCreatedSuccessfully: "Download job created successfully."
+    jobAlreadyExists: "A download job for this URL already exists."
+    jobCompleted: "The download job has been completed."
+    jobNotFound: "Download job not found."
+    jobTokenInvalid: "The job token provided is invalid."
   options:
     initializationFailed: "Failed to initialize options."
     savedSuccessfully: "Saved successfully."
     errorSavingSettings: "Error saving settings."
+    testingServerConnection: "Testing server connection..."
+    serverConnectionSuccessful: "Server connection successful."
+    serverConnectionFailed: "Server connection failed."
+    serverConnectionError: "Error connecting to server: %{error}"
+  background:
+    testMessage:
+      return: "Hello from background via messaging! Received: $1"
+    testApiServiceHost:
+      success: "Host $1 is supported."
+      failure: "Host $1 is not supported: $2"
+
 forms:
   buttons:
     save: "Save"
     import: "Import"
     export: "Export"
+    testConnection: "Test Connection"
   options:
     title: "Extension Options"
     labels:
