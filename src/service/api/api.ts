@@ -161,6 +161,7 @@ export interface ConstraintViolationJsonld {
      * @type {any}
      * @memberof ConstraintViolationJsonld
      */
+
     title?: any;
     /**
      * 

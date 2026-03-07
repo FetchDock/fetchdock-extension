@@ -2,6 +2,8 @@ import {
     Configuration,
     DownloaderApi,
     DownloadJobApi,
+    DownloadJobEventApi,
+    DownloadedFileApi,
     DownloadJobDownloadJobDTO,
     SupportedSiteApi,
     VersionApi
@@ -21,12 +23,19 @@ class ApiService {
 
     // Lazy API instances (recreated whenever configuration changes)
     private downloadJobApi?: DownloadJobApi;
+    private downloadJobEventApi?: DownloadJobEventApi;
+    private downloadedFileApi?: DownloadedFileApi;
     private versionApi?: VersionApi;
     private supportedSiteApi?: SupportedSiteApi;
     private downloaderApi?: DownloaderApi;
 
     // Default request options that will be merged into every API call.
-    private defaultRequestOptions: any = {};
+    private defaultRequestOptions: any = {
+        headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+        }
+    };
 
     /** Token endpoint discovered from the server's well-known document */
     private tokenEndpoint: string | null = null;
@@ -48,6 +57,8 @@ class ApiService {
         void this.setDefaultRequestHeaders;
         void this.submitDownloadJob;
         void this.listSupportedSites;
+        void this.listDownloadJobEvents;
+        void this.listDownloadedFiles;
         void this.getVersion;
         void this.listDownloaders;
         void this.testHost;
@@ -93,6 +104,8 @@ class ApiService {
         this.configuration = new Configuration(conf);
 
         this.downloadJobApi = undefined;
+        this.downloadJobEventApi = undefined;
+        this.downloadedFileApi = undefined;
         this.versionApi = undefined;
         this.supportedSiteApi = undefined;
         this.downloaderApi = undefined;
@@ -161,10 +174,23 @@ class ApiService {
 
     private getDownloadJobApi() {
         if (!this.downloadJobApi) {
-            // Pass the runtime fetch implementation to avoid relying on the generated file's isomorphic-fetch import
             this.downloadJobApi = new DownloadJobApi(this.configuration, undefined, this.getRuntimeFetch());
         }
         return this.downloadJobApi;
+    }
+
+    private getDownloadJobEventApi() {
+        if (!this.downloadJobEventApi) {
+            this.downloadJobEventApi = new DownloadJobEventApi(this.configuration, undefined, this.getRuntimeFetch());
+        }
+        return this.downloadJobEventApi;
+    }
+
+    private getDownloadedFileApi() {
+        if (!this.downloadedFileApi) {
+            this.downloadedFileApi = new DownloadedFileApi(this.configuration, undefined, this.getRuntimeFetch());
+        }
+        return this.downloadedFileApi;
     }
 
     private getVersionApi() {
@@ -203,6 +229,30 @@ class ApiService {
         try {
             const opts = await this.buildAuthOptions(options);
             return await this.getDownloaderApi().apiDownloadersGetCollection(page, opts);
+        } catch (err: any) {
+            throw await this.normalizeApiError(err);
+        }
+    }
+
+    /** List download job events for a given job UUID */
+    public async listDownloadJobEvents(downloadJobUuid: string, page?: number, options?: any) {
+        await this.ready();
+        try {
+            const opts = await this.buildAuthOptions(options);
+            return await this.getDownloadJobEventApi()
+                .apiDownloadJobsDownloadJobUuideventsFormatGetCollection(downloadJobUuid, page, opts);
+        } catch (err: any) {
+            throw await this.normalizeApiError(err);
+        }
+    }
+
+    /** List downloaded files for a given job UUID */
+    public async listDownloadedFiles(downloadJobUuid: string, page?: number, options?: any) {
+        await this.ready();
+        try {
+            const opts = await this.buildAuthOptions(options);
+            return await this.getDownloadedFileApi()
+                .apiDownloadJobsDownloadJobUuidfilesFormatGetCollection(downloadJobUuid, page, opts);
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
