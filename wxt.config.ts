@@ -22,7 +22,10 @@ export default defineConfig({
   manifest: {
     permissions: [
         "storage",
+        "tabs",
         "webRequest",
+        "contextMenus",
+        "scripting"
     ],
     name: "Download Router companion extension",
     description: "Companion extension for Download Router app",

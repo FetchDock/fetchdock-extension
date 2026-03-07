@@ -3,20 +3,21 @@ import OptionsSync from "webext-options-sync";
 export default new OptionsSync({
     defaults: {
         downloadRouterServerHost: "",
-        sendCookies: true,
-        sendUserAgent: true,
-        sendReferrer: true,
-        apiKey: "",
+        sendCookies: false,
+        sendUserAgent: false,
+        sendReferrer: false,
+        oauth2AccessToken: "",
+        oauth2RefreshToken: "",
+        oauth2TokenExpiresAt: 0,
     },
 
     // List of functions that are called when the extension is updated
     migrations: [
-        (savedOptions, currentDefaults) => {
-            // Perhaps it was renamed
-            // if (savedOptions.colour) {
-            //     savedOptions.color = savedOptions.colour;
-            //delete savedOptions.colour;
-            // }
+        (savedOptions, _currentDefaults) => {
+            // Remove legacy apiKey field if present
+            if ('apiKey' in savedOptions) {
+                delete (savedOptions as any).apiKey;
+            }
         },
 
         // Integrated utility that drops any properties that don't appear in the defaults

@@ -16,6 +16,7 @@ export interface ConfigurationParameters {
     username?: string;
     password?: string;
     accessToken?: string | ((name: string, scopes?: string[]) => string);
+    refreshToken?: string | ((name: string) => string);
     basePath?: string;
 }
 
@@ -47,6 +48,7 @@ export class Configuration {
      * @memberof Configuration
      */
     accessToken?: string | ((name: string, scopes?: string[]) => string);
+    refreshToken?: string | ((name: string) => string);
     /**
      * override base path
      * 
@@ -60,6 +62,7 @@ export class Configuration {
         this.username = param.username;
         this.password = param.password;
         this.accessToken = param.accessToken;
+        this.refreshToken = param.refreshToken;
         this.basePath = param.basePath;
     }
 }

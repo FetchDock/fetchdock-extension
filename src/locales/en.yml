@@ -16,12 +16,19 @@ messages:
     serverConnectionSuccessful: "Server connection successful."
     serverConnectionFailed: "Server connection failed."
     serverConnectionError: "Error connecting to server: %{error}"
+    oauth2Authenticating: "Opening authentication window..."
+    oauth2Success: "Authenticated successfully."
+    oauth2Failed: "Authentication failed: %{error}"
+    oauth2WindowClosed: "Authentication window was closed."
+    oauth2NotSupported: "This server does not support OAuth2 authentication."
+    oauth2TokenStored: "Access token stored."
+    oauth2Revoked: "Authentication revoked."
   background:
     testMessage:
       return: "Hello from background via messaging! Received: $1"
     testApiServiceHost:
-      success: "Host $1 is supported."
-      failure: "Host $1 is not supported: $2"
+      success: "Host supported - \r\n Authentication mode: $2 \n Version: $3"
+      failure: "Host not supported: $1 - %{error}"
 
 forms:
   buttons:
@@ -29,6 +36,8 @@ forms:
     import: "Import"
     export: "Export"
     testConnection: "Test Connection"
+    authenticate: "Authenticate"
+    revokeAuth: "Revoke"
   options:
     title: "Extension Options"
     labels:
@@ -36,10 +45,10 @@ forms:
       sendCookies: "Send Cookies"
       sendUserAgent: "Send User-Agent"
       sendReferrer: "Send Referer"
-      apiKey: "API Key"
+      authentication: "Authentication"
     help:
       downloadRouterServerHost: "Specify the host address of the Download Router Server. This server manages download requests and routes them appropriately."
       sendCookies: "Enable this option to include cookies in requests sent to the Download Router Server. This may be necessary for authenticated download urls."
       sendUserAgent: "Enable this option to include the User-Agent header in requests sent sent to the Download Router Server. This helps the server identify the client making the request."
       sendReferrer: "Enable this option to include the Referer header in requests sent to the Download Router Server. This can be useful for tracking the source of download requests."
-      apiKey: "Enter your API key for accessing the Download Router Server. This key is used for authentication and authorization purposes."
+      authentication: "Authenticate with the Download Router Server using OAuth2. Click 'Authenticate' to open the login window."

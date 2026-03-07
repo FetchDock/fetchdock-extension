@@ -1,11 +1,14 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { i18n } from "#imports";
 import optionsStorage from "@/utils/optionsStorage";
-import { sendMessage } from "@/lib/messaging";
+import {sendMessage} from "@/lib/messaging";
 
 function App() {
     const formRef = useRef<HTMLFormElement | null>(null);
     const [status, setStatus] = useState<string | null>(null);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    // Track the in-flight popup so we can close it once tokens arrive
+    const popupRef = useRef<Window | null>(null);
 
     useEffect(() => {
         const form = formRef.current;
@@ -13,15 +16,32 @@ function App() {
 
         // Wire the form to optionsStorage so it loads defaults and auto-saves
         optionsStorage.syncForm(form).catch((err) => {
-            // If syncForm fails, show an error in the UI
             console.error('optionsStorage.syncForm failed', err);
             setStatus(i18n.t('messages.options.initializationFailed'));
         });
 
-        // Listen to custom events emitted by webext-options-sync when save succeeds/fails
+        // Reflect initial auth state
+        optionsStorage.getAll().then((opts) => {
+            setIsAuthenticated(!!opts.oauth2AccessToken);
+        });
+
+        // React to token changes written by the background worker.
+        // The oauth-callback content script detects the #auth-result element on
+        // the server's callback page, sends the tokens to the background via
+        // storeOAuth2Tokens, which writes to optionsStorage — triggering this.
+        // The background also closes the popup tab directly after storing.
+        optionsStorage.onChanged((newOpts) => {
+            const authenticated = !!newOpts.oauth2AccessToken;
+            setIsAuthenticated(authenticated);
+            if (authenticated) {
+                popupRef.current = null;
+                setStatus(i18n.t('messages.options.oauth2Success'));
+                setTimeout(() => setStatus(null), 2000);
+            }
+        });
+
         const onSaveSuccess = () => {
             setStatus(i18n.t('messages.options.savedSuccessfully'));
-            // clear status after a short delay
             setTimeout(() => setStatus(null), 1200);
         };
         const onSaveError = (e: Event) => {
@@ -37,6 +57,62 @@ function App() {
             form.removeEventListener('options-sync:save-error', onSaveError as EventListener);
         };
     }, []);
+
+    const handleAuthenticate = async () => {
+        const hostInput = formRef.current?.elements.namedItem('downloadRouterServerHost') as HTMLInputElement;
+        const host = hostInput?.value?.trim();
+
+        if (!host) {
+            setStatus(i18n.t('messages.options.serverConnectionFailed'));
+            return;
+        }
+
+        setStatus(i18n.t('messages.options.oauth2Authenticating'));
+
+        let authUrl: string;
+        try {
+            authUrl = await sendMessage("getOAuth2AuthorizationUrl", host);
+        } catch (err) {
+            setStatus(i18n.t('messages.options.oauth2NotSupported'));
+            return;
+        }
+
+        // Open the OAuth2 flow in a popup window. The extension's content script
+        // (test.content) will detect the #auth-result element on the server's
+        // callback page, extract the tokens and send them to the background via
+        // storeOAuth2Tokens. optionsStorage.onChanged above will then fire and
+        // update the UI — no postMessage or polling needed.
+        const popup = window.open(
+            authUrl,
+            'oauth2-auth',
+            'width=600,height=700,scrollbars=yes,resizable=yes'
+        );
+
+        if (!popup) {
+            setStatus(i18n.t('messages.options.oauth2Failed', { error: 'Could not open popup window' }));
+            return;
+        }
+
+        popupRef.current = popup;
+    };
+
+    const handleRevoke = async () => {
+        await sendMessage("revokeOAuth2Tokens", undefined);
+        setIsAuthenticated(false);
+        setStatus(i18n.t('messages.options.oauth2Revoked'));
+        setTimeout(() => setStatus(null), 1500);
+    };
+
+    const handleRefresh = async () => {
+        const refreshResult = await sendMessage("refreshOAuth2Tokens", undefined);
+        if (refreshResult) {
+            setIsAuthenticated(true);
+            setStatus(i18n.t('messages.options.oauth2Refreshed'));
+            setTimeout(() => setStatus(null), 1500);
+        } else {
+            setStatus(i18n.t('messages.options.oauth2RefreshFailed'));
+        }
+    }
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
@@ -102,18 +178,47 @@ function App() {
                     </span>
                 </div>
 
+                {/* OAuth2 Authentication */}
                 <div className="mb-4">
-                    <label htmlFor="apiKey" className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">{i18n.t('forms.options.labels.apiKey')}</label>
-                    <input
-                        type="text"
-                        id="apiKey"
-                        name="apiKey"
-                        className="mt-1 ml-0 border border-gray-300 rounded px-2 py-1 w-full"
-                    />
+                    <label className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">
+                        {i18n.t('forms.options.labels.authentication')}
+                    </label>
+                    <div className="flex items-center gap-2 mt-2">
+                        {isAuthenticated ? (
+                            <>
+                                <span className="inline-flex items-center gap-1 text-sm text-green-600 dark:text-green-400">
+                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    {i18n.t('messages.options.oauth2TokenStored')}
+                                </span>
+                                <button
+                                    type="button"
+                                    className="inline-flex items-center px-3 py-1 border rounded-4xl bg-red-500 hover:bg-red-700 text-white text-sm"
+                                    onClick={handleRevoke}
+                                >
+                                    {i18n.t('forms.buttons.revokeAuth')}
+                                </button>
+                            </>
+                        ) : (
+                            <button
+                                type="button"
+                                className="inline-flex items-center px-3 py-1 border rounded-4xl bg-sky-500 hover:bg-sky-700 text-white"
+                                onClick={handleAuthenticate}
+                            >
+                                {i18n.t('forms.buttons.authenticate')}
+                            </button>
+                        )}
+                    </div>
                     <span className="text-sm text-gray-600 mt-1">
-                        {i18n.t('forms.options.help.apiKey')}
+                        {i18n.t('forms.options.help.authentication')}
                     </span>
                 </div>
+
+                {/* Hidden fields so optionsStorage can sync them */}
+                <input type="hidden" name="oauth2AccessToken" />
+                <input type="hidden" name="oauth2RefreshToken" />
+                <input type="hidden" name="oauth2TokenExpiresAt" />
 
                 <div className="flex items-center gap-2">
                     {/* These buttons are picked up by webext-options-sync for import/export */}
@@ -127,3 +232,4 @@ function App() {
 }
 
 export default App;
+

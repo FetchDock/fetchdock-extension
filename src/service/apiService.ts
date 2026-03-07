@@ -1,6 +1,14 @@
-import { Configuration, DownloadJobApi, DownloaderApi, DownloadJobDownloadJobDTO, VersionApi, SupportedSiteApi } from "@/service/api";
-import { getMergedAppConfig, subscribeToAppConfigChanges } from "@/lib/config";
-import type { WxtAppConfig } from "@/lib/types";
+import {
+    Configuration,
+    DownloaderApi,
+    DownloadJobApi,
+    DownloadJobDownloadJobDTO,
+    SupportedSiteApi,
+    VersionApi
+} from "@/service/api";
+import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
+import type {WxtAppConfig} from "@/lib/types";
+import {tokenManager} from "@/lib/tokenManager";
 
 /**
  * Small wrapper around the generated OpenAPI client that:
@@ -18,26 +26,23 @@ class ApiService {
     private downloaderApi?: DownloaderApi;
 
     // Default request options that will be merged into every API call.
-    // Useful for default headers like Content-Type, auth, etc.
     private defaultRequestOptions: any = {};
+
+    /** Token endpoint discovered from the server's well-known document */
+    private tokenEndpoint: string | null = null;
 
     private initPromise?: Promise<void> | null = null;
 
     constructor() {
-        // Start initialization asynchronously
         this.initPromise = this.init();
 
-        // Subscribe to runtime config changes and update Configuration accordingly
         subscribeToAppConfigChanges((newConfig) => {
             this.updateConfigurationFromAppConfig(newConfig);
         });
 
-        // Reference public API methods and setters so static analyzers/tooling recognize they are intentionally exported/used.
         this._markPublicApiForTools();
     }
 
-    // This method exists to create references to public methods so static analysis doesn't report them as unused.
-    // It intentionally does nothing at runtime.
     private _markPublicApiForTools(): void {
         void this.setDefaultRequestOptions;
         void this.setDefaultRequestHeaders;
@@ -46,37 +51,70 @@ class ApiService {
         void this.getVersion;
         void this.listDownloaders;
         void this.testHost;
+        void this.getOAuth2AuthorizationUrl;
     }
 
     private async init() {
         const cfg = await getMergedAppConfig();
         this.updateConfigurationFromAppConfig(cfg);
+        // Eagerly discover the token endpoint from the well-known document
+        await this.discoverTokenEndpoint(cfg);
+    }
+
+    /**
+     * Fetches the well-known document and caches oauth2.token_endpoint if present.
+     */
+    private async discoverTokenEndpoint(cfg: WxtAppConfig): Promise<void> {
+        const base = (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
+        if (!base) return;
+        try {
+            const res = await fetch(`${base}/.well-known/browser-extension`);
+            if (!res.ok) return;
+            const data = await res.json();
+            const endpoint: string | undefined = data?.oauth2?.token_endpoint;
+            if (endpoint) {
+                this.tokenEndpoint = endpoint.startsWith('http')
+                    ? endpoint
+                    : base + (endpoint.startsWith('/') ? '' : '/') + endpoint;
+                console.debug('[ApiService] Discovered token endpoint:', this.tokenEndpoint);
+            }
+        } catch {
+            // Non-fatal — token refresh will simply not be available
+        }
     }
 
     private updateConfigurationFromAppConfig(cfg: WxtAppConfig) {
         const conf: any = {};
-        if (cfg.apiKey) {
-            conf.apiKey = cfg.apiKey;
-        }
         if (cfg.downloadRouterServerHost) {
             conf.basePath = cfg.downloadRouterServerHost.replace(/\/+$/, '');
         }
-
+        // Bearer token is injected per-request via buildAuthOptions() so the
+        // configuration doesn't need to know about it statically.
         this.configuration = new Configuration(conf);
 
-        // drop cached API instances so they'll be recreated using new configuration
         this.downloadJobApi = undefined;
         this.versionApi = undefined;
         this.supportedSiteApi = undefined;
         this.downloaderApi = undefined;
     }
 
-    // Ensure initialization has completed
     private async ready() {
         if (this.initPromise) {
             await this.initPromise;
             this.initPromise = null;
         }
+    }
+
+    /**
+     * Builds request options that include a fresh Bearer token header.
+     * Silently skips auth if no token is available.
+     */
+    private async buildAuthOptions(options?: any): Promise<any> {
+        const accessToken = await tokenManager.getAccessToken(this.tokenEndpoint ?? undefined);
+        const authHeaders = accessToken
+            ? { Authorization: `Bearer ${accessToken}` }
+            : {};
+        return this.mergeOptions(this.buildRequestOptions(options), { headers: authHeaders });
     }
 
     // Helper to get the global fetch function in a type-safe manner
@@ -150,13 +188,10 @@ class ApiService {
         return this.supportedSiteApi;
     }
 
-    /**
-     * Submits a download job to the server
-     */
     public async submitDownloadJob(job: DownloadJobDownloadJobDTO, options?: any) {
         await this.ready();
         try {
-            const opts = this.buildRequestOptions(options);
+            const opts = await this.buildAuthOptions(options);
             return await this.getDownloadJobApi().apiDownloadJobsPost(job, opts);
         } catch (err: any) {
             throw await this.normalizeApiError(err);
@@ -166,34 +201,27 @@ class ApiService {
     public async listDownloaders(page?: number, options?: any) {
         await this.ready();
         try {
-            const opts = this.buildRequestOptions(options);
+            const opts = await this.buildAuthOptions(options);
             return await this.getDownloaderApi().apiDownloadersGetCollection(page, opts);
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
-    /**
-     * List supported sites
-     */
     public async listSupportedSites(page?: number, options?: any) {
         await this.ready();
         try {
-            const opts = this.buildRequestOptions(options);
+            const opts = await this.buildAuthOptions(options);
             return await this.getSupportedSiteApi().apiSupportedSitesGetCollection(page, opts);
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
-    /**
-     * Get version info
-     */
     public async getVersion(options?: any) {
         await this.ready();
         try {
-            const opts = this.buildRequestOptions(options);
-            // apiVersionsGetCollection accepts (page?, options?)
+            const opts = await this.buildAuthOptions(options);
             return await this.getVersionApi().apiVersionsGetCollection(undefined, opts);
         } catch (err: any) {
             throw await this.normalizeApiError(err);
@@ -204,21 +232,40 @@ class ApiService {
         await this.ready();
         // Test the provided host by instantiating a transient API client using that base path.
         const base = (host || '').replace(/\/\/+$/, '');
-        const tempConfig: any = { basePath: base };
-        const tempConf = new Configuration(tempConfig);
+        const tempConf = new Configuration({ basePath: base });
         const tempDownloaderApi = new DownloaderApi(tempConf, undefined, this.getRuntimeFetch());
 
-        // First attempt to fetch available downloaders and normalize API errors.
-        const opts = this.buildRequestOptions();
-        const availableDownloaders = await tempDownloaderApi.apiDownloadersGetCollection(undefined, opts).catch(async (err: any) => { throw await this.normalizeApiError(err); });
+        return await tempDownloaderApi.testServer().catch(async (err: any) => {
+            throw await this.normalizeApiError(err);
+        });
+    }
 
-        console.debug(availableDownloaders);
+    /**
+     * Returns the OAuth2 authorization endpoint URL for the given host by reading the well-known endpoint.
+     */
+    public async getOAuth2AuthorizationUrl(host: string): Promise<string> {
+        await this.ready();
+        const base = (host || '').replace(/\/+$/, '');
+        const tempConf = new Configuration({ basePath: base });
+        const tempDownloaderApi = new DownloaderApi(tempConf, undefined, this.getRuntimeFetch());
+        const info = await tempDownloaderApi.testServer().catch(async (err: any) => {
+            throw await this.normalizeApiError(err);
+        }) as any;
 
-        if ((availableDownloaders.member?.length ?? 0) === 0) {
-            // Normalize and throw an error for the empty-downloaders case.
-            throw await this.normalizeApiError(new Error('No downloaders are available on the server'));
+        if (info.authMode !== 'oauth2') {
+            throw new Error(`Server auth mode is '${info.authMode}', not 'oauth2'`);
         }
-        return;
+
+        const authEndpoint: string | undefined = info.oauth2?.authorization_endpoint;
+        if (!authEndpoint) {
+            throw new Error('Server did not provide an oauth2.authorization_endpoint');
+        }
+
+        // The endpoint may be a relative path – resolve it against the server base.
+        if (authEndpoint.startsWith('http://') || authEndpoint.startsWith('https://')) {
+            return authEndpoint;
+        }
+        return base + (authEndpoint.startsWith('/') ? '' : '/') + authEndpoint;
     }
 
     // Try to extract a useful error shape from the thrown value

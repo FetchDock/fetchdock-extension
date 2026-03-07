@@ -1862,14 +1862,13 @@ export const DownloaderApiFp = function(configuration?: Configuration) {
          */
         apiDownloadersGetCollection(page?: any, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<any> {
             const localVarFetchArgs = DownloaderApiFetchParamCreator(configuration).apiDownloadersGetCollection(page, options);
-            return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
-                return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
-                    if (response.status >= 200 && response.status < 300) {
-                        return response.json();
-                    } else {
-                        throw response;
-                    }
-                });
+            return async (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
+                const response = await fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options);
+                if (response.status >= 200 && response.status < 300) {
+                    return response.json();
+                } else {
+                    throw response;
+                }
             };
         },
         /**
@@ -1881,14 +1880,13 @@ export const DownloaderApiFp = function(configuration?: Configuration) {
          */
         apiDownloadersIdGet(id: any, options?: any): (fetch?: FetchAPI, basePath?: string) => Promise<DownloaderJsonld> {
             const localVarFetchArgs = DownloaderApiFetchParamCreator(configuration).apiDownloadersIdGet(id, options);
-            return (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
-                return fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options).then((response) => {
-                    if (response.status >= 200 && response.status < 300) {
-                        return response.json();
-                    } else {
-                        throw response;
-                    }
-                });
+            return async (fetch: FetchAPI = isomorphicFetch, basePath: string = BASE_PATH) => {
+                const response = await fetch(basePath + localVarFetchArgs.url, localVarFetchArgs.options);
+                if (response.status >= 200 && response.status < 300) {
+                    return response.json();
+                } else {
+                    throw response;
+                }
             };
         },
     }
@@ -1930,6 +1928,40 @@ export const DownloaderApiFactory = function (configuration?: Configuration, fet
  * @extends {BaseAPI}
  */
 export class DownloaderApi extends BaseAPI {
+    public testServer(options?: any) {
+        // Try to fetch {basePath}/.well-known/browser-extension
+        return fetch(this.basePath + '/.well-known/browser-extension', options)
+            .then(async response => {
+                if (response.ok) {
+                    console.log(response);
+
+                    // Response MUST be a JSON object with at least the following keys available:
+                    // version: string (semver)
+                    // auth-mode: string ("none", "basic", "oauth2")
+
+                    const responseJson = await response.json();
+                    if (!responseJson.version || !responseJson.auth_mode) {
+                        console.debug(responseJson);
+                        throw new Error('Invalid response format');
+                    }
+                    console.log(`Server version: ${responseJson.version}, auth mode: ${responseJson.auth_mode}`);
+
+                    return {
+                        success: true,
+                        version: responseJson.version,
+                        authMode: responseJson.auth_mode,
+                        oauth2: responseJson.oauth2 ?? null,
+                    }
+                } else {
+                    throw new Error('Server is not running');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching server version:', error);
+                throw new Error('Server is not running');
+            });
+    }
+
     /**
      * Retrieves the collection of Downloader resources.
      * @summary Retrieves the collection of Downloader resources.
