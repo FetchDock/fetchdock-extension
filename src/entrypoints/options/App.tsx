@@ -2,12 +2,16 @@ import React, {useEffect, useRef, useState} from "react";
 import { i18n } from "#imports";
 import optionsStorage from "@/utils/optionsStorage";
 import {sendMessage} from "@/lib/messaging";
+import { KeyComboInput } from "@/components/ui/key-combo-input";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { useTheme } from "@/lib/useTheme";
 
 function App() {
     const formRef = useRef<HTMLFormElement | null>(null);
     const [status, setStatus] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    // Track the in-flight popup so we can close it once tokens arrive
+    const [shortcut, setShortcut] = useState<string>('ctrl+k');
+    const [theme, setTheme] = useTheme();
     const popupRef = useRef<Window | null>(null);
 
     useEffect(() => {
@@ -23,16 +27,14 @@ function App() {
         // Reflect initial auth state
         optionsStorage.getAll().then((opts) => {
             setIsAuthenticated(!!opts.oauth2AccessToken);
+            if (opts.commandPaletteShortcut) setShortcut(opts.commandPaletteShortcut);
         });
 
         // React to token changes written by the background worker.
-        // The oauth-callback content script detects the #auth-result element on
-        // the server's callback page, sends the tokens to the background via
-        // storeOAuth2Tokens, which writes to optionsStorage — triggering this.
-        // The background also closes the popup tab directly after storing.
         optionsStorage.onChanged((newOpts) => {
             const authenticated = !!newOpts.oauth2AccessToken;
             setIsAuthenticated(authenticated);
+            if (newOpts.commandPaletteShortcut) setShortcut(newOpts.commandPaletteShortcut);
             if (authenticated) {
                 popupRef.current = null;
                 setStatus(i18n.t('messages.options.oauth2Success'));
@@ -116,6 +118,13 @@ function App() {
 
     return (
         <div className="bg-white dark:bg-gray-800 rounded-lg px-6 py-8 ring shadow-xl ring-gray-900/5">
+            {/* Page header */}
+            <div className="flex items-center justify-between mb-6">
+                <h1 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    {i18n.t('forms.options.title')}
+                </h1>
+                <ThemeToggle value={theme} onChange={setTheme} variant="full" />
+            </div>
             <form ref={formRef}>
                 <div className="mb-4">
                     <label htmlFor="downloadRouterServerHost" className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">
@@ -176,6 +185,28 @@ function App() {
                     <span className="text-sm text-gray-600 mt-1">
                         {i18n.t('forms.options.help.sendReferrer')}
                     </span>
+                </div>
+
+                {/* Command Palette Shortcut */}
+                <div className="mb-4">
+                    <label className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">
+                        {i18n.t('forms.options.labels.commandPaletteShortcut')}
+                    </label>
+                    <div className="mt-2">
+                        <KeyComboInput
+                            value={shortcut}
+                            onChange={combo => {
+                                setShortcut(combo);
+                                // Write directly so optionsStorage persists it without a form submit
+                                optionsStorage.set({ commandPaletteShortcut: combo });
+                            }}
+                        />
+                    </div>
+                    <span className="text-sm text-gray-600 mt-1 block">
+                        {i18n.t('forms.options.help.commandPaletteShortcut')}
+                    </span>
+                    {/* Hidden input so webext-options-sync can also sync this field */}
+                    <input type="hidden" name="commandPaletteShortcut" value={shortcut} readOnly />
                 </div>
 
                 {/* OAuth2 Authentication */}

@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { sendMessage } from "@/lib/messaging";
 
 function App() {
-    const [count, setCount] = useState(0);
-
-    const openDashboard = () => {
-        const url = browser.runtime.getURL('/dashboard.html');
+    const openDashboard = async () => {
+        const url = await sendMessage("getExtensionPageUrl", "/dashboard.html");
 
         console.log("Opening dashboard at:", url);
 
@@ -14,7 +12,6 @@ function App() {
 
     return (
         <div className="m-10">
-            <Button onClick={() => setCount(count + 1)}>Count: {count}</Button>
             <Button onClick={openDashboard}>Open Dashboard</Button>
         </div>
     );

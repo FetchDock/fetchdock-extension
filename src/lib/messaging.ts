@@ -1,4 +1,4 @@
-import type { WxtAppConfig, OAuth2AuthResult } from '@/lib/types';
+import type { WxtAppConfig, OAuth2AuthResult, DownloadJobDTO } from '@/lib/types';
 import type { DownloadJob } from '@/lib/types';
 import { defineExtensionMessaging } from '@webext-core/messaging';
 
@@ -7,6 +7,9 @@ interface ProtocolMap {
     updateSettings(settings: Partial<WxtAppConfig>): WxtAppConfig;
     getDownloadJobs(): DownloadJob[];
     sendDownloadJob(job: DownloadJob): void;
+
+    /** Submits a new download job via POST /download_jobs */
+    submitDownloadJob(dto: DownloadJobDTO): any;
 
     testApiServiceHost(host: string): string;
 
@@ -23,6 +26,12 @@ interface ProtocolMap {
 
     /** Fired by the oauth-callback content script once it has stored tokens; result mirrors OAuth2AuthResult */
     oauth2CallbackReceived(result: OAuth2AuthResult): void;
+
+    /** Asks the background to open the extension's options page */
+    openOptionsPage(): void;
+
+    /** Asks the background to resolve an extension-relative path to a full URL */
+    getExtensionPageUrl(path: string): string;
 
     // test
     testMessage(msg: string): string;

@@ -4,13 +4,14 @@ import {
     DownloadJobApi,
     DownloadJobEventApi,
     DownloadedFileApi,
-    DownloadJobDownloadJobDTO,
+    LoginCheckApi,
     SupportedSiteApi,
     VersionApi
 } from "@/service/api";
 import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
-import type {WxtAppConfig} from "@/lib/types";
+import type {WxtAppConfig, DownloadJobDTO} from "@/lib/types";
 import {tokenManager} from "@/lib/tokenManager";
+import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 
 /**
  * Small wrapper around the generated OpenAPI client that:
@@ -28,12 +29,13 @@ class ApiService {
     private versionApi?: VersionApi;
     private supportedSiteApi?: SupportedSiteApi;
     private downloaderApi?: DownloaderApi;
+    private loginCheckApi?: LoginCheckApi;
 
     // Default request options that will be merged into every API call.
     private defaultRequestOptions: any = {
         headers: {
             'Content-Type': 'application/json',
-            'Accept': 'application/json',
+            'Accept': 'application/ld+json',
         }
     };
 
@@ -56,6 +58,8 @@ class ApiService {
         void this.setDefaultRequestOptions;
         void this.setDefaultRequestHeaders;
         void this.submitDownloadJob;
+        void this.listDownloadJobs;
+        void this.getDownloadJob;
         void this.listSupportedSites;
         void this.listDownloadJobEvents;
         void this.listDownloadedFiles;
@@ -79,14 +83,12 @@ class ApiService {
         const base = (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
         if (!base) return;
         try {
-            const res = await fetch(`${base}/.well-known/browser-extension`);
+            const res = await fetchDiscovery(`${base}/.well-known/browser-extension`);
             if (!res.ok) return;
             const data = await res.json();
             const endpoint: string | undefined = data?.oauth2?.token_endpoint;
             if (endpoint) {
-                this.tokenEndpoint = endpoint.startsWith('http')
-                    ? endpoint
-                    : base + (endpoint.startsWith('/') ? '' : '/') + endpoint;
+                this.tokenEndpoint = resolveEndpoint(endpoint, base);
                 console.debug('[ApiService] Discovered token endpoint:', this.tokenEndpoint);
             }
         } catch {
@@ -109,6 +111,7 @@ class ApiService {
         this.versionApi = undefined;
         this.supportedSiteApi = undefined;
         this.downloaderApi = undefined;
+        this.loginCheckApi = undefined;
     }
 
     private async ready() {
@@ -214,136 +217,183 @@ class ApiService {
         return this.supportedSiteApi;
     }
 
-    public async submitDownloadJob(job: DownloadJobDownloadJobDTO, options?: any) {
+    // ---------------------------------------------------------------------------
+    // DownloadJob
+    // ---------------------------------------------------------------------------
+
+    /**
+     * POST /download_jobs
+     * Submits a new download job to the server.
+     * @see docs.jsonld #DownloadJob (writeable properties)
+     */
+    public async submitDownloadJob(dto: DownloadJobDTO): Promise<any> {
         await this.ready();
         try {
-            const opts = await this.buildAuthOptions(options);
-            return await this.getDownloadJobApi().apiDownloadJobsPost(job, opts);
+            const opts = await this.buildAuthOptions({
+                body: JSON.stringify(dto),
+                headers: {
+                    'Content-Type': 'application/ld+json',
+                },
+            });
+            const res = await this.getDownloadJobApi().apiDownloadJobsPost(opts);
+            return await res.json();
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
-    public async listDownloaders(page?: number, options?: any) {
+    /** GET /download_jobs */
+    public async listDownloadJobs(page?: number, pageSize?: number, options?: any) {
         await this.ready();
         try {
-            const opts = await this.buildAuthOptions(options);
-            return await this.getDownloaderApi().apiDownloadersGetCollection(page, opts);
+            const opts = await this.buildAuthOptions(this.withPageSize(options, pageSize));
+            const res = await this.getDownloadJobApi().apiDownloadJobsGetCollection(page, opts);
+            return await res.json();
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
-    /** List download job events for a given job UUID */
-    public async listDownloadJobEvents(downloadJobUuid: string, page?: number, options?: any) {
+    /** GET /download_jobs/{uuid} */
+    public async getDownloadJob(uuid: string, options?: any) {
         await this.ready();
         try {
             const opts = await this.buildAuthOptions(options);
-            return await this.getDownloadJobEventApi()
+            const res = await this.getDownloadJobApi().apiDownloadJobsUuidGet(uuid, opts);
+            return await res.json();
+        } catch (err: any) {
+            throw await this.normalizeApiError(err);
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+    // DownloadJobEvents & DownloadedFiles
+    // ---------------------------------------------------------------------------
+
+    public async listDownloadJobEvents(downloadJobUuid: string, page?: number, pageSize?: number, options?: any) {
+        await this.ready();
+        try {
+            const opts = await this.buildAuthOptions(this.withPageSize(options, pageSize));
+            const res = await this.getDownloadJobEventApi()
                 .apiDownloadJobsDownloadJobUuideventsFormatGetCollection(downloadJobUuid, page, opts);
+            return await res.json();
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
-    /** List downloaded files for a given job UUID */
-    public async listDownloadedFiles(downloadJobUuid: string, page?: number, options?: any) {
+    public async listDownloadedFiles(downloadJobUuid: string, page?: number, pageSize?: number, options?: any) {
         await this.ready();
         try {
-            const opts = await this.buildAuthOptions(options);
-            return await this.getDownloadedFileApi()
+            const opts = await this.buildAuthOptions(this.withPageSize(options, pageSize));
+            const res = await this.getDownloadedFileApi()
                 .apiDownloadJobsDownloadJobUuidfilesFormatGetCollection(downloadJobUuid, page, opts);
+            return await res.json();
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
-    public async listSupportedSites(page?: number, options?: any) {
+    // ---------------------------------------------------------------------------
+    // Downloaders
+    // ---------------------------------------------------------------------------
+
+    public async listDownloaders(page?: number, pageSize?: number, options?: any) {
         await this.ready();
         try {
-            const opts = await this.buildAuthOptions(options);
-            return await this.getSupportedSiteApi().apiSupportedSitesGetCollection(page, opts);
+            const opts = await this.buildAuthOptions(this.withPageSize(options, pageSize));
+            const res = await this.getDownloaderApi().apiDownloadersGetCollection(page, opts);
+            return await res.json();
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
+
+    // ---------------------------------------------------------------------------
+    // SupportedSites
+    // ---------------------------------------------------------------------------
+
+    public async listSupportedSites(page?: number, pageSize?: number, options?: any) {
+        await this.ready();
+        try {
+            const opts = await this.buildAuthOptions(this.withPageSize(options, pageSize));
+            const res = await this.getSupportedSiteApi().apiSupportedSitesGetCollection(page, opts);
+            return await res.json();
+        } catch (err: any) {
+            throw await this.normalizeApiError(err);
+        }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Versions
+    // ---------------------------------------------------------------------------
 
     public async getVersion(options?: any) {
         await this.ready();
         try {
             const opts = await this.buildAuthOptions(options);
-            return await this.getVersionApi().apiVersionsGetCollection(undefined, opts);
+            const res = await this.getVersionApi().apiVersionsGetCollection(undefined, opts);
+            return await res.json();
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
     }
 
+    // ---------------------------------------------------------------------------
+    // Server testing & OAuth2 discovery — use DownloadJobApi.testServer()
+    // ---------------------------------------------------------------------------
+
     public async testHost(host: string) {
         await this.ready();
-        // Test the provided host by instantiating a transient API client using that base path.
-        const base = (host || '').replace(/\/\/+$/, '');
+        const base = (host || '').replace(/\/+$/, '');
         const tempConf = new Configuration({ basePath: base });
-        const tempDownloaderApi = new DownloaderApi(tempConf, undefined, this.getRuntimeFetch());
-
-        return await tempDownloaderApi.testServer().catch(async (err: any) => {
+        const tempApi = new DownloadJobApi(tempConf, undefined, this.getRuntimeFetch());
+        return await tempApi.testServer().catch(async (err: any) => {
             throw await this.normalizeApiError(err);
         });
     }
 
-    /**
-     * Returns the OAuth2 authorization endpoint URL for the given host by reading the well-known endpoint.
-     */
     public async getOAuth2AuthorizationUrl(host: string): Promise<string> {
         await this.ready();
         const base = (host || '').replace(/\/+$/, '');
         const tempConf = new Configuration({ basePath: base });
-        const tempDownloaderApi = new DownloaderApi(tempConf, undefined, this.getRuntimeFetch());
-        const info = await tempDownloaderApi.testServer().catch(async (err: any) => {
+        const tempApi = new DownloadJobApi(tempConf, undefined, this.getRuntimeFetch());
+        const info = await tempApi.testServer().catch(async (err: any) => {
             throw await this.normalizeApiError(err);
         }) as any;
 
         if (info.authMode !== 'oauth2') {
             throw new Error(`Server auth mode is '${info.authMode}', not 'oauth2'`);
         }
-
         const authEndpoint: string | undefined = info.oauth2?.authorization_endpoint;
         if (!authEndpoint) {
             throw new Error('Server did not provide an oauth2.authorization_endpoint');
         }
-
-        // The endpoint may be a relative path – resolve it against the server base.
-        if (authEndpoint.startsWith('http://') || authEndpoint.startsWith('https://')) {
-            return authEndpoint;
-        }
-        return base + (authEndpoint.startsWith('/') ? '' : '/') + authEndpoint;
+        return resolveEndpoint(authEndpoint, base);
     }
 
-    // Try to extract a useful error shape from the thrown value
+    // ---------------------------------------------------------------------------
+    // Error normalisation
+    // ---------------------------------------------------------------------------
+
+    /** Merges itemsPerPage into options.query so the generated client sends it as a query param */
+    private withPageSize(options: any, pageSize?: number): any {
+        if (!pageSize) return options;
+        return this.mergeOptions(options ?? {}, { query: { itemsPerPage: pageSize } });
+    }
+
     private async normalizeApiError(err: any) {
-        // The generated client throws the raw Response for non-2xx. Try to parse it.
         if (err instanceof Response) {
             try {
                 const text = await err.text();
-                try {
-                    const json = JSON.parse(text);
-                    return { status: err.status, body: json };
-                } catch {
-                    return { status: err.status, body: text };
-                }
-            } catch (e) {
-                return { status: err.status, body: null };
-            }
+                try { return { status: err.status, body: JSON.parse(text) }; }
+                catch { return { status: err.status, body: text }; }
+            } catch { return { status: err.status, body: null }; }
         }
-
-        // If it's an Error already, rethrow
-        if (err && err.message) {
-            return err;
-        }
-
+        if (err && err.message) return err;
         return { status: 0, body: err };
     }
 }
 
 export const apiService = new ApiService();
 
-export type { DownloadJobDownloadJobDTO };

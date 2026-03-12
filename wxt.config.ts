@@ -25,7 +25,11 @@ export default defineConfig({
         "tabs",
         "webRequest",
         "contextMenus",
-        "scripting"
+        "scripting",
+        "clipboardRead",
+        "clipboardWrite",
+        "contextMenus",
+        "activeTab"
     ],
     name: "Download Router companion extension",
     description: "Companion extension for Download Router app",

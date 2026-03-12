@@ -6,7 +6,6 @@ declare module 'wxt/utils/define-app-config' {
         sendCookies: boolean;
         sendUserAgent: boolean;
         sendReferrer: boolean;
-        apiKey?: string;
     }
 }
 
@@ -22,5 +21,4 @@ export default defineAppConfig({
     sendReferrer: typeof import.meta.env.WXT_SEND_REFERRER !== 'undefined'
         ? String(import.meta.env.WXT_SEND_REFERRER).toLowerCase() === 'true'
         : true,
-    apiKey: import.meta.env.WXT_API_KEY ?? "",
 });

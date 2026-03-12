@@ -33,6 +33,16 @@ interface ResourcePanelProps<T> {
     getRowKey: (row: T) => string | number;
     /** Optional action slot rendered in the card header (right side) */
     headerAction?: React.ReactNode;
+    /** Rendered in the card footer — pass a <Pagination /> component */
+    pagination?: React.ReactNode;
+    /** Total item count shown next to the title */
+    totalItems?: number;
+    /**
+     * When provided, a row whose key matches `expandedKey` will render an
+     * additional full-width <tr> below it containing `renderExpanded(row)`.
+     */
+    expandedKey?: string | number | null;
+    renderExpanded?: (row: T) => React.ReactNode;
 }
 
 function SkeletonRow({ cols }: { cols: number }) {
@@ -58,6 +68,10 @@ export function ResourcePanel<T>({
     onReload,
     getRowKey,
     headerAction,
+    pagination,
+    totalItems,
+    expandedKey,
+    renderExpanded,
 }: ResourcePanelProps<T>) {
     const isLoading = status === 'loading' || status === 'idle';
     const isEmpty   = status === 'success' && (!rows || rows.length === 0);
@@ -67,11 +81,16 @@ export function ResourcePanel<T>({
             {/* Header */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                 <div className="flex items-center gap-3">
-                    {icon && (
-                        <span className="text-muted-foreground">{icon}</span>
-                    )}
+                    {icon && <span className="text-muted-foreground">{icon}</span>}
                     <div>
-                        <h2 className="text-base font-semibold leading-tight">{title}</h2>
+                        <h2 className="text-base font-semibold leading-tight flex items-center gap-2">
+                            {title}
+                            {totalItems != null && status === 'success' && (
+                                <span className="text-xs font-normal text-muted-foreground">
+                                    ({totalItems.toLocaleString()} total)
+                                </span>
+                            )}
+                        </h2>
                         {description && (
                             <p className="text-xs text-muted-foreground mt-0.5">{description}</p>
                         )}
@@ -143,22 +162,41 @@ export function ResourcePanel<T>({
                         )}
 
                         {/* Data rows */}
-                        {status === 'success' && rows && rows.map(row => (
-                            <tr
-                                key={getRowKey(row)}
-                                className="border-b border-border last:border-0 hover:bg-muted/30 transition-colors"
-                            >
-                                {columns.map(col => (
-                                    <td key={col.key} className={cn('px-4 py-3', col.width)}>
-                                        {col.render(row)}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
+                        {status === 'success' && rows && rows.map(row => {
+                            const key       = getRowKey(row);
+                            const isExpanded = expandedKey != null && key === expandedKey;
+                            return (
+                                <React.Fragment key={key}>
+                                    <tr className={cn(
+                                        'border-b border-border hover:bg-muted/30 transition-colors',
+                                        isExpanded && 'bg-muted/20 border-b-0'
+                                    )}>
+                                        {columns.map(col => (
+                                            <td key={col.key} className={cn('px-4 py-3', col.width)}>
+                                                {col.render(row)}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                    {isExpanded && renderExpanded && (
+                                        <tr className="border-b border-border bg-muted/10">
+                                            <td colSpan={columns.length} className="p-0">
+                                                {renderExpanded(row)}
+                                            </td>
+                                        </tr>
+                                    )}
+                                </React.Fragment>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
+
+            {/* Footer — pagination */}
+            {pagination && (
+                <div className="flex items-center justify-end px-4 py-3 border-t border-border">
+                    {pagination}
+                </div>
+            )}
         </div>
     );
 }
-

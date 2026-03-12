@@ -3,6 +3,7 @@ import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
 import {apiService} from "@/service/apiService.ts";
 import {i18n} from "#imports";
 import {tokenManager} from "@/lib/tokenManager";
+import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 
 export default defineBackground(() => {
 
@@ -19,6 +20,60 @@ export default defineBackground(() => {
   subscribeToAppConfigChanges((newConfig, oldConfig) => {
     console.log('App config changed in background', { newConfig, oldConfig });
   });
+
+  if(typeof browser !== 'undefined') {
+    if(typeof browser.contextMenus !== 'undefined') {
+
+      browser.contextMenus.create({
+        id: 'sendLinkToDownloadServer',
+        title: 'Send Link to Download Server',
+        contexts: ['link']
+      });
+
+      browser.contextMenus.create({
+        id: 'sentPageToDownloadServer',
+        title: 'Sent Page to Download Server',
+        contexts: ['page']
+      });
+
+      browser.contextMenus.create({
+        id: 'sentImageToDownloadServer',
+        title: 'Sent Image to Download Server',
+        contexts: ['image']
+      });
+
+
+      browser.contextMenus.onClicked.addListener((info, tab) => {
+        console.debug('Context menu item clicked', info);
+        switch (info.menuItemId) {
+          case 'sendLinkToDownloadServer':
+            console.log('Sending link to download server:', info.linkUrl);
+            if (info.linkUrl) {
+              apiService.submitDownloadJob({ uri: info.linkUrl })
+                .then((job: any) => {
+                  console.log('Download job created:', job);
+                })
+                .catch((err: any) => {
+                  console.error('Failed to create download job:', err);
+                });
+            }
+            break;
+          case 'sentPageToDownloadServer':
+            console.log('Sent page to download server menu item clicked', info, tab);
+            break;
+          case 'sentImageToDownloadServer':
+            console.log('Sent image to download server menu item clicked', info, tab);
+            break;
+          case 'sentVideoToDownloadServer':
+            console.log('Sent video to download server menu item clicked', info, tab);
+            break;
+          default:
+            console.log('Unknown menu item clicked', info, tab);
+        }
+      })
+    }
+  }
+
 
   onMessage("testMessage", async (message) => {
     console.log(message);
@@ -52,6 +107,43 @@ export default defineBackground(() => {
   onMessage("revokeOAuth2Tokens", async () => {
     await tokenManager.revokeTokens();
     return true;
+  });
+
+  onMessage("submitDownloadJob", async (message) => {
+    return await apiService.submitDownloadJob(message.data);
+  });
+
+  onMessage("refreshOAuth2Tokens", async () => {
+    const cfg = await getMergedAppConfig();
+    const base = (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
+    if (!base) {
+      console.warn('[background] refreshOAuth2Tokens: no server host configured');
+      return false;
+    }
+    try {
+      const res = await fetchDiscovery(`${base}/.well-known/browser-extension`);
+      if (!res.ok) return false;
+      const data = await res.json();
+      const tokenEndpoint: string | undefined = data?.oauth2?.token_endpoint;
+      if (!tokenEndpoint) {
+        console.warn('[background] refreshOAuth2Tokens: no token_endpoint in well-known');
+        return false;
+      }
+      const fullEndpoint = resolveEndpoint(tokenEndpoint, base);
+      const newToken = await tokenManager.refresh(fullEndpoint);
+      return newToken !== null;
+    } catch (err) {
+      console.error('[background] refreshOAuth2Tokens failed:', err);
+      return false;
+    }
+  });
+
+  onMessage("openOptionsPage", () => {
+    browser.runtime.openOptionsPage();
+  });
+
+  onMessage("getExtensionPageUrl", (message) => {
+    return browser.runtime.getURL(message.data as any);
   });
 
   onMessage("storeOAuth2Tokens", async (message) => {
@@ -88,6 +180,4 @@ export default defineBackground(() => {
 
     return true;
   });
-
-  console.log('Hello background!', { id: browser.runtime.id });
 });

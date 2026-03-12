@@ -9,6 +9,8 @@ export default new OptionsSync({
         oauth2AccessToken: "",
         oauth2RefreshToken: "",
         oauth2TokenExpiresAt: 0,
+        commandPaletteShortcut: "ctrl+k",
+        theme: "system" as "light" | "dark" | "system",
     },
 
     // List of functions that are called when the extension is updated

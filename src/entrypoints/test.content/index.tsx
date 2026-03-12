@@ -5,6 +5,7 @@ export default defineContentScript({
     matches: ['<all_urls>'],
 
     async main() {
+
         // Only act on pages that contain the server's auth-result element.
         const resultEl = document.getElementById('auth-result');
         if (!resultEl) return;

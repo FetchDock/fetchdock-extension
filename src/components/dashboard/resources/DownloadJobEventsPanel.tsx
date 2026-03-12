@@ -1,11 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { Activity } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { ResourcePanel, type ColumnDef } from '@/components/dashboard/ResourcePanel';
-import { useResource } from '@/components/dashboard/useResource';
+import { usePagedResource } from '@/components/dashboard/useResource';
+import { Pagination } from '@/components/dashboard/Pagination';
 import { apiService } from '@/service/apiService';
-import type { DownloadJobEvent } from '@/service/api';
+
+interface DownloadJobEventLD {
+    '@id'?: string;
+    id?: any;
+    // downloadJob may be an IRI in JSON-LD
+    downloadJob?: string;
+    workerIdentifier?: any;
+    event?: any;
+    source?: any;
+    updateMessage?: any;
+    exceptionMessage?: any;
+    createdAt?: any;
+}
+
 
 function eventVariant(event: string): 'success' | 'destructive' | 'warning' | 'secondary' {
     const e = String(event).toLowerCase();
@@ -17,14 +31,11 @@ function eventVariant(event: string): 'success' | 'destructive' | 'warning' | 's
 
 function formatDate(value: any): string {
     if (!value) return '—';
-    try {
-        return new Date(value).toLocaleString();
-    } catch {
-        return String(value);
-    }
+    try { return new Date(value).toLocaleString(); }
+    catch { return String(value); }
 }
 
-const COLUMNS: ColumnDef<DownloadJobEvent>[] = [
+const COLUMNS: ColumnDef<DownloadJobEventLD>[] = [
     {
         key: 'event',
         header: 'Event',
@@ -72,21 +83,24 @@ const COLUMNS: ColumnDef<DownloadJobEvent>[] = [
 ];
 
 export function DownloadJobEventsPanel() {
-    const [jobUuid, setJobUuid]   = useState('');
-    const [submitted, setSubmitted] = useState('');
+    const [jobUuid,    setJobUuid]    = useState('');
+    const [submitted,  setSubmitted]  = useState('');
 
-    const { data, status, error, reload } = useResource(
-        () => apiService
-            .listDownloadJobEvents(submitted)
-            .then((res: any) => res?.member ?? res ?? []),
-        { enabled: !!submitted }
+    const fetcher = useCallback(
+        (page: number, pageSize: number) => apiService.listDownloadJobEvents(submitted, page, pageSize),
+        [submitted]
     );
+
+    const paged = usePagedResource<DownloadJobEventLD>(fetcher, {
+        enabled: !!submitted,
+    });
 
     const handleSearch = (e: React.FormEvent) => {
         e.preventDefault();
-        if (jobUuid.trim()) {
-            setSubmitted(jobUuid.trim());
-        }
+        const uuid = jobUuid.trim();
+        if (!uuid) return;
+        setSubmitted(uuid);
+        paged.setPage(1);
     };
 
     const uuidInput = (
@@ -112,13 +126,24 @@ export function DownloadJobEventsPanel() {
             description="Activity log for a specific download job"
             icon={<Activity className="w-5 h-5" />}
             columns={COLUMNS}
-            rows={submitted ? (data as DownloadJobEvent[] | null) : null}
-            status={submitted ? status : 'idle'}
-            error={error}
-            onReload={reload}
-            getRowKey={row => row.id ?? Math.random()}
+            rows={submitted ? paged.rows : null}
+            status={submitted ? paged.status : 'idle'}
+            error={paged.error}
+            onReload={paged.reload}
+            totalItems={submitted ? paged.totalItems : undefined}
+            getRowKey={row => row['@id'] ?? row.id ?? Math.random()}
             headerAction={uuidInput}
+            pagination={submitted ? (
+                <Pagination
+                    page={paged.page}
+                    totalPages={paged.totalPages}
+                    totalItems={paged.totalItems}
+                    pageSize={paged.pageSize}
+                    onPage={paged.setPage}
+                    onPageSize={paged.setPageSize}
+                    disabled={paged.status === 'loading'}
+                />
+            ) : undefined}
         />
     );
 }
-

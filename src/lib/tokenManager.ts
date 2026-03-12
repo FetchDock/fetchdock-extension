@@ -1,5 +1,6 @@
 import optionsStorage from '@/utils/optionsStorage';
 import type { OAuth2AuthResult, TokenState, WxtAppConfig } from '@/lib/types';
+import { fetchToken } from '@/lib/fetchUtils';
 
 /**
  * How many milliseconds before the real expiry we consider the token "expired"
@@ -169,7 +170,7 @@ class TokenManager {
         console.log('[TokenManager] Refreshing access token...');
 
         try {
-            const response = await fetch(tokenEndpoint, {
+            const response = await fetchToken(tokenEndpoint, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                 body: new URLSearchParams({
