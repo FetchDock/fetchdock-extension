@@ -7,10 +7,6 @@ jobs:
   publish:
     name: Build and Publish
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      id-token: write
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -25,9 +21,10 @@ jobs:
       - name: Create Firefox Extension Package
         run: pnpm zip:firefox
       - name: Publish to Release
-        uses: xresloader/upload-to-github-release@v1
+        uses: xresloader/upload-to-github-release@main
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           file: './.output/*.zip'
           tags: true
+          verbose: true
