@@ -31,12 +31,12 @@ export default defineConfig({
         "contextMenus",
         "activeTab"
     ],
-    name: "Download Router companion extension",
-    description: "Companion extension for Download Router app",
+    name: "FetchDock",
+    description: "Companion extension for FetchDock Server",
     version: '0.1.0',
     browser_specific_settings: {
       gecko: {
-        id: 'download-router-companion@pbxg33k.eu' // Required as temp addon ID are not permitted to use storage API
+        id: 'fetchdock@pbxg33k.eu' // Required as temp addon ID are not permitted to use storage API
       }
     },
     default_locale: 'en',

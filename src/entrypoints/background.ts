@@ -26,19 +26,19 @@ export default defineBackground(() => {
 
       browser.contextMenus.create({
         id: 'sendLinkToDownloadServer',
-        title: 'Send Link to Download Server',
+        title: 'Send Link to FetchDock',
         contexts: ['link']
       });
 
       browser.contextMenus.create({
         id: 'sentPageToDownloadServer',
-        title: 'Sent Page to Download Server',
+        title: 'Sent Page to FetchDock',
         contexts: ['page']
       });
 
       browser.contextMenus.create({
         id: 'sentImageToDownloadServer',
-        title: 'Sent Image to Download Server',
+        title: 'Sent Image to FetchDock',
         contexts: ['image']
       });
 
@@ -47,7 +47,7 @@ export default defineBackground(() => {
         console.debug('Context menu item clicked', info);
         switch (info.menuItemId) {
           case 'sendLinkToDownloadServer':
-            console.log('Sending link to download server:', info.linkUrl);
+            console.log('Sending link to FetchDock:', info.linkUrl);
             if (info.linkUrl) {
               apiService.submitDownloadJob({ uri: info.linkUrl })
                 .then((job: any) => {
@@ -59,13 +59,14 @@ export default defineBackground(() => {
             }
             break;
           case 'sentPageToDownloadServer':
-            console.log('Sent page to download server menu item clicked', info, tab);
+            console.log('Sent page to FetchDock menu item clicked', info, tab);
+
             break;
           case 'sentImageToDownloadServer':
-            console.log('Sent image to download server menu item clicked', info, tab);
+            console.log('Sent image to FetchDock menu item clicked', info, tab);
             break;
           case 'sentVideoToDownloadServer':
-            console.log('Sent video to download server menu item clicked', info, tab);
+            console.log('Sent video to FetchDock menu item clicked', info, tab);
             break;
           default:
             console.log('Unknown menu item clicked', info, tab);

@@ -41,16 +41,16 @@ forms:
   options:
     title: "Extension Options"
     labels:
-      downloadRouterServerHost: "Download Router Server Host"
+      downloadRouterServerHost: "FetchDock Server Host"
       sendCookies: "Send Cookies"
       sendUserAgent: "Send User-Agent"
       sendReferrer: "Send Referer"
       authentication: "Authentication"
       commandPaletteShortcut: "Command Palette Shortcut"
     help:
-      downloadRouterServerHost: "Specify the host address of the Download Router Server. This server manages download requests and routes them appropriately."
-      sendCookies: "Enable this option to include cookies in requests sent to the Download Router Server. This may be necessary for authenticated download urls."
-      sendUserAgent: "Enable this option to include the User-Agent header in requests sent sent to the Download Router Server. This helps the server identify the client making the request."
-      sendReferrer: "Enable this option to include the Referer header in requests sent to the Download Router Server. This can be useful for tracking the source of download requests."
-      authentication: "Authenticate with the Download Router Server using OAuth2. Click 'Authenticate' to open the login window."
+      downloadRouterServerHost: "Specify the host address of the FetchDock Server. This server manages download requests and routes them appropriately."
+      sendCookies: "Enable this option to include cookies in requests sent to the FetchDock Server. This may be necessary for authenticated download urls."
+      sendUserAgent: "Enable this option to include the User-Agent header in requests sent sent to the FetchDock Server. This helps the server identify the client making the request."
+      sendReferrer: "Enable this option to include the Referer header in requests sent to the FetchDock Server. This can be useful for tracking the source of download requests."
+      authentication: "Authenticate with the FetchDock Server using OAuth2. Click 'Authenticate' to open the login window."
       commandPaletteShortcut: "Click the shortcut display to record a new key combination. Use any modifier keys (Ctrl, Alt, Shift, Cmd) plus a regular key. Press Escape to cancel recording."

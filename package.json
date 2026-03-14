@@ -1,6 +1,6 @@
 {
-  "name": "wxt-react-starter",
-  "description": "manifest.json description",
+  "name": "fetchdock-extension",
+  "description": "FetchDock companion extension",
   "private": true,
   "version": "0.0.0",
   "type": "module",

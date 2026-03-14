@@ -1,0 +1,33 @@
+name: Publish New Version
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    name: Build and Publish
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: latest
+          cache: true
+      - name: Install dependencies
+        run: pnpm install
+      - name: Create Chrome Extension Package
+        run: pnpm zip
+      - name: Create Firefox Extension Package
+        run: pnpm zip:firefox
+      - name: Publish to Release
+        uses: xresloader/upload-to-github-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          file: './.output/*.zip'
+          tags: true
