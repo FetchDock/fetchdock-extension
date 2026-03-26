@@ -48,7 +48,7 @@ function App() {
             <aside className="w-56 shrink-0 flex flex-col border-r border-border bg-card">
                 {/* Logo / Title */}
                 <div className="flex items-center gap-2.5 px-4 h-14 border-b border-border">
-                    <LayoutDashboard className="w-5 h-5 text-primary" />
+                    <img src="/logo-icon.svg" alt="FetchDock" className="w-5 h-5" />
                     <span className="font-semibold text-sm truncate">FetchDock</span>
                 </div>
 
