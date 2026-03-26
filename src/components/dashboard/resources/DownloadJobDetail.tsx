@@ -157,7 +157,16 @@ function EventsTable({ uuid }: { uuid: string }) {
                                     </td>
                                     <td className="px-3 py-2 font-mono text-muted-foreground">{ev.source ?? '—'}</td>
                                     <td className="px-3 py-2">{ev.updateMessage ?? ev.exceptionMessage ?? '—'}</td>
-                                    <td className="px-3 py-2 font-mono text-muted-foreground"><pre>{ev.context ? JSON.stringify(ev.context, null, "\t") : '—'}</pre></td>
+                                    <td className="px-3 py-2 font-mono text-muted-foreground">
+                                        <pre className="whitespace-pre-wrap overflow-auto">
+                                            {ev.context
+                                                ? JSON.stringify(ev.context, null, '\t')
+                                                    .replace(/\\n/g, '\n')
+                                                    .replace(/\\t/g, '\t')
+                                                : '—'
+                                            }
+                                        </pre>
+                                    </td>
                                     <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
                                         {fmtDate(ev.createdAt)}
                                     </td>
