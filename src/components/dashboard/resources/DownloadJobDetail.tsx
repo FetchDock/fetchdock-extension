@@ -36,6 +36,13 @@ interface DownloadJobEventLD {
     createdAt?: string;
 }
 
+interface DownloadJobFileLD {
+    '@id'?: string;
+    id?: any;
+    filename?: string;
+    downloadUri?: string;
+}
+
 // ─── Small helpers ────────────────────────────────────────────────────────────
 
 
@@ -131,31 +138,31 @@ function EventsTable({ uuid }: { uuid: string }) {
                     <div className="rounded-md border border-border overflow-hidden">
                         <table className="w-full text-xs">
                             <thead>
-                                <tr className="bg-muted/40 border-b border-border">
-                                    <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-36">Event</th>
-                                    <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-28">Source</th>
-                                    <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-40">Message</th>
-                                    <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide">Context</th>
-                                    <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-40">Time</th>
-                                </tr>
+                            <tr className="bg-muted/40 border-b border-border">
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-36">Event</th>
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-28">Source</th>
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-40">Message</th>
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide">Context</th>
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-40">Time</th>
+                            </tr>
                             </thead>
                             <tbody>
-                                {paged.rows.map((ev, i) => (
-                                    <tr key={ev['@id'] ?? ev.id ?? i}
-                                        className="border-b border-border last:border-0 hover:bg-muted/20">
-                                        <td className="px-3 py-2">
-                                            <Badge variant={eventVariant(String(ev.event ?? ''))} className="text-[10px]">
-                                                {ev.event ?? '—'}
-                                            </Badge>
-                                        </td>
-                                        <td className="px-3 py-2 font-mono text-muted-foreground">{ev.source ?? '—'}</td>
-                                        <td className="px-3 py-2">{ev.updateMessage ?? ev.exceptionMessage ?? '—'}</td>
-                                        <td className="px-3 py-2 font-mono text-muted-foreground"><pre>{ev.context ? JSON.stringify(ev.context, null, "\t") : '—'}</pre></td>
-                                        <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
-                                            {fmtDate(ev.createdAt)}
-                                        </td>
-                                    </tr>
-                                ))}
+                            {paged.rows.map((ev, i) => (
+                                <tr key={ev['@id'] ?? ev.id ?? i}
+                                    className="border-b border-border last:border-0 hover:bg-muted/20">
+                                    <td className="px-3 py-2">
+                                        <Badge variant={eventVariant(String(ev.event ?? ''))} className="text-[10px]">
+                                            {ev.event ?? '—'}
+                                        </Badge>
+                                    </td>
+                                    <td className="px-3 py-2 font-mono text-muted-foreground">{ev.source ?? '—'}</td>
+                                    <td className="px-3 py-2">{ev.updateMessage ?? ev.exceptionMessage ?? '—'}</td>
+                                    <td className="px-3 py-2 font-mono text-muted-foreground"><pre>{ev.context ? JSON.stringify(ev.context, null, "\t") : '—'}</pre></td>
+                                    <td className="px-3 py-2 text-muted-foreground whitespace-nowrap">
+                                        {fmtDate(ev.createdAt)}
+                                    </td>
+                                </tr>
+                            ))}
                             </tbody>
                         </table>
                     </div>
@@ -170,6 +177,94 @@ function EventsTable({ uuid }: { uuid: string }) {
                                 onPage={paged.setPage}
                                 onPageSize={paged.setPageSize}
                                 disabled={paged.status !== 'success'}
+                            />
+                        </div>
+                    )}
+                </>
+            )}
+        </div>
+    );
+}
+
+
+// ─── Embedded files mini-table ───────────────────────────────────────────────
+
+const FILES_PAGE_SIZE = 10;
+
+function FilesTable({ uuid }: { uuid: string }) {
+    const pagedDownloads = usePagedResource<DownloadJobFileLD>(
+        (page, pageSize) => apiService.listDownloadedFiles(uuid, page, pageSize),
+        { initialPageSize: FILES_PAGE_SIZE }
+    )
+
+    return (
+        <div className="mt-4">
+            <div className="flex items-center justify-between mb-2">
+                <h4 className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">
+                    Files
+                    {pagedDownloads.status === 'success' && pagedDownloads.totalItems > 0 && (
+                        <span className="ml-1.5 font-normal">({pagedDownloads.totalItems})</span>
+                    )}
+                </h4>
+                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={pagedDownloads.reload}
+                        disabled={pagedDownloads.status === 'loading'} title="Refresh files">
+                    <RefreshCw className={cn('w-3 h-3', pagedDownloads.status === 'loading' && 'animate-spin')} />
+                </Button>
+            </div>
+
+            {pagedDownloads.status === 'error' && (
+                <p className="text-xs text-destructive flex items-center gap-1">
+                    <AlertCircle className="w-3 h-3" /> {pagedDownloads.error}
+                </p>
+            )}
+
+            {(pagedDownloads.status === 'loading' || pagedDownloads.status === 'idle') && (
+                <div className="space-y-1.5">
+                    {[1, 2, 3].map(i => (
+                        <div key={i} className="h-7 rounded bg-muted animate-pulse" />
+                    ))}
+                </div>
+            )}
+
+            {pagedDownloads.status === 'success' && pagedDownloads.rows.length === 0 && (
+                <p className="text-xs text-muted-foreground">No files yet.</p>
+            )}
+
+            {pagedDownloads.status === 'success' && pagedDownloads.rows.length > 0 && (
+                <>
+                    <div className="rounded-md border border-border overflow-hidden">
+                        <table className="w-full text-xs">
+                            <thead>
+                            <tr className="bg-muted/40 border-b border-border">
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-36">File</th>
+                                {/*<th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-28">Size</th>*/}
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-40">Download URI</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {pagedDownloads.rows.map((file) => (
+                                <tr key={file.id}>
+                                    <td className="px-3 py-2">{file.filename}</td>
+                                    {/*<td className="px-3 py-2">{file.size} bytes</td>*/}
+                                    <td className="px-3 py-2">{file.downloadUri}</td>
+                                </tr>
+                            ))}
+                            </tbody>
+                        </table>
+                    </div>
+
+
+
+                    {pagedDownloads.totalPages > 1 && (
+                        <div className="mt-2 flex justify-end">
+                            <Pagination
+                                page={pagedDownloads.page}
+                                totalPages={pagedDownloads.totalPages}
+                                totalItems={pagedDownloads.totalItems}
+                                pageSize={pagedDownloads.pageSize}
+                                onPage={pagedDownloads.setPage}
+                                onPageSize={pagedDownloads.setPageSize}
+                                disabled={pagedDownloads.status !== 'success'}
                             />
                         </div>
                     )}
@@ -291,6 +386,8 @@ export function DownloadJobDetail({ uuid, onClose }: DownloadJobDetailProps) {
                     )}
                 </dl>
             )}
+
+            {uuid && <FilesTable uuid={uuid} />}
 
             {/* Events — only mount once we have the UUID and the detail loaded */}
             {uuid && <EventsTable uuid={uuid} />}
