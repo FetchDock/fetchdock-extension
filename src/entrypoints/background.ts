@@ -7,8 +7,13 @@ import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 
 export default defineBackground(() => {
 
-  browser.runtime.onInstalled.addListener(() => {
-    console.log("onInstalled event fired");
+  browser.runtime.onInstalled.addListener(async ({reason}) => {
+    if (reason === 'install') {
+      await browser.tabs.create({
+        url: browser.runtime.getURL('/welcome.html'),
+        active: true,
+      })
+    }
   });
 
   getMergedAppConfig().then((cfg) => {
@@ -42,7 +47,6 @@ export default defineBackground(() => {
         contexts: ['image']
       });
 
-
       browser.contextMenus.onClicked.addListener((info, tab) => {
         console.debug('Context menu item clicked', info);
         switch (info.menuItemId) {
@@ -74,7 +78,6 @@ export default defineBackground(() => {
       })
     }
   }
-
 
   onMessage("testMessage", async (message) => {
     console.log(message);
@@ -162,8 +165,6 @@ export default defineBackground(() => {
       console.error('OAuth2 authentication failed:', result.error, result.error_description);
       return false;
     }
-
-
 
     try {
       await tokenManager.storeTokens(result);
