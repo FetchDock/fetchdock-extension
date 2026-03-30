@@ -24,9 +24,9 @@ function App() {
                     <ThemeToggle value={theme} onChange={setTheme} variant="icon" />
                 </div>
             </header>
-            <div className="mx-auto max-w-2xl py-32 sm:py-48 lg:py-56">
+            <div className="mx-auto max-w-2xl pb-16 sm:pb-16 lg:pb-16">
                 <div className="text-center text-gray-400 dark:text-gray-300">
-                    <img src="/logo-v1-full.svg" alt="FetchDock" className="mx-auto h-16 w-auto" />
+                    <img src="/logo-v1-full.svg" alt="FetchDock" className="mx-auto h-32 w-auto" />
                     <p className="mt-8 text-lg font-medium text-pretty sm:text-xl/8">
                         Thank you for installing FetchDock!
                     </p>
@@ -36,15 +36,27 @@ function App() {
                     </p>
                     <p className="mt-8 text-lg font-medium text-pretty sm:text-xl/8">
                         Visit our <a href="https://github.com/fetchdock/fetchdock-extension"
-                           className="text-indigo-400 hover:text-indigo-300">
-                            GitHub repository
-                        </a> for more information.
+                                     className="text-sky-500 hover:text-sky-400">
+                        GitHub repository
+                    </a> for more information.
                     </p>
                     <div className="mt-10 flex items-center justify-center gap-x-6">
-                        <a href="#" onClick={openOptions} className="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">Open Settings</a>
+                        <a href="#" onClick={openOptions} className="rounded-md bg-sky-600 px-3.5 py-2.5 text-sm font-semibold text-white shadow-xs hover:bg-sky-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-600">Open Settings</a>
                     </div>
                 </div>
             </div>
+
+            <footer className="absolute inset-x-0 py-4 text-center text-sm text-gray-400">
+                <p className={"py-2"}>
+                    FetchDock is in early development, we're working hard on features and improvements. {/* Visit our <a href="https://github.com/fetchdock/fetchdock-extension/discussions">Github Discussions</a> for feedback and feature requests. */}
+                </p>
+                <p>
+                    FetchDock is an open-source project. Contributions are welcome! Visit our <a href="https://github.com/fetchdock/fetchdock-extension">Github Repository</a> to contribute.
+                </p>
+                <p className={"py-2"}>
+                    &copy; {new Date().getFullYear()} FetchDock. All rights reserved.
+                </p>
+            </footer>
         </div>
     );
 }
