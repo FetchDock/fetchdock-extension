@@ -21,22 +21,26 @@ export default defineConfig({
   },
   manifest: {
     permissions: [
-        "storage",
-        "tabs",
-        "webRequest",
-        "contextMenus",
-        "scripting",
+        "activeTab",
         "clipboardRead",
         "clipboardWrite",
         "contextMenus",
-        "activeTab"
+        "cookies",
+        "scripting",
+        "storage",
+        "tabs",
+        "webRequest",
     ],
     name: "FetchDock",
     description: "Companion extension for FetchDock Server",
     version: '0.1.0',
     browser_specific_settings: {
       gecko: {
-        id: 'fetchdock@pbxg33k.eu' // Required as temp addon ID are not permitted to use storage API
+        id: 'fetchdock@pbxg33k.eu', // Required as temp addon ID are not permitted to use storage API
+        // @ts-ignore
+        data_collection_permissions: {
+            required: ['none']
+        }
       }
     },
     default_locale: 'en',
