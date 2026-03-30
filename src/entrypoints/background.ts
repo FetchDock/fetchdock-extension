@@ -1,9 +1,11 @@
-import {onMessage} from "@/lib/messaging";
+import {onMessage, sendMessage} from "@/lib/messaging";
 import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
 import {apiService} from "@/service/apiService.ts";
 import {i18n} from "#imports";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
+import {SendMessageOptions} from "@webext-core/messaging";
+import {DownloadJobDTO} from "@/lib/types.ts";
 
 export default defineBackground(() => {
 
@@ -47,14 +49,45 @@ export default defineBackground(() => {
         contexts: ['image']
       });
 
-      browser.contextMenus.onClicked.addListener((info, tab) => {
+      browser.contextMenus.onClicked.addListener(async (
+          info: Browser.contextMenus.OnClickData,
+          tab?: Browser.tabs.Tab
+      ) => {
         console.debug('Context menu item clicked', info);
+
+        const MOCK_URI = 'https://mock.fetchdock.dev/to-be-replaced';
+
+        let downloadJob: DownloadJobDTO = {
+          uri: MOCK_URI,
+        };
+
+        // Check if the sendCookie setting has been enabled, if so we'll try to get the cookies for the link domain
+        const {sendCookies, sendReferrer, sendUserAgent} = await getMergedAppConfig();
+        if (sendCookies) {
+          browser.cookies.getAll({ url: info.linkUrl }, (cookies) => {
+            //console.log('Retrieved cookies for domain', info.linkUrl, cookies);
+          });
+        }
+
+        if (sendReferrer) {
+          console.log('Sending referrer:', tab?.url);
+        }
+
+        if (sendUserAgent) {
+          downloadJob.userAgent = navigator.userAgent;
+        }
+
         switch (info.menuItemId) {
           case 'sendLinkToDownloadServer':
             console.log('Sending link to FetchDock:', info.linkUrl);
             if (info.linkUrl) {
-              apiService.submitDownloadJob({ uri: info.linkUrl })
+              downloadJob.uri = info.linkUrl;
+              apiService.submitDownloadJob(downloadJob)
                 .then((job: any) => {
+                  const sendMessageOptions: SendMessageOptions = {
+                    tabId: tab.id,
+                  }
+                  sendMessage("acceptedDownloadJob", job, sendMessageOptions);
                   console.log('Download job created:', job);
                 })
                 .catch((err: any) => {
