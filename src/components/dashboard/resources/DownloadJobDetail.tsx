@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle } from 'lucide-react';
+import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle, DownloadIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StateBadge, stateFromNumber } from '@/components/ui/state-badge';
@@ -200,6 +200,26 @@ function EventsTable({ uuid }: { uuid: string }) {
 
 const FILES_PAGE_SIZE = 10;
 
+function FileActionButtons({ uuid, file }: { uuid: string; file: DownloadJobFileLD }) {
+
+    /**
+     *
+     *                     <Button variant="ghost" size="icon" className="h-7 w-7"
+     *                         onClick={reload} disabled={status === 'loading'} title="Refresh">
+     *                         <RefreshCw className={cn('w-3.5 h-3.5', status === 'loading' && 'animate-spin')} />
+     *                     </Button>
+     */
+
+    return (
+        <div className="flex items-center gap-1">
+            <Button title={file.filename} variant="ghost" size="icon">
+                <DownloadIcon />
+            </Button>
+            {/*<button className="btn btn-sm btn-ghost">Delete</button>*/}
+        </div>
+    )
+}
+
 function FilesTable({ uuid }: { uuid: string }) {
     const pagedDownloads = usePagedResource<DownloadJobFileLD>(
         (page, pageSize) => apiService.listDownloadedFiles(uuid, page, pageSize),
@@ -245,6 +265,7 @@ function FilesTable({ uuid }: { uuid: string }) {
                         <table className="w-full text-xs">
                             <thead>
                             <tr className="bg-muted/40 border-b border-border">
+                                <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide">Actions</th>
                                 <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-36">File</th>
                                 {/*<th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-28">Size</th>*/}
                                 <th className="px-3 py-2 text-left font-medium text-muted-foreground uppercase tracking-wide w-40">Download URI</th>
@@ -253,6 +274,7 @@ function FilesTable({ uuid }: { uuid: string }) {
                             <tbody>
                             {pagedDownloads.rows.map((file) => (
                                 <tr key={file.id}>
+                                    <FileActionButtons uuid={uuid} file={file} />
                                     <td className="px-3 py-2">{file.filename}</td>
                                     {/*<td className="px-3 py-2">{file.size} bytes</td>*/}
                                     <td className="px-3 py-2">{file.downloadUri}</td>
