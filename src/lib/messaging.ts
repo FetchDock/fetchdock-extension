@@ -1,4 +1,4 @@
-import type { WxtAppConfig, OAuth2AuthResult, DownloadJobDTO } from '@/lib/types';
+import {WxtAppConfig, OAuth2AuthResult, DownloadJobDTO, AcceptedDownloadJob} from '@/lib/types';
 import type { DownloadJob } from '@/lib/types';
 import { defineExtensionMessaging } from '@webext-core/messaging';
 
@@ -10,6 +10,7 @@ interface ProtocolMap {
 
     /** Submits a new download job via POST /download_jobs */
     submitDownloadJob(dto: DownloadJobDTO): any;
+    acceptedDownloadJob(job: AcceptedDownloadJob): void;
 
     testApiServiceHost(host: string): string;
 
