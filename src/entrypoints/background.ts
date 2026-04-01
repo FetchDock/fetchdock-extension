@@ -5,7 +5,8 @@ import {i18n} from "#imports";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 import {SendMessageOptions} from "@webext-core/messaging";
-import {DownloadJobDTO} from "@/lib/types.ts";
+import {DownloadJobDTO, CookieDTO} from "@/lib/types.ts";
+import {Browser} from "@wxt-dev/browser";
 
 export default defineBackground(() => {
 
@@ -64,8 +65,30 @@ export default defineBackground(() => {
         // Check if the sendCookie setting has been enabled, if so we'll try to get the cookies for the link domain
         const {sendCookies, sendReferrer, sendUserAgent} = await getMergedAppConfig();
         if (sendCookies) {
-          browser.cookies.getAll({ url: info.linkUrl }, (cookies) => {
-            //console.log('Retrieved cookies for domain', info.linkUrl, cookies);
+          downloadJob.cookies = await new Promise<CookieDTO[]>((resolve) => {
+            browser.cookies.getAll({ url: info.linkUrl }, (cookies) => {
+              const collected: CookieDTO[] = [];
+
+              for (const cookie of cookies) {
+                const payloadCookie: CookieDTO = {
+                  name: cookie.name,
+                  value: cookie.value,
+                  domain: cookie.domain,
+                  path: cookie.path,
+                  secure: cookie.secure,
+                  httpOnly: cookie.httpOnly,
+                  sameSite: cookie.sameSite,
+                };
+                if (cookie.expirationDate !== undefined) {
+                  // Convert floating-point epoch seconds to ISO-8601 datetime string
+                  const epochMs: number = cookie.expirationDate * 1000;
+                  payloadCookie.expirationDate = new Date(epochMs).toISOString();
+                }
+                collected.push(payloadCookie);
+              }
+
+              resolve(collected);
+            });
           });
         }
 
