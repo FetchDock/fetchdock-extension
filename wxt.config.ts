@@ -23,7 +23,6 @@ export default defineConfig({
     permissions: [
         "activeTab",
         "clipboardRead",
-        "clipboardWrite",
         "contextMenus",
         "cookies",
         "scripting",
