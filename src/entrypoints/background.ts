@@ -100,12 +100,35 @@ export default defineBackground(() => {
           downloadJob.userAgent = navigator.userAgent;
         }
 
-        switch (info.menuItemId) {
-          case 'sendLinkToDownloadServer':
-            console.log('Sending link to FetchDock:', info.linkUrl);
-            if (info.linkUrl) {
-              downloadJob.uri = info.linkUrl;
-              apiService.submitDownloadJob(downloadJob)
+        if(info.menuItemId) {
+          let caseMatch = false;
+          switch (info.menuItemId) {
+            case 'sendLinkToDownloadServer':
+              if (info.linkUrl) {
+                downloadJob.uri = info.linkUrl;
+                caseMatch = true;
+              }
+              break;
+            case 'sentVideoToDownloadServer':
+            case 'sentImageToDownloadServer':
+              if (info.srcUrl) {
+                downloadJob.uri = info.srcUrl;
+                caseMatch = true;
+              }
+              break;
+            case 'sentPageToDownloadServer':
+              if (info.frameUrl) {
+                downloadJob.uri = info.frameUrl;
+                caseMatch = true;
+              }
+              break;
+            default:
+              console.error('Unknown menu item clicked', info, tab);
+              return;
+          }
+
+          if(caseMatch) {
+            apiService.submitDownloadJob(downloadJob)
                 .then((job: any) => {
                   const sendMessageOptions: SendMessageOptions = {
                     tabId: tab.id,
@@ -116,20 +139,7 @@ export default defineBackground(() => {
                 .catch((err: any) => {
                   console.error('Failed to create download job:', err);
                 });
-            }
-            break;
-          case 'sentPageToDownloadServer':
-            console.log('Sent page to FetchDock menu item clicked', info, tab);
-
-            break;
-          case 'sentImageToDownloadServer':
-            console.log('Sent image to FetchDock menu item clicked', info, tab);
-            break;
-          case 'sentVideoToDownloadServer':
-            console.log('Sent video to FetchDock menu item clicked', info, tab);
-            break;
-          default:
-            console.log('Unknown menu item clicked', info, tab);
+          }
         }
       })
     }
