@@ -14,11 +14,11 @@ export default defineAppConfig({
     downloadRouterServerHost: import.meta.env.WXT_DOWNLOAD_ROUTER_SERVER_HOST ?? "",
     sendCookies: typeof import.meta.env.WXT_SEND_COOKIES !== 'undefined'
         ? String(import.meta.env.WXT_SEND_COOKIES).toLowerCase() === 'true'
-        : true,
+        : false,
     sendUserAgent: typeof import.meta.env.WXT_SEND_USER_AGENT !== 'undefined'
         ? String(import.meta.env.WXT_SEND_USER_AGENT).toLowerCase() === 'true'
-        : true,
+        : false,
     sendReferrer: typeof import.meta.env.WXT_SEND_REFERRER !== 'undefined'
         ? String(import.meta.env.WXT_SEND_REFERRER).toLowerCase() === 'true'
-        : true,
+        : false,
 });

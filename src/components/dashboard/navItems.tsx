@@ -28,13 +28,6 @@ export const NAV_ITEMS: NavItem[] = [
         icon: <Download className="w-4 h-4" />,
         panel: <DownloadJobsPanel />,
     },
-    {
-        id: 'download-events',
-        label: 'Download Events',
-        description: 'Activity log for a specific download job',
-        icon: <Activity className="w-4 h-4" />,
-        panel: <DownloadJobEventsPanel />,
-    },
 ];
 
 export { Settings, KeyRound, LayoutDashboard };
