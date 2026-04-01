@@ -1,13 +1,117 @@
-export interface DownloadJob {
+export type Theme = 'light' | 'dark' | 'system';
 
+// ─── Cookie ───────────────────────────────────────────────────────────────────
+// The `cookies` property on DownloadJob / DownloadJobDTO is not formally typed
+// in docs.jsonld, but the server expects an array of these objects.
+
+export interface CookieDTO {
+    name: string;
+    value: string;
+    domain?: string;
+    path?: string;
+    secure?: boolean;
+    httpOnly?: boolean;
+    /** SameSite policy: 'no_restriction' | 'lax' | 'strict' | 'unspecified' */
+    sameSite?: string;
+    /** ISO-8601 datetime string, e.g. "2026-12-31T23:59:59.000Z" */
+    expirationDate?: string;
+}
+
+// ─── Resource interfaces (shaped after docs.jsonld) ───────────────────────────
+// Relations may arrive as IRI strings (JSON-LD) or as embedded objects
+// depending on whether the server expands them. Both forms are valid here.
+
+export interface DownloadJob {
+    '@id'?: string;
+    '@type'?: string;
+    id?: number;
+    /** Unique token for this job (read-only) */
+    token?: string;
+    uri?: string;
+    userAgent?: string | null;
+    cookies?: CookieDTO[] | null;
+    state?: number | string | null;
+    /** IRI of the selected downloader or embedded object */
+    downloader?: string | null;
+    downloadJobEvents?: string | DownloadJobEvent[];
+    files?: string | DownloadedFile[];
+    /** Owner identity (IRI or embedded OidcSubjectIdentifier) */
+    owner?: string | OidcSubjectIdentifier | null;
+    createdAt?: string;
+    updatedAt?: string;
+    /** Resolved public URL for this job (read-only) */
+    url?: string | null;
+}
+
+export interface DownloadJobEvent {
+    '@id'?: string;
+    '@type'?: string;
+    downloadJob?: string | DownloadJob;
+    workerIdentifier?: string;
+    event?: string;
+    source?: string;
+    updateMessage?: string;
+    context?: any;
+    metadata?: any;
+    exceptionMessage?: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
+export interface DownloadedFile {
+    '@id'?: string;
+    '@type'?: string;
+    downloadJob?: string | DownloadJob;
+    path?: string;
+    metadata?: any;
+    visible?: boolean;
+    /** Derived filename (read-only) */
+    filename?: string;
+    /** Download URI (read-only) */
+    downloadUri?: string;
+}
+
+export interface Downloader {
+    '@id'?: string;
+    '@type'?: string;
+    id?: string;
+    enabled?: boolean;
+    downloaderType?: any;
+    supportedDomains?: string[] | any;
+}
+
+/** OIDC subject identity — new resource in latest API */
+export interface OidcSubjectIdentifier {
+    '@id'?: string;
+    '@type'?: string;
+    subject?: string;
+    downloadJobs?: string | DownloadJob[];
+}
+
+export interface SupportedSite {
+    '@id'?: string;
+    '@type'?: string;
+    name?: string;
+    description?: string;
+    domains?: string[] | any;
+    enabled?: boolean;
+    metadata?: any;
+}
+
+export interface Version {
+    '@id'?: string;
+    '@type'?: string;
+    id?: string;
+    /** @deprecated Use currentVersion */
+    version?: string;
+    currentVersion?: string;
+    latestVersion?: string;
 }
 
 export interface AcceptedDownloadJob extends DownloadJob {
     jobId: string;
     accepted: boolean;
 }
-
-export type Theme = 'light' | 'dark' | 'system';
 
 /**
  * The input shape for POST /download_jobs.
@@ -19,9 +123,9 @@ export interface DownloadJobDTO {
     uri: string;
     /** Optional User-Agent string to pass to the downloader */
     userAgent?: string | null;
-    /** Optional cookies to pass to the downloader */
-    cookies?: Record<string, string> | string | null;
-    /** IRI of the preferred downloader, e.g. "/downloaders/1" */
+    /** Cookies to forward to the downloader */
+    cookies?: CookieDTO[];
+    /** IRI of the preferred downloader, e.g. "/downloaders/yt-dlp" */
     downloader?: string | null;
 }
 
