@@ -60,20 +60,6 @@ export function DownloadJobsPanel() {
             },
         },
         {
-            key: 'uuid',
-            header: 'UUID',
-            width: 'w-36',
-            render: row => (
-                <span
-                    className="font-mono text-xs text-muted-foreground truncate block max-w-36 cursor-pointer hover:text-foreground transition-colors"
-                    onClick={() => { if (row.uuid) toggle(row.uuid); }}
-                    title={row.uuid}
-                >
-                    {row.uuid ?? '—'}
-                </span>
-            ),
-        },
-        {
             key: 'uri',
             header: 'URI',
             render: row => (
