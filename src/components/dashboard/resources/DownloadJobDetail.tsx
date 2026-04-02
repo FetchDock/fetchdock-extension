@@ -319,12 +319,6 @@ export function DownloadJobDetail({ uuid, onClose }: DownloadJobDetailProps) {
 
     const job = data as DownloadJobFull | null;
 
-    const jobTypeName = (() => {
-        if (!job?.jobType) return '—';
-        if (typeof job.jobType === 'object') return job.jobType.name ?? '—';
-        return String(job.jobType).split('/').at(-1) ?? '—';
-    })();
-
     const downloaderLabel = (() => {
         if (!job?.downloader) return '—';
         return String(job.downloader).split('/').at(-1) ?? String(job.downloader);
@@ -377,9 +371,6 @@ export function DownloadJobDetail({ uuid, onClose }: DownloadJobDetailProps) {
                 <dl className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-4">
                     <Field label="Status">
                         <StateBadge state={stateFromNumber(job.state)} />
-                    </Field>
-                    <Field label="Job Type">
-                        <span>{jobTypeName}</span>
                     </Field>
                     <Field label="Downloader">
                         <span className="font-mono text-xs">{downloaderLabel}</span>
