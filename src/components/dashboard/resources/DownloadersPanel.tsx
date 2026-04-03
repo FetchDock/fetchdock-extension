@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { HardDrive } from 'lucide-react';
+import React, {JSX, useState} from 'react';
+import {HardDrive, PanelsTopLeftIcon, TerminalIcon} from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { ResourcePanel, type ColumnDef } from '@/components/dashboard/ResourcePanel';
 import { usePagedResource } from '@/components/dashboard/useResource';
@@ -70,7 +70,25 @@ const COLUMNS: ColumnDef<DownloaderLD>[] = [
         render: row => {
             const t = row.downloaderType;
             const name = typeof t === 'object' ? t?.name : t;
-            return <span className="font-medium">{name ?? '—'}</span>;
+            let className: string = '';
+            let label: string = 'Unknown';
+            let icon: JSX.Element | undefined = undefined;
+            switch(name) {
+                case 'CLI_DOWNLOADER':
+                    label = 'Cli';
+                    icon = <TerminalIcon className={"w-4 h-4 mr-1"} />;
+                    break
+                case 'WEB_DOWNLOADER':
+                    label = 'Web';
+                    icon = <PanelsTopLeftIcon className={"w-4 h-4 mr-1"} />;
+                    break
+            }
+            className += "font-medium";
+
+            return <span className={className}>
+                {icon ?? <span className="w-4 h-4 mr-1" />}
+
+            </span>;
         },
     },
     {
