@@ -8,10 +8,10 @@ Send download jobs to your self-hosted [FetchDock Server](https://github.com/Fet
 
 ## Targeted browsers
 
-| Browser | Status |
-|---------|--------|
-| Chrome / Chromium | ✅ [Chrome Web Store](#) |
-| Firefox | ✅ [Firefox Add-ons](#) |
+| Browser | Status                                                                                                             |
+|---------|--------------------------------------------------------------------------------------------------------------------|
+| Chrome / Chromium | ✅ [Chrome Web Store](https://chromewebstore.google.com/detail/fetchdock/bfhogjcdmkkidopkodamefcifnjhlogh)          |
+| Firefox | ✅ [Firefox Add-ons](https://addons.mozilla.org/firefox/addon/fetchdock/)                                           |
 
 ---
 
