@@ -39,8 +39,8 @@ jobs:
       - name: Submit to stores
         run: |
           pnpm wxt submit \
-          --chrome-zip .output/*-chrome.zip \
-          --firefox-zip .output/*-firefox.zip --firefox-sources-zip .output/*-src.zip
+          --chrome-zip ./.output/*-chrome.zip \
+          --firefox-zip ./.output/*-firefox.zip --firefox-sources-zip .output/*-sources.zip
         env:
           FIREFOX_EXTENSION_ID: ${{ secrets.FIREFOX_EXTENSION_ID }}
           FIREFOX_JWT_ISSUER: ${{ secrets.FIREFOX_JWT_ISSUER }}
