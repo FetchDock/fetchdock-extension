@@ -18,6 +18,7 @@ function getInitialId(): string {
 
 function App() {
     const [activeId, setActiveId] = useState<string>(getInitialId);
+    const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const active = NAV_ITEMS.find(n => n.id === activeId) ?? NAV_ITEMS[0];
     const [shortcut, setShortcut] = useState('ctrl+k');
     const [theme, setTheme] = useTheme();
@@ -40,6 +41,23 @@ function App() {
     const openOptions = () => {
         sendMessage('openOptionsPage', undefined);
     };
+
+    // Redirect to options if no token is set
+    optionsStorage.getAll().then(opts => {
+        if (!opts.oauth2AccessToken) {
+            sendMessage('openOptionsPage', undefined).then(r => {
+
+            });
+        }
+    });
+
+    // Trigger a refresh of the dashboard if the token changes (ie user has authenticated)
+    optionsStorage.onChanged(opts => {
+        if (opts.oauth2AccessToken) {
+            window.location.reload();
+        }
+
+    })
 
     return (
         <div className="flex h-screen bg-background text-foreground overflow-hidden">

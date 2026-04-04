@@ -29,6 +29,9 @@ messages:
     testApiServiceHost:
       success: "Host supported - \r\n Authentication mode: $2 \n Version: $3"
       failure: "Host not supported: $1 - %{error}"
+    testApiServiceHostV2:
+      success: "Host supported - \r\n Version: $1"
+      failure: "Host not supported: $1 - %{error}"
 
 forms:
   buttons:
