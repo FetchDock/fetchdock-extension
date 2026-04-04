@@ -113,6 +113,14 @@ export interface AcceptedDownloadJob extends DownloadJob {
     accepted: boolean;
 }
 
+export interface ApiTestResult {
+    success: boolean;
+    host: string;
+    authMode?: string;
+    version?: string;
+    message: string;
+}
+
 /**
  * The input shape for POST /download_jobs.
  * Only writable fields from the DownloadJob resource are included.

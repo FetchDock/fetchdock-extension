@@ -1,4 +1,4 @@
-import {WxtAppConfig, OAuth2AuthResult, DownloadJobDTO, AcceptedDownloadJob} from '@/lib/types';
+import {WxtAppConfig, OAuth2AuthResult, DownloadJobDTO, AcceptedDownloadJob, ApiTestResult} from '@/lib/types';
 import type { DownloadJob } from '@/lib/types';
 import { defineExtensionMessaging } from '@webext-core/messaging';
 
@@ -12,7 +12,9 @@ interface ProtocolMap {
     submitDownloadJob(dto: DownloadJobDTO): any;
     acceptedDownloadJob(job: AcceptedDownloadJob): void;
 
+    /** @deprecated use testApiServiceHostV2 instead */
     testApiServiceHost(host: string): string;
+    testApiServiceHostV2(host: string): ApiTestResult;
 
     /** Returns the oauth2 authorization_endpoint URL for the currently configured host, or throws if not available */
     getOAuth2AuthorizationUrl(host: string): string;

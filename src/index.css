@@ -46,6 +46,11 @@
         --destructive-foreground: 210 40% 98%;
         --ring: 216 34% 17%;
     }
+
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
 }
 
 @layer base {

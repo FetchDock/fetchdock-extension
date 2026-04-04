@@ -162,6 +162,32 @@ export default defineBackground(() => {
     }
   });
 
+  onMessage("testApiServiceHostV2", async (message) => {
+    const host = message.data as string;
+    try {
+      const result = await apiService.testHost(host);
+      return {
+        success: true,
+        host: host,
+        authMode: result?.authMode,
+        version: result?.version,
+        // supportedFeatures: result?.supportedFeatures,
+        // supportedDownloaders: result?.supportedDownloaders,
+        // supportedSites: result?.supportedSites,
+        // supportedCommands: result?.supportedCommands,
+        // supportedEvents: result?.supportedEvents,
+        // supportedFileTypes: result?.supportedFileTypes,
+        message: i18n.t('messages.background.testApiServiceHostV2.success', [host, result?.authMode, result?.version]),
+      };
+    } catch (err) {
+      return {
+        success: false,
+        host: host,
+        message: i18n.t('messages.background.testApiServiceHostV2.failure', [host, `${err}`]),
+      }
+    }
+  })
+
   onMessage("getOAuth2AuthorizationUrl", async (message) => {
     const host = message.data as string;
     console.log('Getting OAuth2 authorization URL for host:', host);
