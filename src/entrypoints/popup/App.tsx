@@ -8,8 +8,6 @@ function App() {
     const openDashboard = async () => {
         const url = await sendMessage("getExtensionPageUrl", "/dashboard.html");
 
-        console.log("Opening dashboard at:", url);
-
         window.open(url);
     }
 
