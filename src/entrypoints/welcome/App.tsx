@@ -26,6 +26,7 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const popupRef = useRef<Window | null>(null)
     const [carousel, setCarousel] = useState<CarouselApi>();
+    const [validUrl, setValidUrl] = useState<boolean>(false);
 
     const openDashboard = async () => {
         const url = await sendMessage("getExtensionPageUrl", "/dashboard.html");
@@ -45,13 +46,15 @@ function App() {
         });
 
         // React to token changes written by the background worker.
-        optionsStorage.onChanged((newOpts) => {
+        optionsStorage.onChanged(async (newOpts) => {
             const authenticated = !!newOpts.oauth2AccessToken;
             setIsAuthenticated(authenticated);
             if (authenticated) {
                 popupRef.current = null;
                 carousel?.scrollNext(false)
             }
+
+            setValidUrl(await isValidUrl(newOpts.downloadRouterServerHost || ''));
         });
 
         const onSaveError = (e: Event) => {
@@ -89,9 +92,17 @@ function App() {
         popupRef.current = popup;
     };
 
-    const isValidUrl = (urlString: string): boolean => {
+    const isValidUrl = async (urlString: string): Promise<boolean> => {
+        console.log("isValidUrl", urlString);
         try {
             new URL(urlString);
+
+            // try to fetch the well-known/browser-extension endpoint
+            const response = await fetch(`${urlString}/.well-known/browser-extension`);
+            if (!response.ok) {
+                return false;
+            }
+
             return true;
         } catch (err) {
             return false;
@@ -168,7 +179,7 @@ function App() {
                                                         />
                                                         <Button
                                                             variant="outline"
-                                                            disabled={!isValidUrl(formRef.current?.elements.namedItem('downloadRouterServerHost')?.value || '')}
+                                                            disabled={!validUrl}
                                                             onClick={
                                                                 async () => {
                                                                     const hostInput = formRef.current?.elements.namedItem('downloadRouterServerHost') as HTMLInputElement;
@@ -219,7 +230,7 @@ function App() {
                                                 <div className={"grid gap-2"}>
                                                     <Button
                                                         variant="outline"
-                                                        disabled={!isValidUrl(formRef.current?.elements.namedItem('downloadRouterServerHost')?.value || '') || (apiStatus && !apiStatus.success)}
+                                                        disabled={!validUrl || isAuthenticated}
                                                         onClick={handleAuthenticate}
                                                     >
                                                         {isAuthenticated ? 'Re-authenticate with OAuth2' : 'Authenticate with OAuth2'}
