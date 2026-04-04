@@ -122,6 +122,31 @@ export interface ApiTestResult {
 }
 
 /**
+ * Payload sent to the content script when the server rejects a download job (4xx response).
+ */
+export interface RejectedDownloadJob {
+    /** The URI that was submitted */
+    uri: string;
+    /** HTTP status code returned by the server */
+    status: number;
+    /** Human-readable rejection reason (from server response body) */
+    message?: string;
+}
+
+/**
+ * Payload sent to the content script when a download job reaches a terminal state
+ * via a Mercure SSE event.
+ */
+export interface DownloadJobFinished {
+    /** The unique token of the finished job */
+    jobToken: string;
+    /** Final state value from the server (e.g. 3 = completed, 4 = failed, 5 = cancelled) */
+    state: number | string;
+    /** The original URI that was downloaded */
+    uri?: string;
+}
+
+/**
  * The input shape for POST /download_jobs.
  * Only writable fields from the DownloadJob resource are included.
  * @see docs.jsonld #DownloadJob supportedProperty (writeable: true)
@@ -147,6 +172,12 @@ export interface WxtAppConfig {
     oauth2TokenExpiresAt?: number;
     commandPaletteShortcut?: string;
     theme?: Theme;
+    /** Show a toast when the server accepts a submitted link */
+    notifyOnAccepted: boolean;
+    /** Show a toast when the server rejects a submitted link (4xx) */
+    notifyOnRejected: boolean;
+    /** Show a toast when a download job finishes (via Mercure) */
+    notifyOnJobFinished: boolean;
 }
 
 export interface OAuth2AuthResult {

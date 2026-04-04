@@ -1,4 +1,4 @@
-import {WxtAppConfig, OAuth2AuthResult, DownloadJobDTO, AcceptedDownloadJob, ApiTestResult} from '@/lib/types';
+import {WxtAppConfig, OAuth2AuthResult, DownloadJobDTO, AcceptedDownloadJob, ApiTestResult, RejectedDownloadJob, DownloadJobFinished} from '@/lib/types';
 import type { DownloadJob } from '@/lib/types';
 import { defineExtensionMessaging } from '@webext-core/messaging';
 
@@ -10,7 +10,12 @@ interface ProtocolMap {
 
     /** Submits a new download job via POST /download_jobs */
     submitDownloadJob(dto: DownloadJobDTO): any;
+    /** Fired when the server accepts a submitted download job */
     acceptedDownloadJob(job: AcceptedDownloadJob): void;
+    /** Fired when the server rejects a submitted download job (4xx response) */
+    rejectedDownloadJob(job: RejectedDownloadJob): void;
+    /** Fired when a tracked download job reaches a terminal state via Mercure */
+    downloadJobFinished(event: DownloadJobFinished): void;
 
     /** @deprecated use testApiServiceHostV2 instead */
     testApiServiceHost(host: string): string;

@@ -11,6 +11,9 @@ export default new OptionsSync({
         oauth2TokenExpiresAt: 0,
         commandPaletteShortcut: "ctrl+k",
         theme: "system" as "light" | "dark" | "system",
+        notifyOnAccepted: true,
+        notifyOnRejected: true,
+        notifyOnJobFinished: true,
     },
 
     // List of functions that are called when the extension is updated
