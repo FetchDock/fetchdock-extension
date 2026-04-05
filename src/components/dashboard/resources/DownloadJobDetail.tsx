@@ -1,5 +1,6 @@
 import React from 'react';
 import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle, DownloadIcon } from 'lucide-react';
+import optionsStorage from '@/utils/optionsStorage';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { StateBadge, stateFromNumber } from '@/components/ui/state-badge';
@@ -200,31 +201,47 @@ function EventsTable({ uuid }: { uuid: string }) {
 
 const FILES_PAGE_SIZE = 10;
 
-function FileActionButtons({ uuid, file }: { uuid: string; file: DownloadJobFileLD }) {
+function FileActionButtons({ file, host }: { file: DownloadJobFileLD; host: string }) {
+    const absoluteUrl = React.useMemo(() => {
+        if (!file.downloadUri) return '';
+        // If the URI is already absolute (e.g. starts with http), use it as-is.
+        if (/^https?:\/\//i.test(file.downloadUri)) return file.downloadUri;
+        const base = host.replace(/\/+$/, '');
+        const path = file.downloadUri.startsWith('/') ? file.downloadUri : `/${file.downloadUri}`;
+        return `${base}${path}`;
+    }, [file.downloadUri, host]);
 
-    /**
-     *
-     *                     <Button variant="ghost" size="icon" className="h-7 w-7"
-     *                         onClick={reload} disabled={status === 'loading'} title="Refresh">
-     *                         <RefreshCw className={cn('w-3.5 h-3.5', status === 'loading' && 'animate-spin')} />
-     *                     </Button>
-     */
+    const handleDownload = () => {
+        if (absoluteUrl) window.open(absoluteUrl, '_blank');
+    };
 
     return (
         <div className="flex items-center gap-1">
-            <Button title={file.filename} variant="ghost" size="icon">
+            <Button
+                title={absoluteUrl || 'No download URL available'}
+                variant="ghost"
+                size="icon"
+                onClick={handleDownload}
+                disabled={!absoluteUrl}
+            >
                 <DownloadIcon />
             </Button>
-            {/*<button className="btn btn-sm btn-ghost">Delete</button>*/}
         </div>
-    )
+    );
 }
 
 function FilesTable({ uuid }: { uuid: string }) {
     const pagedDownloads = usePagedResource<DownloadJobFileLD>(
         (page, pageSize) => apiService.listDownloadedFiles(uuid, page, pageSize),
         { initialPageSize: FILES_PAGE_SIZE }
-    )
+    );
+
+    const [host, setHost] = React.useState('');
+    React.useEffect(() => {
+        optionsStorage.getAll().then(opts => {
+            setHost((opts.downloadRouterServerHost ?? '').replace(/\/+$/, ''));
+        });
+    }, []);
 
     return (
         <div className="mt-4">
@@ -273,8 +290,10 @@ function FilesTable({ uuid }: { uuid: string }) {
                             </thead>
                             <tbody>
                             {pagedDownloads.rows.map((file) => (
-                                <tr key={file.id}>
-                                    <FileActionButtons uuid={uuid} file={file} />
+                                <tr key={file['@id'] ?? file.id}>
+                                    <td>
+                                        <FileActionButtons file={file} host={host} />
+                                    </td>
                                     <td className="px-3 py-2">{file.filename}</td>
                                     {/*<td className="px-3 py-2">{file.size} bytes</td>*/}
                                     <td className="px-3 py-2">{file.downloadUri}</td>
