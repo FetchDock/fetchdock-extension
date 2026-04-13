@@ -54,53 +54,15 @@ export default defineBackground(() => {
           info: Browser.contextMenus.OnClickData,
           tab?: Browser.tabs.Tab
       ) => {
-        console.debug('Context menu item clicked', info);
-
-        const MOCK_URI = 'https://mock.fetchdock.dev/to-be-replaced';
-
-        let downloadJob: DownloadJobDTO = {
-          uri: MOCK_URI,
-        };
-
-        // Check if the sendCookie setting has been enabled, if so we'll try to get the cookies for the link domain
-        const {sendCookies, sendReferrer, sendUserAgent} = await getMergedAppConfig();
-        if (sendCookies) {
-          downloadJob.cookies = await new Promise<CookieDTO[]>((resolve) => {
-            browser.cookies.getAll({ url: info.linkUrl }, (cookies) => {
-              const collected: CookieDTO[] = [];
-
-              for (const cookie of cookies) {
-                const payloadCookie: CookieDTO = {
-                  name: cookie.name,
-                  value: cookie.value,
-                  domain: cookie.domain,
-                  path: cookie.path,
-                  secure: cookie.secure,
-                  httpOnly: cookie.httpOnly,
-                  sameSite: cookie.sameSite,
-                };
-                if (cookie.expirationDate !== undefined) {
-                  // Convert floating-point epoch seconds to ISO-8601 datetime string
-                  const epochMs: number = cookie.expirationDate * 1000;
-                  payloadCookie.expirationDate = new Date(epochMs).toISOString();
-                }
-                collected.push(payloadCookie);
-              }
-
-              resolve(collected);
-            });
-          });
-        }
-
-        if (sendReferrer) {
-          console.log('Sending referrer:', tab?.url);
-        }
-
-        if (sendUserAgent) {
-          downloadJob.userAgent = navigator.userAgent;
-        }
-
         if(info.menuItemId) {
+          console.debug('Context menu item clicked', info);
+
+          const MOCK_URI = 'https://mock.fetchdock.dev/to-be-replaced';
+
+          let downloadJob: DownloadJobDTO = {
+            uri: MOCK_URI,
+          };
+
           let caseMatch = false;
           switch (info.menuItemId) {
             case 'sendLinkToDownloadServer':
@@ -127,7 +89,45 @@ export default defineBackground(() => {
               return;
           }
 
-          if(caseMatch) {
+          // Check if the sendCookie setting has been enabled, if so we'll try to get the cookies for the link domain
+          const {sendCookies, sendReferrer, sendUserAgent} = await getMergedAppConfig();
+          if (sendCookies) {
+            downloadJob.cookies = await new Promise<CookieDTO[]>((resolve) => {
+              browser.cookies.getAll({url: downloadJob.uri}, (cookies) => {
+                const collected: CookieDTO[] = [];
+
+                for (const cookie of cookies) {
+                  const payloadCookie: CookieDTO = {
+                    name: cookie.name,
+                    value: cookie.value,
+                    domain: cookie.domain,
+                    path: cookie.path,
+                    secure: cookie.secure,
+                    httpOnly: cookie.httpOnly,
+                    sameSite: cookie.sameSite,
+                  };
+                  if (cookie.expirationDate !== undefined) {
+                    // Convert floating-point epoch seconds to ISO-8601 datetime string
+                    const epochMs: number = cookie.expirationDate * 1000;
+                    payloadCookie.expirationDate = new Date(epochMs).toISOString();
+                  }
+                  collected.push(payloadCookie);
+                }
+
+                resolve(collected);
+              });
+            });
+          }
+
+          if (sendReferrer) {
+            console.log('Sending referrer:', tab?.url);
+          }
+
+          if (sendUserAgent) {
+            downloadJob.userAgent = navigator.userAgent;
+          }
+
+          if (caseMatch) {
             apiService.submitDownloadJob(downloadJob)
                 .then((job: any) => {
                   const sendMessageOptions: SendMessageOptions = {
