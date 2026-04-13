@@ -43,5 +43,9 @@ export default defineConfig({
       }
     },
     default_locale: 'en',
+    host_permissions: [
+        'https://*/*',
+        'http://*/*'
+    ]
   }
 });
