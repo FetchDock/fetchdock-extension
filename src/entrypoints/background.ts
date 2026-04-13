@@ -83,6 +83,9 @@ export default defineBackground(() => {
               if (info.frameUrl) {
                 downloadJob.uri = info.frameUrl;
                 caseMatch = true;
+              } else if (info.pageUrl) {
+                downloadJob.uri = info.pageUrl;
+                caseMatch = true;
               }
               break;
             default:
