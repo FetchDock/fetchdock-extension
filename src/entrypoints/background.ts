@@ -5,8 +5,9 @@ import {i18n} from "#imports";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 import {SendMessageOptions} from "@webext-core/messaging";
-import {DownloadJobDTO, CookieDTO} from "@/lib/types.ts";
+import {DownloadJobDTO, CookieDTO, RejectedDownloadJob} from "@/lib/types.ts";
 import {Browser} from "@wxt-dev/browser";
+import {mercureService} from "@/service/mercureService.ts";
 
 export default defineBackground(() => {
 
@@ -128,16 +129,47 @@ export default defineBackground(() => {
           }
 
           if (caseMatch) {
+            // Context-menu clicks always originate from a tab, but the type is optional.
+            const tabId = tab?.id;
+            
             apiService.submitDownloadJob(downloadJob)
                 .then((job: any) => {
-                  const sendMessageOptions: SendMessageOptions = {
-                    tabId: tab.id,
+                  if (tabId != null) {
+                    const sendMessageOptions: SendMessageOptions = { tabId };
+                    sendMessage("acceptedDownloadJob", job, sendMessageOptions);
                   }
-                  sendMessage("acceptedDownloadJob", job, sendMessageOptions);
                   console.log('Download job created:', job);
+
+                  // Register the job with the Mercure service so we can notify
+                  // the user when it reaches a terminal state (completed/failed/cancelled).
+                  // The hub URL can optionally be discovered from the `Link` response
+                  // header of the POST /download_jobs call; pass it here once available.
+                  if (job?.token && tabId != null) {
+                    mercureService.trackJob(job.token, tabId, downloadJob.uri /*, hubUrl */);
+                  }
                 })
                 .catch((err: any) => {
                   console.error('Failed to create download job:', err);
+
+                  // Send a rejection notification when the server explicitly rejects the
+                  // job (4xx). Network errors and 5xx responses are intentionally excluded
+                  // here — those will be covered by error-reporting features in the future.
+                  if (tabId != null && err && typeof err.status === 'number' && err.status >= 400 && err.status < 500) {
+                    const body = err.body;
+                    const serverMessage: string | undefined =
+                        body?.detail ??
+                        body?.['hydra:description'] ??
+                        body?.message ??
+                        undefined;
+
+                    const rejected: RejectedDownloadJob = {
+                      uri: downloadJob.uri,
+                      status: err.status,
+                      message: serverMessage,
+                    };
+
+                    sendMessage("rejectedDownloadJob", rejected, { tabId });
+                  }
                 });
           }
         }

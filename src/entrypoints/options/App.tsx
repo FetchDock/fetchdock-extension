@@ -187,6 +187,46 @@ function App() {
                     </span>
                 </div>
 
+                {/* ── Notifications ──────────────────────────────────────── */}
+                <div className="mb-1 mt-6">
+                    <h2 className="text-base font-semibold text-gray-900 dark:text-white">
+                        {i18n.t('forms.options.labels.notifications')}
+                    </h2>
+                    <span className="text-sm text-gray-600">
+                        {i18n.t('forms.options.help.notifications')}
+                    </span>
+                </div>
+
+                <div className="mb-2">
+                    <label className="block text-gray-900 dark:text-white mt-3 text-base font-medium tracking-tight">
+                        <input type="checkbox" id="notifyOnAccepted" name="notifyOnAccepted" className="mr-2" />
+                        {i18n.t('forms.options.labels.notifyOnAccepted')}
+                    </label>
+                    <span className="text-sm text-gray-600 mt-1">
+                        {i18n.t('forms.options.help.notifyOnAccepted')}
+                    </span>
+                </div>
+
+                <div className="mb-2">
+                    <label className="block text-gray-900 dark:text-white mt-3 text-base font-medium tracking-tight">
+                        <input type="checkbox" id="notifyOnRejected" name="notifyOnRejected" className="mr-2" />
+                        {i18n.t('forms.options.labels.notifyOnRejected')}
+                    </label>
+                    <span className="text-sm text-gray-600 mt-1">
+                        {i18n.t('forms.options.help.notifyOnRejected')}
+                    </span>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-900 dark:text-white mt-3 text-base font-medium tracking-tight">
+                        <input type="checkbox" id="notifyOnJobFinished" name="notifyOnJobFinished" className="mr-2" />
+                        {i18n.t('forms.options.labels.notifyOnJobFinished')}
+                    </label>
+                    <span className="text-sm text-gray-600 mt-1">
+                        {i18n.t('forms.options.help.notifyOnJobFinished')}
+                    </span>
+                </div>
+
                 {/* Command Palette Shortcut */}
                 <div className="mb-4">
                     <label className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">

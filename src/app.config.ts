@@ -6,6 +6,9 @@ declare module 'wxt/utils/define-app-config' {
         sendCookies: boolean;
         sendUserAgent: boolean;
         sendReferrer: boolean;
+        notifyOnAccepted: boolean;
+        notifyOnRejected: boolean;
+        notifyOnJobFinished: boolean;
     }
 }
 
@@ -21,4 +24,7 @@ export default defineAppConfig({
     sendReferrer: typeof import.meta.env.WXT_SEND_REFERRER !== 'undefined'
         ? String(import.meta.env.WXT_SEND_REFERRER).toLowerCase() === 'true'
         : false,
+    notifyOnAccepted: true,
+    notifyOnRejected: true,
+    notifyOnJobFinished: true,
 });

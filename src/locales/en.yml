@@ -23,6 +23,8 @@ messages:
     oauth2NotSupported: "This server does not support OAuth2 authentication."
     oauth2TokenStored: "Access token stored."
     oauth2Revoked: "Authentication revoked."
+    oauth2Refreshed: "Token refreshed successfully."
+    oauth2RefreshFailed: "Token refresh failed. Please re-authenticate."
   background:
     testMessage:
       return: "Hello from background via messaging! Received: $1"
@@ -50,6 +52,10 @@ forms:
       sendReferrer: "Send Referer"
       authentication: "Authentication"
       commandPaletteShortcut: "Command Palette Shortcut"
+      notifications: "Notifications"
+      notifyOnAccepted: "Notify when a link is accepted"
+      notifyOnRejected: "Notify when a link is rejected"
+      notifyOnJobFinished: "Notify when a download finishes"
     help:
       downloadRouterServerHost: "Specify the host address of the FetchDock Server. This server manages download requests and routes them appropriately."
       sendCookies: "Enable this option to include cookies in requests sent to the FetchDock Server. This may be necessary for authenticated download urls."
@@ -57,3 +63,7 @@ forms:
       sendReferrer: "Enable this option to include the Referer header in requests sent to the FetchDock Server. This can be useful for tracking the source of download requests."
       authentication: "Authenticate with the FetchDock Server using OAuth2. Click 'Authenticate' to open the login window."
       commandPaletteShortcut: "Click the shortcut display to record a new key combination. Use any modifier keys (Ctrl, Alt, Shift, Cmd) plus a regular key. Press Escape to cancel recording."
+      notifications: "Choose which in-page toast notifications you would like to receive."
+      notifyOnAccepted: "Show a toast when the server accepts a submitted link."
+      notifyOnRejected: "Show a toast when the server rejects a submitted link (e.g. unsupported URL)."
+      notifyOnJobFinished: "Show a toast when a download job completes, fails, or is cancelled (requires Mercure support on the server)."
