@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import optionsStorage from "@/utils/optionsStorage.ts";
-import { sendMessage } from "@/lib/messaging.ts";
+import { onMessage, sendMessage } from "@/lib/messaging";
 import { useTheme } from "@/lib/useTheme.ts";
 import { ThemeToggle } from "@/components/ui/theme-toggle.tsx";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -90,6 +90,10 @@ function App() {
         }
 
         popupRef.current = popup;
+
+        onMessage("storeOAuth2Tokens", (message) => {
+            popupRef.current?.close();
+        })
     };
 
     const isValidUrl = async (urlString: string): Promise<boolean> => {
