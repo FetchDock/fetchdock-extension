@@ -193,15 +193,18 @@ class MercureService {
                 this.handleJobUpdate(token, data);
             } catch (err) {
                 console.error('[MercureService] Failed to parse event data:', err, event.data);
+
+                es.close();
+                this.eventSources.delete(token);
             }
         };
 
-        es.onerror = (err) => {
-            console.error('[MercureService] EventSource error for job', token, err);
-            // Close and remove — the next SW wake-up will re-subscribe via restore().
-            es.close();
-            this.eventSources.delete(token);
-        };
+        // es.onerror = (err) => {
+        //     console.error('[MercureService] EventSource error for job', token, err);
+        //     // Close and remove — the next SW wake-up will re-subscribe via restore().
+        //     es.close();
+        //     this.eventSources.delete(token);
+        // };
 
         this.eventSources.set(token, es);
     }
