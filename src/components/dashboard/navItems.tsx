@@ -2,7 +2,6 @@ import React from 'react';
 import { HardDrive, Activity, Download, Settings, KeyRound, LayoutDashboard } from 'lucide-react';
 import { DownloadersPanel } from '@/components/dashboard/resources/DownloadersPanel';
 import { DownloadJobsPanel } from '@/components/dashboard/resources/DownloadJobsPanel';
-import { DownloadJobEventsPanel } from '@/components/dashboard/resources/DownloadJobEventsPanel';
 
 export interface NavItem {
     id: string;

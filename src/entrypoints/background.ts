@@ -10,7 +10,6 @@ import {Browser} from "@wxt-dev/browser";
 import {mercureService} from "@/service/mercureService.ts";
 
 export default defineBackground(() => {
-
   browser.runtime.onInstalled.addListener(async ({reason}) => {
     if (reason === 'install') {
       await browser.tabs.create({
@@ -298,13 +297,6 @@ export default defineBackground(() => {
     } catch (err) {
       console.error('Failed to store OAuth2 tokens:', err);
       return false;
-    }
-
-    // Close the popup tab now that we have the token
-    if (result.tabId != null) {
-      browser.tabs.remove(result.tabId).catch((err) => {
-        console.warn('Could not close OAuth2 popup tab:', err);
-      });
     }
 
     return true;
