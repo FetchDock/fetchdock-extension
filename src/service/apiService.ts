@@ -9,7 +9,7 @@ import {
     VersionApi
 } from "@/service/api";
 import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
-import type {WxtAppConfig, DownloadJobDTO} from "@/lib/types";
+import type {WxtAppConfig, DownloadJobDTO, SubscriptionToken} from "@/lib/types";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 
@@ -377,6 +377,32 @@ class ApiService {
     // ---------------------------------------------------------------------------
 
     /** Merges itemsPerPage into options.query so the generated client sends it as a query param */
+    /**
+     * POST /users/me/subscription-token: a short-lived Mercure subscriber token for the current user's own topics.
+     *
+     * Returns null when the server doesn't offer the endpoint (404, servers < 0.7), so callers can fall back to the
+     * previous, anonymous per-job subscriptions.
+     */
+    public async getSubscriptionToken(): Promise<SubscriptionToken | null> {
+        await this.ready();
+        const cfg = await getMergedAppConfig();
+        const base = (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
+        if (!base) {
+            throw new Error('No FetchDock server configured');
+        }
+
+        const opts = await this.buildAuthOptions({ method: 'POST', headers: { Accept: 'application/json' } });
+        const res = await this.getRuntimeFetch()(`${base}/users/me/subscription-token`, opts);
+        if (res.status === 404) {
+            return null;
+        }
+        if (!res.ok) {
+            throw await this.normalizeApiError(res);
+        }
+
+        return await res.json() as SubscriptionToken;
+    }
+
     private withPageSize(options: any, pageSize?: number): any {
         if (!pageSize) return options;
         return this.mergeOptions(options ?? {}, { query: { itemsPerPage: pageSize } });
