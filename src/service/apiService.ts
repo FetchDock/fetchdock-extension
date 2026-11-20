@@ -12,6 +12,29 @@ import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
 import type {WxtAppConfig, DownloadJobDTO, SubscriptionToken} from "@/lib/types";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
+import { clientRegistrationItem } from "@/lib/storageItems";
+import type {
+    Client,
+    ClientCreate,
+    ClientPreferences,
+    ClientSettings,
+    ClientSettingsWrite,
+    DownloaderOptionsSchema,
+    SiteResolution,
+    UserDownloaderSettings,
+    UserDownloaderSettingsWrite,
+    UserSettings,
+    UserSettingsWrite,
+    UserSiteSettings,
+    UserSiteSettingsWrite,
+} from "@/api/schemas";
+
+type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+interface JsonRequestOptions {
+    query?: Record<string, string>;
+    body?: unknown;
+}
 
 /**
  * Small wrapper around the generated OpenAPI client that:
@@ -127,10 +150,65 @@ class ApiService {
      */
     private async buildAuthOptions(options?: any): Promise<any> {
         const accessToken = await tokenManager.getAccessToken(this.tokenEndpoint ?? undefined);
-        const authHeaders = accessToken
+        const authHeaders: Record<string, string> = accessToken
             ? { Authorization: `Bearer ${accessToken}` }
             : {};
+
+        // Enables this device's per-client settings layer on the server
+        const clientId = await this.getClientIdForCurrentServer();
+        if (clientId) {
+            authHeaders['X-Client-Id'] = clientId;
+        }
+
         return this.mergeOptions(this.buildRequestOptions(options), { headers: authHeaders });
+    }
+
+    private async getServerBase(): Promise<string> {
+        const cfg = await getMergedAppConfig();
+        return (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
+    }
+
+    /** The registered client id, if it was registered on the currently configured server. */
+    private async getClientIdForCurrentServer(): Promise<string | null> {
+        const registration = await clientRegistrationItem.getValue();
+        if (!registration) {
+            return null;
+        }
+        return registration.server === await this.getServerBase() ? registration.id : null;
+    }
+
+    /**
+     * Plain JSON request against the configured server (for endpoints not covered by the legacy generated client).
+     * Throws `{ status, body }` on non-2xx responses; resolves to null for 204.
+     */
+    private async requestJson<T>(method: HttpMethod, path: string, options: JsonRequestOptions = {}): Promise<T> {
+        await this.ready();
+        const base = await this.getServerBase();
+        if (!base) {
+            throw new Error('No FetchDock server configured');
+        }
+
+        const url = new URL(base + path);
+        Object.entries(options.query ?? {}).forEach(([key, value]) => url.searchParams.set(key, value));
+
+        const headers: Record<string, string> = { Accept: 'application/json' };
+        if (options.body !== undefined) {
+            headers['Content-Type'] = method === 'PATCH' ? 'application/merge-patch+json' : 'application/json';
+        }
+
+        const init = await this.buildAuthOptions({
+            method,
+            headers,
+            body: options.body !== undefined ? JSON.stringify(options.body) : undefined,
+        });
+        const res = await this.getRuntimeFetch()(url.toString(), init);
+        if (!res.ok) {
+            throw await this.normalizeApiError(res);
+        }
+        if (res.status === 204) {
+            return null as T;
+        }
+        return await res.json() as T;
     }
 
     // Helper to get the global fetch function in a type-safe manner
@@ -322,6 +400,113 @@ class ApiService {
         } catch (err: any) {
             throw await this.normalizeApiError(err);
         }
+    }
+
+    // ---------------------------------------------------------------------------
+    // Sites
+    // ---------------------------------------------------------------------------
+
+    /** GET /sites/resolve?url= */
+    public async resolveSite(url: string): Promise<SiteResolution> {
+        return this.requestJson<SiteResolution>('GET', '/sites/resolve', { query: { url } });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Client registry
+    // ---------------------------------------------------------------------------
+
+    /** POST /users/clients */
+    public async registerClient(client: ClientCreate): Promise<Client> {
+        return this.requestJson<Client>('POST', '/users/clients', { body: client });
+    }
+
+    /** GET /users/clients/{id} */
+    public async getClient(id: string): Promise<Client> {
+        return this.requestJson<Client>('GET', `/users/clients/${encodeURIComponent(id)}`);
+    }
+
+    /** GET /users/clients/{clientId}/settings */
+    public async getClientSettings(clientId: string): Promise<ClientSettings> {
+        return this.requestJson<ClientSettings>('GET', `/users/clients/${encodeURIComponent(clientId)}/settings`);
+    }
+
+    /** PUT /users/clients/{clientId}/settings (full replace, null = inherit) */
+    public async putClientSettings(clientId: string, settings: ClientSettingsWrite): Promise<ClientSettings> {
+        return this.requestJson<ClientSettings>('PUT', `/users/clients/${encodeURIComponent(clientId)}/settings`, { body: settings });
+    }
+
+    // ---------------------------------------------------------------------------
+    // User settings layers
+    // ---------------------------------------------------------------------------
+
+    /** GET /users/settings */
+    public async getUserSettings(): Promise<UserSettings> {
+        return this.requestJson<UserSettings>('GET', '/users/settings');
+    }
+
+    /** PUT /users/settings */
+    public async putUserSettings(settings: UserSettingsWrite): Promise<UserSettings> {
+        return this.requestJson<UserSettings>('PUT', '/users/settings', { body: settings });
+    }
+
+    /** GET /users/settings/downloaders (includes downloaders without user settings) */
+    public async listUserDownloaderSettings(): Promise<UserDownloaderSettings[]> {
+        return this.requestJson<UserDownloaderSettings[]>('GET', '/users/settings/downloaders', { query: { pagination: 'false' } });
+    }
+
+    /** PUT /users/settings/downloaders/{downloader} */
+    public async putUserDownloaderSettings(downloader: string, settings: UserDownloaderSettingsWrite): Promise<UserDownloaderSettings> {
+        return this.requestJson<UserDownloaderSettings>('PUT', `/users/settings/downloaders/${encodeURIComponent(downloader)}`, { body: settings });
+    }
+
+    /**
+     * GET /users/settings/sites/{slug}
+     * Resolves to an empty override set when the user has no overrides for the site (404).
+     */
+    public async getUserSiteSettings(slug: string): Promise<UserSiteSettings> {
+        try {
+            return await this.requestJson<UserSiteSettings>('GET', `/users/settings/sites/${encodeURIComponent(slug)}`);
+        } catch (err: any) {
+            if (err?.status === 404) {
+                return { slug };
+            }
+            throw err;
+        }
+    }
+
+    /** PUT /users/settings/sites/{slug} */
+    public async putUserSiteSettings(slug: string, settings: UserSiteSettingsWrite): Promise<UserSiteSettings> {
+        return this.requestJson<UserSiteSettings>('PUT', `/users/settings/sites/${encodeURIComponent(slug)}`, { body: settings });
+    }
+
+    /** DELETE /users/settings/sites/{slug} (reset to inherit) */
+    public async deleteUserSiteSettings(slug: string): Promise<void> {
+        try {
+            await this.requestJson<null>('DELETE', `/users/settings/sites/${encodeURIComponent(slug)}`);
+        } catch (err: any) {
+            if (err?.status !== 404) {
+                throw err;
+            }
+        }
+    }
+
+    /** GET /downloaders/{id}/options-schema */
+    public async getDownloaderOptionsSchema(downloader: string): Promise<DownloaderOptionsSchema> {
+        return this.requestJson<DownloaderOptionsSchema>('GET', `/downloaders/${encodeURIComponent(downloader)}/options-schema`);
+    }
+
+    // ---------------------------------------------------------------------------
+    // Client preferences
+    // ---------------------------------------------------------------------------
+
+    /** GET /users/client-preferences/{clientType} */
+    public async getClientPreferences(clientType: string): Promise<ClientPreferences> {
+        return this.requestJson<ClientPreferences>('GET', `/users/client-preferences/${encodeURIComponent(clientType)}`);
+    }
+
+    /** PUT /users/client-preferences/{clientType} */
+    public async putClientPreferences(clientType: string, data: Record<string, unknown>): Promise<ClientPreferences> {
+        return this.requestJson<ClientPreferences>('PUT', `/users/client-preferences/${encodeURIComponent(clientType)}`, { body: { data } });
     }
 
     // ---------------------------------------------------------------------------

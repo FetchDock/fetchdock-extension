@@ -1,0 +1,40 @@
+import { storage } from '#imports';
+import type { SiteResolution, UserSettings } from '@/api/schemas';
+
+/** This device's registration in the server's client registry (POST /users/clients). */
+export interface ClientRegistration {
+    id: string;
+    /** Server host the client was registered on; a host change requires a new registration */
+    server: string;
+}
+
+export const clientRegistrationItem = storage.defineItem<ClientRegistration | null>('local:clientRegistration', {
+    fallback: null,
+});
+
+export interface CachedSiteResolution {
+    server: string;
+    fetchedAt: number;
+    resolution: SiteResolution;
+}
+
+/** GET /sites/resolve results by URL host. */
+export const siteResolveCacheItem = storage.defineItem<Record<string, CachedSiteResolution>>('local:siteResolveCache', {
+    fallback: {},
+});
+
+/** Last known copy of the user's global settings layer (GET /users/settings), for display while offline. */
+export const serverUserSettingsItem = storage.defineItem<UserSettings | null>('local:serverUserSettings', {
+    fallback: null,
+});
+
+export interface ClientPreferencesSyncState {
+    /** `updatedAt` of the server copy last applied or pushed */
+    updatedAt: string | null;
+    /** Serialized data last applied or pushed, to skip no-op pushes */
+    data: string | null;
+}
+
+export const clientPreferencesSyncItem = storage.defineItem<ClientPreferencesSyncState>('local:clientPreferencesSync', {
+    fallback: { updatedAt: null, data: null },
+});

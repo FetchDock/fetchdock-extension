@@ -5,9 +5,15 @@ import {i18n} from "#imports";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
 import {SendMessageOptions} from "@webext-core/messaging";
-import {DownloadJobDTO, CookieDTO, RejectedDownloadJob} from "@/lib/types.ts";
+import {RejectedDownloadJob} from "@/lib/types.ts";
 import {Browser} from "@wxt-dev/browser";
 import {mercureService} from "@/service/mercureService.ts";
+import {migrateOptionsToLocalStorage} from "@/utils/optionsStorage";
+import {buildDownloadJob} from "@/service/downloadJobBuilder";
+import {ensureClientRegistered} from "@/service/clientRegistry";
+import {clearSiteResolveCache} from "@/service/siteResolver";
+import {preferencesChanged, pushPreferences, syncPreferences} from "@/service/preferencesSync";
+import {registerSettingsHandlers} from "@/service/settingsHandlers";
 
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(async ({reason}) => {
@@ -19,15 +25,51 @@ export default defineBackground(() => {
     }
   });
 
-  getMergedAppConfig().then((cfg) => {
-    console.log('Loaded runtime app config in background:', cfg);
-  }).catch((err) => {
-    console.error('Failed to load app config in background', err);
+  // Options moved from storage.sync to storage.local; run before anything relies on the stored options
+  migrateOptionsToLocalStorage()
+    .catch((err) => console.error('Failed to migrate options to storage.local', err))
+    .then(() => getMergedAppConfig())
+    .then(async (cfg) => {
+      console.log('Loaded runtime app config in background:', cfg);
+      if (cfg.oauth2AccessToken) {
+        await ensureClientRegistered();
+        if (cfg.useServerSettings) {
+          await syncPreferences();
+        }
+      }
+    })
+    .catch((err) => {
+      console.error('Failed to load app config in background', err);
+    });
+
+  let pushPreferencesTimer: ReturnType<typeof setTimeout> | undefined;
+
+  subscribeToAppConfigChanges(async (newConfig, oldConfig) => {
+    const hostChanged = newConfig.downloadRouterServerHost !== oldConfig.downloadRouterServerHost;
+    const authenticated = !!newConfig.oauth2AccessToken;
+
+    if (hostChanged) {
+      await clearSiteResolveCache();
+    }
+    if (authenticated && (hostChanged || !oldConfig.oauth2AccessToken)) {
+      await ensureClientRegistered();
+    }
+    if (!authenticated || !newConfig.useServerSettings) {
+      return;
+    }
+
+    if (!oldConfig.useServerSettings || hostChanged || !oldConfig.oauth2AccessToken) {
+      await syncPreferences();
+    } else if (preferencesChanged(newConfig, oldConfig)) {
+      // Debounced: the shortcut recorder and theme toggle may write several times in a row
+      clearTimeout(pushPreferencesTimer);
+      pushPreferencesTimer = setTimeout(() => {
+        pushPreferences().catch((err) => console.warn('Failed to push client preferences', err));
+      }, 1000);
+    }
   });
 
-  subscribeToAppConfigChanges((newConfig, oldConfig) => {
-    console.log('App config changed in background', { newConfig, oldConfig });
-  });
+  registerSettingsHandlers();
 
   if(typeof browser !== 'undefined') {
     if(typeof browser.contextMenus !== 'undefined') {
@@ -57,121 +99,71 @@ export default defineBackground(() => {
         if(info.menuItemId) {
           console.debug('Context menu item clicked', info);
 
-          const MOCK_URI = 'https://mock.fetchdock.dev/to-be-replaced';
-
-          let downloadJob: DownloadJobDTO = {
-            uri: MOCK_URI,
-          };
-
-          let caseMatch = false;
+          let uri: string | undefined;
           switch (info.menuItemId) {
             case 'sendLinkToDownloadServer':
-              if (info.linkUrl) {
-                downloadJob.uri = info.linkUrl;
-                caseMatch = true;
-              }
+              uri = info.linkUrl;
               break;
             case 'sentVideoToDownloadServer':
             case 'sentImageToDownloadServer':
-              if (info.srcUrl) {
-                downloadJob.uri = info.srcUrl;
-                caseMatch = true;
-              }
+              uri = info.srcUrl;
               break;
             case 'sentPageToDownloadServer':
-              if (info.frameUrl) {
-                downloadJob.uri = info.frameUrl;
-                caseMatch = true;
-              } else if (info.pageUrl) {
-                downloadJob.uri = info.pageUrl;
-                caseMatch = true;
-              }
+              uri = info.frameUrl ?? info.pageUrl;
               break;
             default:
               console.error('Unknown menu item clicked', info, tab);
               return;
           }
 
-          // Check if the sendCookie setting has been enabled, if so we'll try to get the cookies for the link domain
-          const {sendCookies, sendReferrer, sendUserAgent} = await getMergedAppConfig();
-          if (sendCookies) {
-            downloadJob.cookies = await new Promise<CookieDTO[]>((resolve) => {
-              browser.cookies.getAll({url: downloadJob.uri}, (cookies) => {
-                const collected: CookieDTO[] = [];
+          if (!uri) {
+            return;
+          }
 
-                for (const cookie of cookies) {
-                  const payloadCookie: CookieDTO = {
-                    name: cookie.name,
-                    value: cookie.value,
-                    domain: cookie.domain,
-                    path: cookie.path,
-                    secure: cookie.secure,
-                    httpOnly: cookie.httpOnly,
-                    sameSite: cookie.sameSite,
-                  };
-                  if (cookie.expirationDate !== undefined) {
-                    // Convert floating-point epoch seconds to ISO-8601 datetime string
-                    const epochMs: number = cookie.expirationDate * 1000;
-                    payloadCookie.expirationDate = new Date(epochMs).toISOString();
-                  }
-                  collected.push(payloadCookie);
+          // Resolves the site and attaches cookies / user agent / referrer as the effective settings allow
+          const pageUrl = info.menuItemId === 'sentPageToDownloadServer' ? undefined : (info.pageUrl ?? tab?.url);
+          const downloadJob = await buildDownloadJob(uri, pageUrl);
+
+          // Context-menu clicks always originate from a tab, but the type is optional.
+          const tabId = tab?.id;
+
+          apiService.submitDownloadJob(downloadJob)
+              .then((job: any) => {
+                if (tabId != null) {
+                  const sendMessageOptions: SendMessageOptions = { tabId };
+                  sendMessage("acceptedDownloadJob", job, sendMessageOptions);
                 }
+                console.log('Download job created:', job);
 
-                resolve(collected);
+                // Register the job with the Mercure service so we can notify
+                // the user when it completes or fails.
+                if (job?.token && tabId != null) {
+                  mercureService.trackJob({ jobUuid: job.jobUuid, token: job.token }, tabId, downloadJob.uri);
+                }
+              })
+              .catch((err: any) => {
+                console.error('Failed to create download job:', err);
+
+                // Send a rejection notification when the server explicitly rejects the
+                // job (4xx). Network errors and 5xx responses are intentionally excluded
+                // here — those will be covered by error-reporting features in the future.
+                if (tabId != null && err && typeof err.status === 'number' && err.status >= 400 && err.status < 500) {
+                  const body = err.body;
+                  const serverMessage: string | undefined =
+                      body?.detail ??
+                      body?.['hydra:description'] ??
+                      body?.message ??
+                      undefined;
+
+                  const rejected: RejectedDownloadJob = {
+                    uri: downloadJob.uri,
+                    status: err.status,
+                    message: serverMessage,
+                  };
+
+                  sendMessage("rejectedDownloadJob", rejected, { tabId });
+                }
               });
-            });
-          }
-
-          if (sendReferrer) {
-            console.log('Sending referrer:', tab?.url);
-          }
-
-          if (sendUserAgent) {
-            downloadJob.userAgent = navigator.userAgent;
-          }
-
-          if (caseMatch) {
-            // Context-menu clicks always originate from a tab, but the type is optional.
-            const tabId = tab?.id;
-            
-            apiService.submitDownloadJob(downloadJob)
-                .then((job: any) => {
-                  if (tabId != null) {
-                    const sendMessageOptions: SendMessageOptions = { tabId };
-                    sendMessage("acceptedDownloadJob", job, sendMessageOptions);
-                  }
-                  console.log('Download job created:', job);
-
-                  // Register the job with the Mercure service so we can notify
-                  // the user when it completes or fails.
-                  if (job?.token && tabId != null) {
-                    mercureService.trackJob({ jobUuid: job.jobUuid, token: job.token }, tabId, downloadJob.uri);
-                  }
-                })
-                .catch((err: any) => {
-                  console.error('Failed to create download job:', err);
-
-                  // Send a rejection notification when the server explicitly rejects the
-                  // job (4xx). Network errors and 5xx responses are intentionally excluded
-                  // here — those will be covered by error-reporting features in the future.
-                  if (tabId != null && err && typeof err.status === 'number' && err.status >= 400 && err.status < 500) {
-                    const body = err.body;
-                    const serverMessage: string | undefined =
-                        body?.detail ??
-                        body?.['hydra:description'] ??
-                        body?.message ??
-                        undefined;
-
-                    const rejected: RejectedDownloadJob = {
-                      uri: downloadJob.uri,
-                      status: err.status,
-                      message: serverMessage,
-                    };
-
-                    sendMessage("rejectedDownloadJob", rejected, { tabId });
-                  }
-                });
-          }
         }
       })
     }
