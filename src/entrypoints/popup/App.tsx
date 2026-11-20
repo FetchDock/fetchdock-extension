@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { sendMessage } from "@/lib/messaging";
 import {useTheme} from "@/lib/useTheme.ts";
+import { SitePanel } from "./SitePanel";
 
 function App() {
     const [theme, setTheme] = useTheme();
@@ -12,7 +13,8 @@ function App() {
     }
 
     return (
-        <div className="m-10">
+        <div className="m-4 w-80 space-y-4">
+            <SitePanel />
             <Button onClick={openDashboard}>Open Dashboard</Button>
         </div>
     );

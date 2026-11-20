@@ -5,12 +5,14 @@ import {sendMessage} from "@/lib/messaging";
 import { KeyComboInput } from "@/components/ui/key-combo-input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useTheme } from "@/lib/useTheme";
+import { ServerSettings } from "./ServerSettings";
 
 function App() {
     const formRef = useRef<HTMLFormElement | null>(null);
     const [status, setStatus] = useState<string | null>(null);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [shortcut, setShortcut] = useState<string>('ctrl+k');
+    const [useServerSettings, setUseServerSettings] = useState<boolean>(false);
     const [theme, setTheme] = useTheme();
     const popupRef = useRef<Window | null>(null);
 
@@ -27,6 +29,7 @@ function App() {
         // Reflect initial auth state
         optionsStorage.getAll().then((opts) => {
             setIsAuthenticated(!!opts.oauth2AccessToken);
+            setUseServerSettings(!!opts.useServerSettings);
             if (opts.commandPaletteShortcut) setShortcut(opts.commandPaletteShortcut);
         });
 
@@ -34,6 +37,7 @@ function App() {
         optionsStorage.onChanged((newOpts) => {
             const authenticated = !!newOpts.oauth2AccessToken;
             setIsAuthenticated(authenticated);
+            setUseServerSettings(!!newOpts.useServerSettings);
             if (newOpts.commandPaletteShortcut) setShortcut(newOpts.commandPaletteShortcut);
             if (authenticated) {
                 popupRef.current = null;
@@ -157,6 +161,8 @@ function App() {
                     </span>
                 </div>
 
+                {/* Local toggles stay in the DOM (synced by optionsStorage) but are replaced by the server settings when enabled */}
+                <div className={useServerSettings && isAuthenticated ? 'hidden' : undefined}>
                 <div className="mb-2">
                     <label className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">
                         <input type="checkbox" id="sendCookies" name="sendCookies" className="mr-2" />
@@ -186,6 +192,22 @@ function App() {
                         {i18n.t('forms.options.help.sendReferrer')}
                     </span>
                 </div>
+                </div>
+
+                <div className="mb-4">
+                    <label className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">
+                        <input type="checkbox" id="useServerSettings" name="useServerSettings" className="mr-2" />
+                        {i18n.t('settings.sync.label')}
+                    </label>
+                    <span className="text-sm text-gray-600 mt-1">
+                        {i18n.t('settings.sync.help')}
+                    </span>
+                    {useServerSettings && !isAuthenticated && (
+                        <span className="block text-sm text-amber-600 mt-1">{i18n.t('settings.sync.requiresAuth')}</span>
+                    )}
+                </div>
+
+                {useServerSettings && isAuthenticated && <ServerSettings />}
 
                 {/* ── Notifications ──────────────────────────────────────── */}
                 <div className="mb-1 mt-6">

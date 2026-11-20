@@ -1,6 +1,18 @@
 import {WxtAppConfig, OAuth2AuthResult, DownloadJobDTO, AcceptedDownloadJob, ApiTestResult, RejectedDownloadJob, DownloadJobFinished} from '@/lib/types';
 import type { DownloadJob } from '@/lib/types';
 import { defineExtensionMessaging } from '@webext-core/messaging';
+import type {
+    ClientSettings,
+    ClientSettingsWrite,
+    DownloaderOptionsSchema,
+    SiteResolution,
+    UserDownloaderSettings,
+    UserDownloaderSettingsWrite,
+    UserSettings,
+    UserSettingsWrite,
+    UserSiteSettings,
+    UserSiteSettingsWrite,
+} from '@/api/schemas';
 
 interface ProtocolMap {
     getSettings(): WxtAppConfig;
@@ -40,6 +52,29 @@ interface ProtocolMap {
 
     /** Asks the background to resolve an extension-relative path to a full URL */
     getExtensionPageUrl(path: string): string;
+
+    // ── Sites & settings layers (all requests go through the background) ──
+
+    /** GET /sites/resolve for the URL (cached per host); null when it can't be resolved */
+    resolveSite(data: { url: string; force?: boolean }): SiteResolution | null;
+
+    /** GET /users/settings (global layer); also refreshes the local cache */
+    getUserSettings(): UserSettings;
+    putUserSettings(settings: UserSettingsWrite): UserSettings;
+
+    /** This device's client settings layer; null when the device isn't registered (not authenticated) */
+    getClientSettings(): ClientSettings | null;
+    putClientSettings(settings: ClientSettingsWrite): ClientSettings;
+
+    listUserDownloaderSettings(): UserDownloaderSettings[];
+    putUserDownloaderSettings(data: { downloader: string; settings: UserDownloaderSettingsWrite }): UserDownloaderSettings;
+
+    getUserSiteSettings(slug: string): UserSiteSettings;
+    putUserSiteSettings(data: { slug: string; settings: UserSiteSettingsWrite }): UserSiteSettings;
+    /** Removes the user's overrides for the site (inherit everything) */
+    resetUserSiteSettings(slug: string): void;
+
+    getDownloaderOptionsSchema(downloader: string): DownloaderOptionsSchema;
 
     // test
     testMessage(msg: string): string;

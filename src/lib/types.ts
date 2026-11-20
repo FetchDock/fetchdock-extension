@@ -183,6 +183,8 @@ export interface DownloadJobDTO {
     cookies?: CookieDTO[];
     /** IRI of the preferred downloader, e.g. "/downloaders/yt-dlp" */
     downloader?: string | null;
+    /** The page the URL was found on */
+    referrer?: string | null;
 }
 
 export interface WxtAppConfig {
@@ -190,6 +192,8 @@ export interface WxtAppConfig {
     sendCookies: boolean;
     sendUserAgent: boolean;
     sendReferrer: boolean;
+    /** Use (and edit) the user's settings stored on the server; off = local toggles only */
+    useServerSettings: boolean;
     oauth2AccessToken?: string;
     oauth2RefreshToken?: string;
     oauth2TokenExpiresAt?: number;
