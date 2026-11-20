@@ -143,11 +143,9 @@ export default defineBackground(() => {
                   console.log('Download job created:', job);
 
                   // Register the job with the Mercure service so we can notify
-                  // the user when it reaches a terminal state (completed/failed/cancelled).
-                  // The hub URL can optionally be discovered from the `Link` response
-                  // header of the POST /download_jobs call; pass it here once available.
+                  // the user when it completes or fails.
                   if (job?.token && tabId != null) {
-                    mercureService.trackJob(job.token, tabId, downloadJob.uri /*, hubUrl */);
+                    mercureService.trackJob({ jobUuid: job.jobUuid, token: job.token }, tabId, downloadJob.uri);
                   }
                 })
                 .catch((err: any) => {

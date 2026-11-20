@@ -140,11 +140,34 @@ export interface RejectedDownloadJob {
 export interface DownloadJobFinished {
     /** The unique token of the finished job */
     jobToken: string;
-    /** Final state value from the server (e.g. 3 = completed, 4 = failed, 5 = cancelled) */
+    /**
+     * Final state: "completed" or "failed" (servers >= 0.7, structured progress events), or a numeric state from
+     * older servers.
+     */
     state: number | string;
     /** The original URI that was downloaded */
     uri?: string;
+    /** The last error reported for the job, if it failed */
+    error?: string;
 }
+
+/** Response of POST /users/me/subscription-token (FetchDock server >= 0.7) */
+export interface SubscriptionToken {
+    /** Public URL of the Mercure hub */
+    hubUrl: string;
+    /** Short-lived subscriber JWT, only valid for the user's own topics */
+    token: string;
+    /** Topic selectors the token covers, to subscribe to */
+    topics: string[];
+    /** ISO 8601 expiry of the token */
+    expiresAt: string;
+}
+
+/** Structured progress event published by the server on a job's private output topic (servers >= 0.7) */
+export type DownloadJobProgressEvent =
+    | { job: string; type: 'state'; state: 'in_progress' | 'completed' | 'failed' }
+    | { job: string; type: 'progress'; percent: number; size: string | null; speed: string | null; eta: string | null }
+    | { job: string; type: 'error'; message: string };
 
 /**
  * The input shape for POST /download_jobs.

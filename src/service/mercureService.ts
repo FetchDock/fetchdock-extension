@@ -1,76 +1,83 @@
 import { sendMessage } from '@/lib/messaging';
-import type { DownloadJobFinished } from '@/lib/types';
+import type { DownloadJobFinished, DownloadJobProgressEvent, SubscriptionToken } from '@/lib/types';
 import type { SendMessageOptions } from '@webext-core/messaging';
+import { apiService } from '@/service/apiService';
+import { getMergedAppConfig } from '@/lib/config';
 
 /**
- * MercureService — manages Mercure SSE subscriptions for download job tracking.
+ * MercureService — live updates for download jobs via Mercure (Server-Sent Events).
  *
- * ## Mercure Protocol
+ * ## Servers >= 0.7 (private updates)
  *
- * Mercure (https://mercure.rocks) layers real-time push updates on top of
- * Server-Sent Events (SSE):
+ *  The server publishes all of a user's updates privately under "/users/{user uuid}/…". The hub doesn't accept
+ *  anonymous subscribers, so the service:
  *
- *  1. The API server returns a `Link` response header on resource endpoints:
+ *   1. requests a short-lived subscriber token: `POST /users/me/subscription-token` → `{hubUrl, token, topics, expiresAt}`
+ *   2. opens **one** EventSource for all tracked jobs: `{hubUrl}?topic={topics…}&authorization={token}`
+ *      (a plain EventSource can't set headers, and third-party cookies aren't reliable for an extension origin)
+ *   3. receives structured progress events (`{job, type: "state" | "progress" | "error", …}`) and notifies the
+ *      originating tab when a tracked job completes or fails
+ *   4. renews the token before it expires and reconnects; on a connection error it requests a new token, with backoff
  *
- *       Link: <https://example.com/.well-known/mercure>; rel="mercure"
+ *  The stream is only open while jobs are being tracked. The token is kept in memory only.
  *
- *  2. The client opens an EventSource connection to that hub URL with a `topic`
- *     query param matching the resource IRI:
+ * ## Older servers (fallback)
  *
- *       GET https://example.com/.well-known/mercure?topic=/download_jobs/{token}
+ *  If the token endpoint doesn't exist (404), the service falls back to the previous anonymous per-job
+ *  subscriptions on `/download_jobs/{token}`.
  *
- *  3. The hub forwards server-published updates to all subscribed clients.
+ * ## MV3 service-worker persistence
  *
- * ## Extension Integration
- *
- *  - `background.ts` calls `mercureService.trackJob()` right after a job is
- *    accepted. It supplies the job token, originating tab ID, optional URI, and
- *    the Mercure hub URL extracted from the `POST /download_jobs` `Link` header.
- *
- *  - When a terminal state event arrives, the service sends `downloadJobFinished`
- *    targeted at the originating tab; the content script's toast manager shows it.
- *
- * ## MV3 Service-Worker Persistence
- *
- *  Chrome MV3 background service workers can be terminated when idle. To survive
- *  restarts, tracked jobs and the hub URL are persisted in `browser.storage.session`
- *  (in-memory, survives SW restarts within a browser session). On construction the
- *  service restores any in-progress jobs and re-opens their EventSource connections.
+ *  Tracked jobs are kept in `browser.storage.session`. After a service-worker restart, they are restored and the
+ *  stream is reopened with a fresh token.
  *
  *  Note: `EventSource` in service workers requires Chrome ≥ 112 / Firefox ≥ 115.
  */
 
-/** Terminal state values used by the FetchDock server */
-const TERMINAL_STATES: Array<number | string> = [3, 4, 5]; // completed, failed, cancelled
+/** Numeric terminal states of servers < 0.7 (fallback subscriptions): completed, failed, cancelled */
+const LEGACY_TERMINAL_STATES: Array<number | string> = [2, 3, 4];
 
-const SESSION_KEY_JOBS   = 'mercureTrackedJobs';
-const SESSION_KEY_HUB    = 'mercureHubUrl';
+/** Renew the subscriber token this long before it expires */
+const TOKEN_RENEW_MARGIN_MS = 60_000;
+/** Reconnect backoff after connection errors: 2 s, 4 s, … up to 60 s */
+const RECONNECT_BASE_DELAY_MS = 2_000;
+const RECONNECT_MAX_DELAY_MS = 60_000;
+
+const SESSION_KEY_JOBS = 'mercureTrackedJobs';
 
 interface TrackedJob {
+    /** Job UUID (servers >= 0.7 identify jobs in progress events by UUID) */
+    uuid?: string;
+    /** Job token (used by the fallback subscription topic) */
     token: string;
     tabId: number;
     uri?: string;
+    /** Last error message reported for the job */
+    lastError?: string;
 }
 
+type Mode = 'unknown' | 'user-stream' | 'legacy';
+
 class MercureService {
-    /** Maps job token → tracked job metadata */
+    /** Tracked jobs, keyed by job token */
     private trackedJobs: Map<string, TrackedJob> = new Map();
 
-    /**
-     * Mercure hub URL. Typically discovered from:
-     *  - The `Link` header of a successful `POST /download_jobs` response, OR
-     *  - The server's `/.well-known/browser-extension` document.
-     */
-    private hubUrl: string | null = null;
+    private mode: Mode = 'unknown';
 
-    /** Active EventSource connections, keyed by job token */
-    private eventSources: Map<string, EventSource> = new Map();
+    // Servers >= 0.7: one stream for all of the user's updates
+    private userStream: EventSource | null = null;
+    private connecting: Promise<void> | null = null;
+    private renewTimer: ReturnType<typeof setTimeout> | null = null;
+    private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    private reconnectAttempts = 0;
+
+    // Fallback: one anonymous stream per job, keyed by job token
+    /** Hub URL for the fallback, known from a token response or derived from the configured server */
+    private legacyHubUrl: string | null = null;
+    private legacyStreams: Map<string, EventSource> = new Map();
 
     constructor() {
-        // Restore any in-progress jobs that were active before the SW was terminated.
-        this.restore().catch((err) =>
-            console.warn('[MercureService] Restore failed:', err)
-        );
+        this.restore().catch((err) => console.warn('[MercureService] Restore failed:', err));
     }
 
     // -------------------------------------------------------------------------
@@ -78,53 +85,220 @@ class MercureService {
     // -------------------------------------------------------------------------
 
     /**
-     * Set (or update) the Mercure hub URL.
-     * Persists the URL and (re-)subscribes all currently tracked jobs.
-     */
-    public setHubUrl(hubUrl: string): void {
-        if (this.hubUrl === hubUrl) return;
-        this.hubUrl = hubUrl;
-        console.debug('[MercureService] Hub URL set:', hubUrl);
-
-        void this.persist();
-
-        // Re-subscribe all tracked jobs now that we have a hub URL.
-        for (const token of this.trackedJobs.keys()) {
-            this.subscribeToJob(token);
-        }
-    }
-
-    /**
-     * Register a newly accepted download job for Mercure tracking.
+     * Register a newly accepted download job for live updates.
      *
-     * @param token   - Unique token returned by the server for the job.
-     * @param tabId   - Browser tab that triggered the download (targeted messaging).
-     * @param uri     - Original URI submitted (shown in the toast notification).
-     * @param hubUrl  - Mercure hub URL, if already known from the `Link` response header.
+     * @param job    - The creation response (`jobUuid` and `token`).
+     * @param tabId  - Browser tab that triggered the download (targeted messaging).
+     * @param uri    - Original URI submitted (shown in the notification).
      */
-    public trackJob(token: string, tabId: number, uri?: string, hubUrl?: string): void {
-        if (hubUrl) this.setHubUrl(hubUrl);
-
-        this.trackedJobs.set(token, { token, tabId, uri });
+    public trackJob(job: { jobUuid?: string; token: string }, tabId: number, uri?: string): void {
+        this.trackedJobs.set(job.token, { uuid: job.jobUuid, token: job.token, tabId, uri });
         void this.persist();
-        console.debug('[MercureService] Tracking job:', token, 'for tab:', tabId);
+        console.debug('[MercureService] Tracking job:', job.jobUuid ?? job.token, 'for tab:', tabId);
 
-        if (this.hubUrl) {
-            this.subscribeToJob(token);
-        } else {
-            console.warn('[MercureService] Hub URL not yet known — will subscribe once setHubUrl() is called');
-        }
+        void this.ensureSubscribed(job.token);
     }
 
-    /**
-     * Stop tracking a job and close its EventSource connection.
-     */
+    /** Stop tracking a job; closes the connection when no jobs are left. */
     public untrackJob(token: string): void {
         this.trackedJobs.delete(token);
-        this.eventSources.get(token)?.close();
-        this.eventSources.delete(token);
+        this.legacyStreams.get(token)?.close();
+        this.legacyStreams.delete(token);
         void this.persist();
-        console.debug('[MercureService] Stopped tracking job:', token);
+
+        if (this.trackedJobs.size === 0) {
+            this.closeUserStream();
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Subscribing
+    // -------------------------------------------------------------------------
+
+    private async ensureSubscribed(token: string): Promise<void> {
+        if (this.mode !== 'legacy') {
+            await this.ensureUserStream();
+        }
+        // In legacy mode, openUserStream() already subscribed the jobs tracked at that time
+        if (this.mode === 'legacy' && !this.legacyStreams.has(token)) {
+            await this.subscribeLegacy(token);
+        }
+    }
+
+    /** Opens the user stream if it isn't open (or being opened) yet. */
+    private ensureUserStream(): Promise<void> {
+        if (this.userStream || this.trackedJobs.size === 0) {
+            return Promise.resolve();
+        }
+        this.connecting ??= this.openUserStream().finally(() => {
+            this.connecting = null;
+        });
+
+        return this.connecting;
+    }
+
+    private async openUserStream(): Promise<void> {
+        let subscription: SubscriptionToken | null;
+        try {
+            subscription = await apiService.getSubscriptionToken();
+        } catch (err) {
+            console.warn('[MercureService] Could not get a subscription token:', err);
+            this.scheduleReconnect();
+            return;
+        }
+
+        if (subscription === null) {
+            console.info('[MercureService] Server has no subscription token endpoint, falling back to per-job subscriptions');
+            this.mode = 'legacy';
+            for (const token of this.trackedJobs.keys()) {
+                await this.subscribeLegacy(token);
+            }
+            return;
+        }
+
+        this.mode = 'user-stream';
+        this.closeUserStream();
+
+        const url = new URL(subscription.hubUrl);
+        for (const topic of subscription.topics) {
+            url.searchParams.append('topic', topic);
+        }
+        url.searchParams.set('authorization', subscription.token);
+        // Also needed by the fallback if the server is ever downgraded
+        this.legacyHubUrl = subscription.hubUrl;
+
+        const es = new EventSource(url.toString());
+        es.onopen = () => {
+            this.reconnectAttempts = 0;
+        };
+        es.onmessage = (event: MessageEvent) => {
+            try {
+                this.handleUserStreamEvent(JSON.parse(event.data as string));
+            } catch (err) {
+                console.error('[MercureService] Failed to parse event data:', err);
+            }
+        };
+        es.onerror = () => {
+            // Expired or invalid tokens and network errors: reconnect with a fresh token, with backoff
+            if (this.userStream === es) {
+                console.warn('[MercureService] Connection error, reconnecting with a fresh token');
+                this.closeUserStream();
+                this.scheduleReconnect();
+            }
+        };
+        this.userStream = es;
+
+        // Renew the token shortly before it expires
+        const renewIn = new Date(subscription.expiresAt).getTime() - Date.now() - TOKEN_RENEW_MARGIN_MS;
+        this.renewTimer = setTimeout(() => {
+            this.closeUserStream();
+            void this.ensureUserStream();
+        }, Math.max(renewIn, 0));
+    }
+
+    private scheduleReconnect(): void {
+        if (this.reconnectTimer || this.trackedJobs.size === 0) {
+            return;
+        }
+        const delay = Math.min(RECONNECT_BASE_DELAY_MS * 2 ** this.reconnectAttempts, RECONNECT_MAX_DELAY_MS);
+        this.reconnectAttempts++;
+        this.reconnectTimer = setTimeout(() => {
+            this.reconnectTimer = null;
+            void this.ensureUserStream();
+        }, delay);
+    }
+
+    private closeUserStream(): void {
+        this.userStream?.close();
+        this.userStream = null;
+        if (this.renewTimer) {
+            clearTimeout(this.renewTimer);
+            this.renewTimer = null;
+        }
+        if (this.trackedJobs.size === 0 && this.reconnectTimer) {
+            clearTimeout(this.reconnectTimer);
+            this.reconnectTimer = null;
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Events
+    // -------------------------------------------------------------------------
+
+    /**
+     * Handles an event of the user stream. Besides progress events, the stream also carries other updates of the user
+     * (e.g. job resources); only progress events of tracked jobs are used here.
+     */
+    private handleUserStreamEvent(data: unknown): void {
+        const event = data as Partial<DownloadJobProgressEvent>;
+        if (typeof event?.job !== 'string' || typeof event.type !== 'string') {
+            return;
+        }
+        const tracked = Array.from(this.trackedJobs.values()).find((job) => job.uuid === event.job);
+        if (!tracked) {
+            return;
+        }
+
+        if (event.type === 'error') {
+            tracked.lastError = (event as { message: string }).message;
+            void this.persist();
+            return;
+        }
+        if (event.type === 'state') {
+            const state = (event as { state: string }).state;
+            if (state === 'completed' || state === 'failed') {
+                this.notifyFinished(tracked, state);
+            }
+        }
+    }
+
+    private notifyFinished(tracked: TrackedJob, state: number | string): void {
+        const payload: DownloadJobFinished = {
+            jobToken: tracked.token,
+            state,
+            uri: tracked.uri,
+            error: state === 'failed' ? tracked.lastError : undefined,
+        };
+        const opts: SendMessageOptions = { tabId: tracked.tabId };
+        sendMessage('downloadJobFinished', payload, opts);
+
+        this.untrackJob(tracked.token);
+        console.debug('[MercureService] Job finished:', tracked.uuid ?? tracked.token, '— state:', state);
+    }
+
+    // -------------------------------------------------------------------------
+    // Fallback for servers < 0.7: anonymous per-job subscriptions
+    // -------------------------------------------------------------------------
+
+    private async subscribeLegacy(token: string): Promise<void> {
+        const hubUrl = this.legacyHubUrl ?? await this.legacyHubUrlFromConfig();
+        if (!hubUrl) {
+            console.warn('[MercureService] Cannot subscribe — hub URL not known');
+            return;
+        }
+        this.legacyStreams.get(token)?.close();
+
+        const url = new URL(hubUrl);
+        url.searchParams.set('topic', `/download_jobs/${token}`);
+        const es = new EventSource(url.toString(), { withCredentials: true });
+        es.onmessage = (event: MessageEvent) => {
+            try {
+                const data = JSON.parse(event.data as string);
+                const tracked = this.trackedJobs.get(token);
+                if (tracked && LEGACY_TERMINAL_STATES.includes(data?.state)) {
+                    this.notifyFinished(tracked, data.state);
+                }
+            } catch (err) {
+                console.error('[MercureService] Failed to parse event data:', err);
+            }
+        };
+        this.legacyStreams.set(token, es);
+    }
+
+    private async legacyHubUrlFromConfig(): Promise<string | null> {
+        const host = ((await getMergedAppConfig()).downloadRouterServerHost ?? '').replace(/\/+$/, '');
+
+        return host ? `${host}/.well-known/mercure` : null;
     }
 
     // -------------------------------------------------------------------------
@@ -132,116 +306,23 @@ class MercureService {
     // -------------------------------------------------------------------------
 
     private async restore(): Promise<void> {
-        const data = await browser.storage.session.get([SESSION_KEY_JOBS, SESSION_KEY_HUB]);
-
-        const savedHubUrl = data[SESSION_KEY_HUB] as string | undefined;
-        if (savedHubUrl) {
-            this.hubUrl = savedHubUrl;
-            console.debug('[MercureService] Restored hub URL:', this.hubUrl);
-        }
-
+        const data = await browser.storage.session.get(SESSION_KEY_JOBS);
         const savedJobs = data[SESSION_KEY_JOBS] as TrackedJob[] | undefined;
-        if (savedJobs?.length) {
-            for (const job of savedJobs) {
-                this.trackedJobs.set(job.token, job);
-                if (this.hubUrl) {
-                    this.subscribeToJob(job.token);
-                }
-            }
-            console.debug('[MercureService] Restored', savedJobs.length, 'tracked job(s)');
+        if (!savedJobs?.length) {
+            return;
         }
+        for (const job of savedJobs) {
+            this.trackedJobs.set(job.token, job);
+        }
+        console.debug('[MercureService] Restored', savedJobs.length, 'tracked job(s)');
+
+        // Opens the user stream, or subscribes per job if the server has no token endpoint
+        await this.ensureUserStream();
     }
 
     private async persist(): Promise<void> {
-        await browser.storage.session.set({
-            [SESSION_KEY_JOBS]: Array.from(this.trackedJobs.values()),
-            [SESSION_KEY_HUB]:  this.hubUrl,
-        });
-    }
-
-    // -------------------------------------------------------------------------
-    // EventSource subscription
-    // -------------------------------------------------------------------------
-
-    /**
-     * Open (or reopen) an EventSource subscription to the Mercure hub for one job.
-     *
-     * Topic convention: `/download_jobs/{token}`
-     *
-     * Authentication: `withCredentials: true` forwards session cookies. If the hub
-     * requires a separate JWT, append it as `?authorization={jwt}` — this can be
-     * added once the server exposes a short-lived Mercure JWT endpoint.
-     */
-    private subscribeToJob(token: string): void {
-        if (!this.hubUrl) {
-            console.warn('[MercureService] Cannot subscribe — hub URL not yet known');
-            return;
-        }
-
-        // Close any stale connection before (re-)subscribing.
-        this.eventSources.get(token)?.close();
-
-        const topic = encodeURIComponent(`/download_jobs/${token}`);
-        const url = `${this.hubUrl}?topic=${topic}`;
-        console.debug('[MercureService] Subscribing to:', url);
-
-        const es = new EventSource(url, { withCredentials: true });
-
-        es.onmessage = (event: MessageEvent) => {
-            try {
-                const data = JSON.parse(event.data as string);
-                this.handleJobUpdate(token, data);
-            } catch (err) {
-                console.error('[MercureService] Failed to parse event data:', err, event.data);
-
-                es.close();
-                this.eventSources.delete(token);
-            }
-        };
-
-        // es.onerror = (err) => {
-        //     console.error('[MercureService] EventSource error for job', token, err);
-        //     // Close and remove — the next SW wake-up will re-subscribe via restore().
-        //     es.close();
-        //     this.eventSources.delete(token);
-        // };
-
-        this.eventSources.set(token, es);
-    }
-
-    /**
-     * Process an incoming Mercure event for a tracked job.
-     *
-     * Sends `downloadJobFinished` to the originating tab when the job enters a
-     * terminal state; ignores non-terminal state changes.
-     *
-     * Terminal states (FetchDock server):
-     *   3 = completed
-     *   4 = failed
-     *   5 = cancelled
-     */
-    private handleJobUpdate(token: string, data: any): void {
-        const tracked = this.trackedJobs.get(token);
-        if (!tracked) return;
-
-        if (!TERMINAL_STATES.includes(data.state)) {
-            console.debug('[MercureService] Non-terminal update for', token, '— state:', data.state);
-            return;
-        }
-
-        const payload: DownloadJobFinished = {
-            jobToken: token,
-            state:    data.state,
-            uri:      tracked.uri,
-        };
-
-        const opts: SendMessageOptions = { tabId: tracked.tabId };
-        sendMessage('downloadJobFinished', payload, opts);
-
-        this.untrackJob(token);
-        console.debug('[MercureService] Job reached terminal state:', token, '— state:', data.state);
+        await browser.storage.session.set({ [SESSION_KEY_JOBS]: Array.from(this.trackedJobs.values()) });
     }
 }
 
 export const mercureService = new MercureService();
-

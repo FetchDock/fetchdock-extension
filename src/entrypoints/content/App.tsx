@@ -81,17 +81,20 @@ const ToastManager: React.FC = () => {
             const opts = await optionsStorage.getAll();
             if (!opts.notifyOnJobFinished) return;
 
-            const { state, uri } = message.data;
+            const { state, uri, error } = message.data;
+            // Servers >= 0.7 send "completed" / "failed"; older servers use numeric states
             const stateLabel: Record<number | string, string> = {
-                3: "completed",
-                4: "failed",
-                5: "cancelled",
+                completed: "completed",
+                failed: "failed",
+                2: "completed",
+                3: "failed",
+                4: "cancelled",
             };
 
             addToast({
                 type: "finished",
-                title: `Download ${stateLabel[state as number] ?? "finished"}`,
-                description: uri,
+                title: `Download ${stateLabel[state] ?? "finished"}`,
+                description: error ? `${uri ?? ""}\n${error}`.trim() : uri,
             });
         });
 
