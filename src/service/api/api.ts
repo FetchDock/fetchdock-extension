@@ -14,6 +14,7 @@
 import * as url from "url";
 import * as isomorphicFetch from "isomorphic-fetch";
 import { Configuration } from "./configuration";
+import { parseWellKnown } from '@/lib/wellKnown';
 
 const BASE_PATH = "/".replace(/\/+$/, "");
 
@@ -146,16 +147,11 @@ export class DownloadJobApi extends BaseAPI {
         return fetch(this.basePath + '/.well-known/browser-extension', options)
             .then(async response => {
                 if (response.ok) {
-                    const responseJson = await response.json();
-                    if (!responseJson.version || !responseJson.auth_mode) {
+                    const info = parseWellKnown(await response.json());
+                    if (!info) {
                         throw new Error('Invalid response format');
                     }
-                    return {
-                        success: true,
-                        version: responseJson.version,
-                        authMode: responseJson.auth_mode,
-                        oauth2: responseJson.oauth2 ?? null,
-                    };
+                    return { success: true, ...info };
                 }
                 throw new Error('Server is not running');
             })

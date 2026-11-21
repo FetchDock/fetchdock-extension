@@ -4,6 +4,7 @@ import {apiService} from "@/service/apiService.ts";
 import {i18n} from "#imports";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
+import { wellKnownTokenEndpoint } from "@/lib/wellKnown";
 import {SendMessageOptions} from "@webext-core/messaging";
 import {RejectedDownloadJob} from "@/lib/types.ts";
 import {Browser} from "@wxt-dev/browser";
@@ -257,7 +258,7 @@ export default defineBackground(() => {
       const res = await fetchDiscovery(`${base}/.well-known/browser-extension`);
       if (!res.ok) return false;
       const data = await res.json();
-      const tokenEndpoint: string | undefined = data?.oauth2?.token_endpoint;
+      const tokenEndpoint = wellKnownTokenEndpoint(data);
       if (!tokenEndpoint) {
         console.warn('[background] refreshOAuth2Tokens: no token_endpoint in well-known');
         return false;
