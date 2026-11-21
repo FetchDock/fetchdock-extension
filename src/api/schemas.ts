@@ -6,6 +6,8 @@ import type { components } from '@/api/types';
 
 type Schemas = components['schemas'];
 
+export type Site = Schemas['Site-site.read'];
+export type SiteDetail = Schemas['Site-site.read_site.item'];
 export type SiteResolution = Schemas['SiteResolution'];
 export type RequestContext = NonNullable<SiteResolution['requestContext']>;
 export type EffectiveSettings = NonNullable<SiteResolution['effectiveSettings']>;
@@ -34,6 +36,12 @@ export type ClientPreferences = Schemas['ClientPreferences-client_preferences.re
 export type Downloader = Schemas['Downloader'];
 
 export type DownloadJobDTO = Schemas['DownloadJob.DownloadJobDTO'];
+
+/** A page of a collection, read from the JSON-LD representation (which carries the total). */
+export interface CollectionPage<T> {
+    member: T[];
+    totalItems: number;
+}
 
 /** Client type this extension registers as (Client.type / client-preferences path) */
 export const CLIENT_TYPE = 'browser-extension';

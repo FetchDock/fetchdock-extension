@@ -80,6 +80,10 @@ export function registerSettingsHandlers(): void {
         return settings;
     }));
 
+    onMessage('listSites', ({ data }) => call(() => apiService.listSites(data)));
+    onMessage('getSite', ({ data }) => call(() => apiService.getSite(data)));
+    onMessage('listUserSiteSettings', () => call(() => apiService.listUserSiteSettings()));
+
     onMessage('getUserSiteSettings', ({ data }) => call(() => apiService.getUserSiteSettings(data)));
 
     onMessage('putUserSiteSettings', ({ data }) => call(async () => {

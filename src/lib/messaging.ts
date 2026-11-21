@@ -4,7 +4,10 @@ import { defineExtensionMessaging } from '@webext-core/messaging';
 import type {
     ClientSettings,
     ClientSettingsWrite,
+    CollectionPage,
     DownloaderOptionsSchema,
+    Site,
+    SiteDetail,
     SiteResolution,
     UserDownloaderSettings,
     UserDownloaderSettingsWrite,
@@ -68,6 +71,12 @@ interface ProtocolMap {
 
     listUserDownloaderSettings(): UserDownloaderSettings[];
     putUserDownloaderSettings(data: { downloader: string; settings: UserDownloaderSettingsWrite }): UserDownloaderSettings;
+
+    /** GET /sites (paginated, JSON-LD totals) */
+    listSites(params: { page?: number; itemsPerPage?: number; search?: string }): CollectionPage<Site>;
+    getSite(slug: string): SiteDetail;
+    /** The user's site overrides (sites without overrides are omitted) */
+    listUserSiteSettings(): UserSiteSettings[];
 
     getUserSiteSettings(slug: string): UserSiteSettings;
     putUserSiteSettings(data: { slug: string; settings: UserSiteSettingsWrite }): UserSiteSettings;
