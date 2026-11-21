@@ -111,6 +111,15 @@ class MercureService {
         }
     }
 
+    /** Stop tracking a job by its uuid (e.g. after it was deleted). */
+    public untrackJobByUuid(uuid: string): void {
+        for (const tracked of [...this.trackedJobs.values()]) {
+            if (tracked.uuid === uuid) {
+                this.untrackJob(tracked.token);
+            }
+        }
+    }
+
     // -------------------------------------------------------------------------
     // Subscribing
     // -------------------------------------------------------------------------

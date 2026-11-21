@@ -25,6 +25,11 @@ interface ProtocolMap {
 
     /** Submits a new download job via POST /download_jobs */
     submitDownloadJob(dto: DownloadJobDTO): any;
+    /**
+     * DELETE /download_jobs/{uuid} and stops its live updates.
+     * `deleted: false` = the server didn't know the job (404: already deleted elsewhere).
+     */
+    deleteDownloadJob(uuid: string): { deleted: boolean };
     /** Fired when the server accepts a submitted download job */
     acceptedDownloadJob(job: AcceptedDownloadJob): void;
     /** Fired when the server rejects a submitted download job (4xx response) */

@@ -233,6 +233,19 @@ export default defineBackground(() => {
     return await apiService.submitDownloadJob(message.data);
   });
 
+  onMessage("deleteDownloadJob", async ({ data: uuid }) => {
+    try {
+      const deleted = await apiService.deleteDownloadJob(uuid);
+      // Gone either way: stop waiting for its updates
+      mercureService.untrackJobByUuid(uuid);
+      return { deleted };
+    } catch (err: any) {
+      const detail = err?.body?.detail ?? err?.body?.description ?? err?.body?.title ?? err?.message;
+      const status = err?.status === 403 ? 'You are not allowed to delete this download job' : 'Deleting the download job failed';
+      throw new Error(detail ? `${status}: ${detail}` : `${status} (${err?.status ?? 'network error'})`);
+    }
+  });
+
   onMessage("refreshOAuth2Tokens", async () => {
     const cfg = await getMergedAppConfig();
     const base = (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
