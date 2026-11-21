@@ -1,0 +1,66 @@
+name: Bug report
+description: Something is broken or behaves unexpectedly.
+labels: [bug]
+body:
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: The smallest sequence that triggers it.
+      placeholder: |
+        1. Right-click a link on https://example.com/… → "Send link to FetchDock"
+        2. …
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected vs. actual
+      placeholder: |
+        Expected: …
+        Actual: …
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Evidence
+      description: Error text, log lines, HTTP status + response body, job UUID, screenshots.
+      render: text
+  - type: dropdown
+    id: component
+    attributes:
+      label: Area
+      options:
+        - Context menu / job submission
+        - Popup
+        - Options / settings
+        - Dashboard
+        - Live updates (Mercure)
+        - Auth / login
+        - Build / release
+        - Other
+  - type: input
+    id: version
+    attributes:
+      label: Extension version / browser
+      placeholder: 0.7.1, Firefox 145
+    validations:
+      required: true
+  - type: input
+    id: other-version
+    attributes:
+      label: Server version
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: Reproducibility
+      options:
+        - Always
+        - Sometimes
+        - Once
+  - type: textarea
+    id: notes
+    attributes:
+      label: Suspected cause / pointers (optional)
+      description: Files, classes, related issues or PRs, a recent change that may have caused it.
