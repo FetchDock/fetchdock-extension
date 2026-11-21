@@ -12,6 +12,7 @@ import {getMergedAppConfig, subscribeToAppConfigChanges} from "@/lib/config";
 import type {WxtAppConfig, DownloadJobDTO, SubscriptionToken} from "@/lib/types";
 import {tokenManager} from "@/lib/tokenManager";
 import { fetchDiscovery, resolveEndpoint } from "@/lib/fetchUtils";
+import { wellKnownTokenEndpoint } from "@/lib/wellKnown";
 import { clientRegistrationItem } from "@/lib/storageItems";
 import type {
     Client,
@@ -106,7 +107,7 @@ class ApiService {
     }
 
     /**
-     * Fetches the well-known document and caches oauth2.token_endpoint if present.
+     * Fetches the well-known document and caches the OAuth2 token endpoint if present.
      */
     private async discoverTokenEndpoint(cfg: WxtAppConfig): Promise<void> {
         const base = (cfg.downloadRouterServerHost ?? '').replace(/\/+$/, '');
@@ -115,7 +116,7 @@ class ApiService {
             const res = await fetchDiscovery(`${base}/.well-known/browser-extension`);
             if (!res.ok) return;
             const data = await res.json();
-            const endpoint: string | undefined = data?.oauth2?.token_endpoint;
+            const endpoint = wellKnownTokenEndpoint(data);
             if (endpoint) {
                 this.tokenEndpoint = resolveEndpoint(endpoint, base);
                 console.debug('[ApiService] Discovered token endpoint:', this.tokenEndpoint);

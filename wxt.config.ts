@@ -32,7 +32,7 @@ export default defineConfig({
     ],
     name: "FetchDock",
     description: "Companion extension for FetchDock Server",
-    version: '0.7.0',
+    version: '0.7.1',
     browser_specific_settings: {
       gecko: {
         id: 'fetchdock@pbxg33k.eu', // Required as temp addon ID are not permitted to use storage API
