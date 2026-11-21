@@ -19,7 +19,10 @@ import type {
     ClientPreferences,
     ClientSettings,
     ClientSettingsWrite,
+    CollectionPage,
     DownloaderOptionsSchema,
+    Site,
+    SiteDetail,
     SiteResolution,
     UserDownloaderSettings,
     UserDownloaderSettingsWrite,
@@ -34,7 +37,10 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 interface JsonRequestOptions {
     query?: Record<string, string>;
     body?: unknown;
+    /** Response media type; defaults to application/json */
+    accept?: string;
 }
+
 
 /**
  * Small wrapper around the generated OpenAPI client that:
@@ -191,7 +197,7 @@ class ApiService {
         const url = new URL(base + path);
         Object.entries(options.query ?? {}).forEach(([key, value]) => url.searchParams.set(key, value));
 
-        const headers: Record<string, string> = { Accept: 'application/json' };
+        const headers: Record<string, string> = { Accept: options.accept ?? 'application/json' };
         if (options.body !== undefined) {
             headers['Content-Type'] = method === 'PATCH' ? 'application/merge-patch+json' : 'application/json';
         }
@@ -405,6 +411,26 @@ class ApiService {
     // ---------------------------------------------------------------------------
     // Sites
     // ---------------------------------------------------------------------------
+
+    /** GET /sites (paginated; `search` matches name and domains) */
+    public async listSites(params: { page?: number; itemsPerPage?: number; search?: string }): Promise<CollectionPage<Site>> {
+        const query: Record<string, string> = {};
+        if (params.page) query.page = String(params.page);
+        if (params.itemsPerPage) query.itemsPerPage = String(params.itemsPerPage);
+        if (params.search) query.search = params.search;
+        const res = await this.requestJson<{ member?: Site[]; totalItems?: number }>('GET', '/sites', { query, accept: 'application/ld+json' });
+        return { member: res.member ?? [], totalItems: res.totalItems ?? 0 };
+    }
+
+    /** GET /sites/{slug} (incl. extractors) */
+    public async getSite(slug: string): Promise<SiteDetail> {
+        return this.requestJson<SiteDetail>('GET', `/sites/${encodeURIComponent(slug)}`);
+    }
+
+    /** GET /users/settings/sites (only sites with overrides) */
+    public async listUserSiteSettings(): Promise<UserSiteSettings[]> {
+        return this.requestJson<UserSiteSettings[]>('GET', '/users/settings/sites', { query: { pagination: 'false' } });
+    }
 
     /** GET /sites/resolve?url= */
     public async resolveSite(url: string): Promise<SiteResolution> {

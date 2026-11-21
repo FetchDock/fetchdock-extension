@@ -110,6 +110,11 @@ settings:
     arrayHelp: "One value per line."
     filter: "Filter options..."
     general: "General"
+  local:
+    name: "Name"
+    domains: "Domains"
+    domainsRequired: "Enter at least one valid domain, e.g. example.com."
+    delete: "Delete local site"
   site:
     unsupported: "This page is not supported by any downloader on the server."
     unavailable: "Could not reach the FetchDock server for this page."

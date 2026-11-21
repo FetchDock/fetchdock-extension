@@ -1,7 +1,8 @@
 import React from 'react';
-import { HardDrive, Activity, Download, Settings, KeyRound, LayoutDashboard } from 'lucide-react';
+import { HardDrive, Activity, Download, Settings, KeyRound, LayoutDashboard, Globe } from 'lucide-react';
 import { DownloadersPanel } from '@/components/dashboard/resources/DownloadersPanel';
 import { DownloadJobsPanel } from '@/components/dashboard/resources/DownloadJobsPanel';
+import { SitesPanel } from '@/components/dashboard/resources/SitesPanel';
 
 export interface NavItem {
     id: string;
@@ -26,6 +27,13 @@ export const NAV_ITEMS: NavItem[] = [
         description: 'Browse all submitted download jobs',
         icon: <Download className="w-4 h-4" />,
         panel: <DownloadJobsPanel />,
+    },
+    {
+        id: 'sites',
+        label: 'Sites',
+        description: 'Supported sites and your site-specific settings',
+        icon: <Globe className="w-4 h-4" />,
+        panel: <SitesPanel />,
     },
 ];
 

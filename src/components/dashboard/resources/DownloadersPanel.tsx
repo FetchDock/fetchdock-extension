@@ -17,7 +17,7 @@ interface DownloaderLD {
 
 const VISIBLE_DOMAINS = 5;
 
-function DomainsCell({ domains }: { domains: string[] }) {
+export function DomainsCell({ domains }: { domains: string[] }) {
     const [expanded, setExpanded] = useState(false);
 
     if (domains.length === 0)
