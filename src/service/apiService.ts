@@ -338,6 +338,22 @@ class ApiService {
         }
     }
 
+    /**
+     * DELETE /download_jobs/{uuid} (owner only; soft delete on the server).
+     * Resolves to false when the job doesn't exist (404: already deleted or not the user's).
+     */
+    public async deleteDownloadJob(uuid: string): Promise<boolean> {
+        try {
+            await this.requestJson<null>('DELETE', `/download_jobs/${encodeURIComponent(uuid)}`);
+            return true;
+        } catch (err: any) {
+            if (err?.status === 404) {
+                return false;
+            }
+            throw err;
+        }
+    }
+
     /** GET /download_jobs/{uuid} */
     public async getDownloadJob(uuid: string, options?: any) {
         await this.ready();

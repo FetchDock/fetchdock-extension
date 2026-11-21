@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle, DownloadIcon } from 'lucide-react';
+import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle, DownloadIcon, Trash2 } from 'lucide-react';
 import optionsStorage from '@/utils/optionsStorage';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -329,9 +329,11 @@ function FilesTable({ uuid }: { uuid: string }) {
 interface DownloadJobDetailProps {
     uuid: string;
     onClose: () => void;
+    /** Asks to delete the job (the caller confirms); hidden when omitted */
+    onDelete?: (job: { uuid: string; uri?: string }) => void;
 }
 
-export function DownloadJobDetail({ uuid, onClose }: DownloadJobDetailProps) {
+export function DownloadJobDetail({ uuid, onClose, onDelete }: DownloadJobDetailProps) {
     const { data, status, error, reload } = useResource<DownloadJobFull>(
         () => apiService.getDownloadJob(uuid)
     );
@@ -357,6 +359,12 @@ export function DownloadJobDetail({ uuid, onClose }: DownloadJobDetailProps) {
                         onClick={reload} disabled={status === 'loading'} title="Refresh">
                         <RefreshCw className={cn('w-3.5 h-3.5', status === 'loading' && 'animate-spin')} />
                     </Button>
+                    {onDelete && (
+                        <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
+                            onClick={() => onDelete({ uuid, uri: job?.uri })} title="Delete job">
+                            <Trash2 className="w-3.5 h-3.5" />
+                        </Button>
+                    )}
                     <Button variant="ghost" size="icon" className="h-7 w-7"
                         onClick={onClose} title="Close">
                         <X className="w-3.5 h-3.5" />
