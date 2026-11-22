@@ -22,6 +22,10 @@ import type {
     ClientSettingsWrite,
     CollectionPage,
     DownloaderOptionsSchema,
+    DownloaderVersion,
+    DownloadJobEvent,
+    FailureReport,
+    FailureReportWrite,
     Site,
     SiteDetail,
     SiteResolution,
@@ -550,6 +554,50 @@ class ApiService {
     /** PUT /users/client-preferences/{clientType} */
     public async putClientPreferences(clientType: string, data: Record<string, unknown>): Promise<ClientPreferences> {
         return this.requestJson<ClientPreferences>('PUT', `/users/client-preferences/${encodeURIComponent(clientType)}`, { body: { data } });
+    }
+
+    // ---------------------------------------------------------------------------
+    // Failure reports (ADR 0012)
+    // ---------------------------------------------------------------------------
+
+    /** POST /users/failure_reports; the body is sent exactly as the user confirmed it */
+    public async submitFailureReport(body: FailureReportWrite): Promise<FailureReport> {
+        return this.requestJson<FailureReport>('POST', '/users/failure_reports', { body });
+    }
+
+    /** GET /users/failure_reports (the user's own, newest first; JSON-LD for the total) */
+    public async listFailureReports(params: { page?: number; itemsPerPage?: number }): Promise<CollectionPage<FailureReport>> {
+        const query: Record<string, string> = {};
+        if (params.page) query.page = String(params.page);
+        if (params.itemsPerPage) query.itemsPerPage = String(params.itemsPerPage);
+        const res = await this.requestJson<{ member?: FailureReport[]; totalItems?: number }>(
+            'GET', '/users/failure_reports', { query, accept: 'application/ld+json' });
+        return { member: res.member ?? [], totalItems: res.totalItems ?? 0 };
+    }
+
+    /** DELETE /users/failure_reports/{id} (withdraw; hard delete). Resolves when already gone (404). */
+    public async withdrawFailureReport(id: string): Promise<void> {
+        try {
+            await this.requestJson<null>('DELETE', `/users/failure_reports/${encodeURIComponent(id)}`);
+        } catch (err: any) {
+            if (err?.status !== 404) {
+                throw err;
+            }
+        }
+    }
+
+    /** GET /download_jobs/{uuid}/events, up to `itemsPerPage` events (JSON-LD collection) */
+    public async listJobEvents(uuid: string, itemsPerPage = 100): Promise<DownloadJobEvent[]> {
+        const res = await this.requestJson<{ member?: DownloadJobEvent[] }>(
+            'GET', `/download_jobs/${encodeURIComponent(uuid)}/events`,
+            { query: { itemsPerPage: String(itemsPerPage) }, accept: 'application/ld+json' });
+        return res.member ?? [];
+    }
+
+    /** GET /versions (installed downloader versions) */
+    public async listDownloaderVersions(): Promise<DownloaderVersion[]> {
+        const res = await this.requestJson<{ member?: DownloaderVersion[] }>('GET', '/versions', { accept: 'application/ld+json' });
+        return res.member ?? [];
     }
 
     // ---------------------------------------------------------------------------

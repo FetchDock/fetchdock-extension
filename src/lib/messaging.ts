@@ -6,6 +6,8 @@ import type {
     ClientSettingsWrite,
     CollectionPage,
     DownloaderOptionsSchema,
+    FailureReport,
+    FailureReportWrite,
     Site,
     SiteDetail,
     SiteResolution,
@@ -16,6 +18,8 @@ import type {
     UserSiteSettings,
     UserSiteSettingsWrite,
 } from '@/api/schemas';
+import type { ServerFeatures } from '@/lib/wellKnown';
+import type { FailureReportContext } from '@/lib/failureReport';
 
 interface ProtocolMap {
     getSettings(): WxtAppConfig;
@@ -89,6 +93,20 @@ interface ProtocolMap {
     resetUserSiteSettings(slug: string): void;
 
     getDownloaderOptionsSchema(downloader: string): DownloaderOptionsSchema;
+
+    // ── Failure reports (ADR 0012; all requests go through the background) ──
+
+    /** Optional features from the server's well-known document (cached briefly) */
+    getServerFeatures(data?: { force?: boolean }): ServerFeatures;
+    /** Opens the report form window for a FAILED job, or for a page URL (`tabId` lets it read the page's referrer) */
+    openReportForm(data: { jobUuid?: string; url?: string; tabId?: number }): void;
+    /** Gathers what can be reported for a job or URL; the form decides with the user what is sent */
+    getFailureReportContext(data: { jobUuid?: string; url?: string; referrer?: string }): FailureReportContext;
+    /** POST /users/failure_reports with the body exactly as shown to the user */
+    submitFailureReport(body: FailureReportWrite): FailureReport;
+    listFailureReports(params: { page?: number; itemsPerPage?: number }): CollectionPage<FailureReport>;
+    /** DELETE /users/failure_reports/{id} */
+    withdrawFailureReport(id: string): void;
 
     // test
     testMessage(msg: string): string;

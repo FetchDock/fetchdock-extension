@@ -38,3 +38,21 @@ export function wellKnownTokenEndpoint(data: any): string | undefined {
     const endpoint = (data?.authentication?.oauth2 ?? data?.oauth2)?.token_endpoint;
     return typeof endpoint === 'string' && endpoint ? endpoint : undefined;
 }
+
+/** Optional server features announced in the well-known document; a missing key means "not supported" (ADR 0007). */
+export interface ServerFeatures {
+    /** `features.failureReports.enabled` (servers >= 0.8) */
+    failureReports: boolean;
+    /** The instance operator's privacy policy (`privacyPolicyUrl`), null when the server publishes none */
+    privacyPolicyUrl: string | null;
+}
+
+export const NO_SERVER_FEATURES: ServerFeatures = { failureReports: false, privacyPolicyUrl: null };
+
+export function parseServerFeatures(data: any): ServerFeatures {
+    const policy: unknown = data?.privacyPolicyUrl;
+    return {
+        failureReports: data?.features?.failureReports?.enabled === true,
+        privacyPolicyUrl: typeof policy === 'string' && /^https?:\/\//i.test(policy) ? policy : null,
+    };
+}

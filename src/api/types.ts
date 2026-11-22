@@ -4,6 +4,458 @@
  */
 
 export interface paths {
+    "/admin/canonicalize": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminCanonicalization resource.
+         * @description Retrieves a AdminCanonicalization resource.
+         */
+        get: operations["api_admincanonicalize_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_directories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminDownloadDirectory resources.
+         * @description Retrieves the collection of AdminDownloadDirectory resources.
+         */
+        get: operations["api_admindownload_directories_get_collection"];
+        put?: never;
+        /**
+         * Creates a AdminDownloadDirectory resource.
+         * @description Creates a AdminDownloadDirectory resource.
+         */
+        post: operations["api_admindownload_directories_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_directories/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminDownloadDirectory resource.
+         * @description Retrieves a AdminDownloadDirectory resource.
+         */
+        get: operations["api_admindownload_directories_id_get"];
+        put?: never;
+        post?: never;
+        /**
+         * Removes the AdminDownloadDirectory resource.
+         * @description Removes the AdminDownloadDirectory resource.
+         */
+        delete: operations["api_admindownload_directories_id_delete"];
+        options?: never;
+        head?: never;
+        /**
+         * Updates the AdminDownloadDirectory resource.
+         * @description Updates the AdminDownloadDirectory resource.
+         */
+        patch: operations["api_admindownload_directories_id_patch"];
+        trace?: never;
+    };
+    "/admin/download_jobs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminDownloadJob resources.
+         * @description Retrieves the collection of AdminDownloadJob resources.
+         */
+        get: operations["api_admindownload_jobs_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_jobs/{uuid}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminDownloadJob resource.
+         * @description Retrieves a AdminDownloadJob resource.
+         */
+        get: operations["api_admindownload_jobs_uuid_get"];
+        put?: never;
+        post?: never;
+        /**
+         * Removes the AdminDownloadJob resource.
+         * @description Removes the AdminDownloadJob resource.
+         */
+        delete: operations["api_admindownload_jobs_uuid_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_jobs/{uuid}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a AdminDownloadJob resource.
+         * @description Creates a AdminDownloadJob resource.
+         */
+        post: operations["api_admindownload_jobs_uuidrestore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_jobs/{uuid}/events": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminDownloadJobEvent resources.
+         * @description Retrieves the collection of AdminDownloadJobEvent resources.
+         */
+        get: operations["api_admindownload_jobs_uuidevents_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_jobs/{uuid}/files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminDownloadedFile resources.
+         * @description Retrieves the collection of AdminDownloadedFile resources.
+         */
+        get: operations["api_admindownload_jobs_uuidfiles_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/downloaded_files": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminDownloadedFile resources.
+         * @description Retrieves the collection of AdminDownloadedFile resources.
+         */
+        get: operations["api_admindownloaded_files_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/downloaded_files/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminDownloadedFile resource.
+         * @description Retrieves a AdminDownloadedFile resource.
+         */
+        get: operations["api_admindownloaded_files_id_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/downloaded_files/{id}/restore": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a AdminDownloadedFile resource.
+         * @description Creates a AdminDownloadedFile resource.
+         */
+        post: operations["api_admindownloaded_files_idrestore_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/failure_reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminFailureReport resources.
+         * @description Retrieves the collection of AdminFailureReport resources.
+         */
+        get: operations["api_adminfailure_reports_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/failure_reports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminFailureReport resource.
+         * @description Retrieves a AdminFailureReport resource.
+         */
+        get: operations["api_adminfailure_reports_id_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /**
+         * Updates the AdminFailureReport resource.
+         * @description Updates the AdminFailureReport resource.
+         */
+        patch: operations["api_adminfailure_reports_id_patch"];
+        trace?: never;
+    };
+    "/admin/failure_reports/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminFailureReportSummary resources.
+         * @description Retrieves the collection of AdminFailureReportSummary resources.
+         */
+        get: operations["api_adminfailure_reportssummary_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/download_directories/{id}/file-moves": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a AdminFileMoveBatch resource.
+         * @description Creates a AdminFileMoveBatch resource.
+         */
+        post: operations["move_directory_files"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/file_moves": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminFileMoveBatch resources.
+         * @description Retrieves the collection of AdminFileMoveBatch resources.
+         */
+        get: operations["api_adminfile_moves_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/file_moves/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminFileMoveBatch resource.
+         * @description Retrieves a AdminFileMoveBatch resource.
+         */
+        get: operations["api_adminfile_moves_id_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/file_moves/{id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a AdminFileMoveBatch resource.
+         * @description Creates a AdminFileMoveBatch resource.
+         */
+        post: operations["cancel_file_move"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/sites/{slug}/file-moves": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a AdminFileMoveBatch resource.
+         * @description Creates a AdminFileMoveBatch resource.
+         */
+        post: operations["move_site_files"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/sites/{slug}/canonicalization": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminSiteCanonicalization resource.
+         * @description Retrieves a AdminSiteCanonicalization resource.
+         */
+        get: operations["api_adminsites_slugcanonicalization_get"];
+        /**
+         * Replaces the AdminSiteCanonicalization resource.
+         * @description Replaces the AdminSiteCanonicalization resource.
+         */
+        put: operations["api_adminsites_slugcanonicalization_put"];
+        post?: never;
+        /**
+         * Removes the AdminSiteCanonicalization resource.
+         * @description Removes the AdminSiteCanonicalization resource.
+         */
+        delete: operations["api_adminsites_slugcanonicalization_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/sites/{slug}/storage": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminSiteStorage resource.
+         * @description Retrieves a AdminSiteStorage resource.
+         */
+        get: operations["api_adminsites_slugstorage_get"];
+        /**
+         * Replaces the AdminSiteStorage resource.
+         * @description Replaces the AdminSiteStorage resource.
+         */
+        put: operations["api_adminsites_slugstorage_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users/clients": {
         parameters: {
             query?: never;
@@ -114,6 +566,26 @@ export interface paths {
          * @description Updates the ClientSettings resource.
          */
         patch: operations["api_usersclients_clientIdsettings_patch"];
+        trace?: never;
+    };
+    "/users/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a CurrentUser resource.
+         * @description Retrieves a CurrentUser resource.
+         */
+        get: operations["api_usersme_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/download_jobs": {
@@ -244,46 +716,6 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
-    "/versions": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieves the collection of Downloader versions resources.
-         * @description Retrieves the collection of Downloader versions resources.
-         */
-        get: operations["api_versions_get_collection"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
-    "/versions/{id}": {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        /**
-         * Retrieves a Downloader versions resource.
-         * @description Retrieves a Downloader versions resource.
-         */
-        get: operations["api_versions_id_get"];
-        put?: never;
-        post?: never;
-        delete?: never;
-        options?: never;
-        head?: never;
-        patch?: never;
-        trace?: never;
-    };
     "/downloader_option_policies": {
         parameters: {
             query?: never;
@@ -351,6 +783,94 @@ export interface paths {
         put?: never;
         post?: never;
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/versions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of DownloaderVersion resources.
+         * @description Retrieves the collection of DownloaderVersion resources.
+         */
+        get: operations["api_versions_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/versions/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a DownloaderVersion resource.
+         * @description Retrieves a DownloaderVersion resource.
+         */
+        get: operations["api_versions_id_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/failure_reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of FailureReport resources.
+         * @description Retrieves the collection of FailureReport resources.
+         */
+        get: operations["api_usersfailure_reports_get_collection"];
+        put?: never;
+        /**
+         * Creates a FailureReport resource.
+         * @description Creates a FailureReport resource.
+         */
+        post: operations["api_usersfailure_reports_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/users/failure_reports/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a FailureReport resource.
+         * @description Retrieves a FailureReport resource.
+         */
+        get: operations["api_usersfailure_reports_id_get"];
+        put?: never;
+        post?: never;
+        /**
+         * Removes the FailureReport resource.
+         * @description Removes the FailureReport resource.
+         */
+        delete: operations["api_usersfailure_reports_id_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -628,6 +1148,1359 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /** @description The canonical key a submitted URL would get, with the layer and profile that produced it. */
+        AdminCanonicalization: {
+            url?: string;
+            /** @description e.g. "ytdlp:Youtube:dQw4w9WgXcQ", "gdl:imgur:gallery:abcde", "url:https://example.com/a" */
+            key?: string;
+            /**
+             * @description Layer that produced the key: "ytdlp", "gdl" or "url"
+             * @enum {string}
+             */
+            layer?: "ytdlp" | "gdl" | "url";
+            /** @description Name of the canonicalization profile used */
+            profile?: string;
+            /** @description Slug of the site the URL resolves to, null if none */
+            site?: string | null;
+        };
+        /** @description The canonical key a submitted URL would get, with the layer and profile that produced it. */
+        "AdminCanonicalization.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            url?: string;
+            /** @description e.g. "ytdlp:Youtube:dQw4w9WgXcQ", "gdl:imgur:gallery:abcde", "url:https://example.com/a" */
+            key?: string;
+            /**
+             * @description Layer that produced the key: "ytdlp", "gdl" or "url"
+             * @enum {string}
+             */
+            layer?: "ytdlp" | "gdl" | "url";
+            /** @description Name of the canonicalization profile used */
+            profile?: string;
+            /** @description Slug of the site the URL resolves to, null if none */
+            site?: string | null;
+        };
+        /** @description The canonical key a submitted URL would get, with the layer and profile that produced it. */
+        "AdminCanonicalization.xml": {
+            url?: string;
+            /** @description e.g. "ytdlp:Youtube:dQw4w9WgXcQ", "gdl:imgur:gallery:abcde", "url:https://example.com/a" */
+            key?: string;
+            /**
+             * @description Layer that produced the key: "ytdlp", "gdl" or "url"
+             * @enum {string}
+             */
+            layer?: "ytdlp" | "gdl" | "url";
+            /** @description Name of the canonicalization profile used */
+            profile?: string;
+            /** @description Slug of the site the URL resolves to, null if none */
+            site?: string | null;
+        };
+        /** @description The canonical key a submitted URL would get, with the layer and profile that produced it. */
+        "AdminCanonicalization.yaml": {
+            url?: string;
+            /** @description e.g. "ytdlp:Youtube:dQw4w9WgXcQ", "gdl:imgur:gallery:abcde", "url:https://example.com/a" */
+            key?: string;
+            /**
+             * @description Layer that produced the key: "ytdlp", "gdl" or "url"
+             * @enum {string}
+             */
+            layer?: "ytdlp" | "gdl" | "url";
+            /** @description Name of the canonicalization profile used */
+            profile?: string;
+            /** @description Slug of the site the URL resolves to, null if none */
+            site?: string | null;
+        };
+        /** @description All download directories, the default one first. */
+        "AdminDownloadDirectory-download_directory.read": {
+            id?: number | null;
+            /** @default  */
+            name: string;
+            /**
+             * @description Absolute path, stored with symlinks resolved
+             * @default
+             */
+            path: string;
+            /**
+             * @description Downloads of sites without a directory go here. Set it to true to switch the default; it can't be unset.
+             * @default false
+             */
+            isDefault: boolean;
+            /**
+             * @description Verify copies into this directory (file moves across filesystems) with SHA-256 in addition to the size
+             * @default false
+             */
+            verifyChecksum: boolean;
+            /**
+             * @description Files stored in the directory, soft-deleted ones included
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Sites whose new downloads go to the directory (not counting sites that use the default)
+             * @default 0
+             */
+            siteCount: number;
+            /**
+             * @description Whether the path is mounted and writable in the api container
+             * @default false
+             */
+            available: boolean;
+        };
+        /** @description Adds a directory. 422 if its path is outside DOWNLOAD_ROOTS, missing, not writable or overlaps another directory. */
+        "AdminDownloadDirectory-download_directory.write": {
+            /** @default  */
+            name: string;
+            /**
+             * @description Absolute path, stored with symlinks resolved
+             * @default
+             */
+            path: string;
+            /**
+             * @description Downloads of sites without a directory go here. Set it to true to switch the default; it can't be unset.
+             * @default false
+             */
+            isDefault: boolean;
+            /**
+             * @description Verify copies into this directory (file moves across filesystems) with SHA-256 in addition to the size
+             * @default false
+             */
+            verifyChecksum: boolean;
+            /**
+             * @description With a new path: the whole tree was already moved there outside FetchDock, so only the record changes
+             * @default false
+             */
+            relocate: boolean;
+        };
+        /** @description The path can change while the directory holds no files, or with relocate: true once the whole tree was moved outside FetchDock (only the record changes). isDefault: true makes it the default directory. */
+        "AdminDownloadDirectory-download_directory.write.jsonMergePatch": {
+            /** @default  */
+            name: string;
+            /**
+             * @description Absolute path, stored with symlinks resolved
+             * @default
+             */
+            path: string;
+            /**
+             * @description Downloads of sites without a directory go here. Set it to true to switch the default; it can't be unset.
+             * @default false
+             */
+            isDefault: boolean;
+            /**
+             * @description Verify copies into this directory (file moves across filesystems) with SHA-256 in addition to the size
+             * @default false
+             */
+            verifyChecksum: boolean;
+            /**
+             * @description With a new path: the whole tree was already moved there outside FetchDock, so only the record changes
+             * @default false
+             */
+            relocate: boolean;
+        };
+        /** @description All download directories, the default one first. */
+        "AdminDownloadDirectory.jsonld-download_directory.read": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number | null;
+            /** @default  */
+            name: string;
+            /**
+             * @description Absolute path, stored with symlinks resolved
+             * @default
+             */
+            path: string;
+            /**
+             * @description Downloads of sites without a directory go here. Set it to true to switch the default; it can't be unset.
+             * @default false
+             */
+            isDefault: boolean;
+            /**
+             * @description Verify copies into this directory (file moves across filesystems) with SHA-256 in addition to the size
+             * @default false
+             */
+            verifyChecksum: boolean;
+            /**
+             * @description Files stored in the directory, soft-deleted ones included
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Sites whose new downloads go to the directory (not counting sites that use the default)
+             * @default 0
+             */
+            siteCount: number;
+            /**
+             * @description Whether the path is mounted and writable in the api container
+             * @default false
+             */
+            available: boolean;
+        };
+        /** @description All download directories, the default one first. */
+        "AdminDownloadDirectory.xml-download_directory.read": {
+            id?: number | null;
+            /** @default  */
+            name: string;
+            /**
+             * @description Absolute path, stored with symlinks resolved
+             * @default
+             */
+            path: string;
+            /**
+             * @description Downloads of sites without a directory go here. Set it to true to switch the default; it can't be unset.
+             * @default false
+             */
+            isDefault: boolean;
+            /**
+             * @description Verify copies into this directory (file moves across filesystems) with SHA-256 in addition to the size
+             * @default false
+             */
+            verifyChecksum: boolean;
+            /**
+             * @description Files stored in the directory, soft-deleted ones included
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Sites whose new downloads go to the directory (not counting sites that use the default)
+             * @default 0
+             */
+            siteCount: number;
+            /**
+             * @description Whether the path is mounted and writable in the api container
+             * @default false
+             */
+            available: boolean;
+        };
+        /** @description All download directories, the default one first. */
+        "AdminDownloadDirectory.yaml-download_directory.read": {
+            id?: number | null;
+            /** @default  */
+            name: string;
+            /**
+             * @description Absolute path, stored with symlinks resolved
+             * @default
+             */
+            path: string;
+            /**
+             * @description Downloads of sites without a directory go here. Set it to true to switch the default; it can't be unset.
+             * @default false
+             */
+            isDefault: boolean;
+            /**
+             * @description Verify copies into this directory (file moves across filesystems) with SHA-256 in addition to the size
+             * @default false
+             */
+            verifyChecksum: boolean;
+            /**
+             * @description Files stored in the directory, soft-deleted ones included
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Sites whose new downloads go to the directory (not counting sites that use the default)
+             * @default 0
+             */
+            siteCount: number;
+            /**
+             * @description Whether the path is mounted and writable in the api container
+             * @default false
+             */
+            available: boolean;
+        };
+        /** @description All users' download jobs, including soft-deleted ones, newest first. */
+        AdminDownloadJob: {
+            uuid?: string;
+            uri?: string;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            downloader?: string | null;
+            /** @description Null for jobs created before download jobs had owners */
+            owner?: components["schemas"]["AdminOwnerDTO"] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Set when the owner deleted the job
+             */
+            deletedAt?: string | null;
+            /**
+             * @description Number of files linked to the job, including soft-deleted and hidden ones (see /admin/download_jobs/{uuid}/files)
+             * @default 0
+             */
+            fileCount: number;
+        };
+        /** @description All users' download jobs, including soft-deleted ones, newest first. */
+        "AdminDownloadJob.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            uuid?: string;
+            uri?: string;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            downloader?: string | null;
+            /** @description Null for jobs created before download jobs had owners */
+            owner?: components["schemas"]["AdminOwnerDTO.jsonld"] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Set when the owner deleted the job
+             */
+            deletedAt?: string | null;
+            /**
+             * @description Number of files linked to the job, including soft-deleted and hidden ones (see /admin/download_jobs/{uuid}/files)
+             * @default 0
+             */
+            fileCount: number;
+        };
+        /** @description All users' download jobs, including soft-deleted ones, newest first. */
+        "AdminDownloadJob.xml": {
+            uuid?: string;
+            uri?: string;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            downloader?: string | null;
+            /** @description Null for jobs created before download jobs had owners */
+            owner?: components["schemas"]["AdminOwnerDTO.xml"] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Set when the owner deleted the job
+             */
+            deletedAt?: string | null;
+            /**
+             * @description Number of files linked to the job, including soft-deleted and hidden ones (see /admin/download_jobs/{uuid}/files)
+             * @default 0
+             */
+            fileCount: number;
+        };
+        /** @description All users' download jobs, including soft-deleted ones, newest first. */
+        "AdminDownloadJob.yaml": {
+            uuid?: string;
+            uri?: string;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            downloader?: string | null;
+            /** @description Null for jobs created before download jobs had owners */
+            owner?: components["schemas"]["AdminOwnerDTO.yaml"] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+            /**
+             * Format: date-time
+             * @description Set when the owner deleted the job
+             */
+            deletedAt?: string | null;
+            /**
+             * @description Number of files linked to the job, including soft-deleted and hidden ones (see /admin/download_jobs/{uuid}/files)
+             * @default 0
+             */
+            fileCount: number;
+        };
+        /** @description A job's events, oldest first. */
+        AdminDownloadJobEvent: {
+            id?: number;
+            event?: string | null;
+            source?: string | null;
+            workerIdentifier?: string | null;
+            updateMessage?: string | null;
+            exceptionMessage?: string | null;
+            context?: unknown[] | null;
+            metadata?: unknown[] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+        };
+        /** @description A job's events, oldest first. */
+        "AdminDownloadJobEvent.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number;
+            event?: string | null;
+            source?: string | null;
+            workerIdentifier?: string | null;
+            updateMessage?: string | null;
+            exceptionMessage?: string | null;
+            context?: unknown[] | null;
+            metadata?: unknown[] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+        };
+        /** @description A job's events, oldest first. */
+        "AdminDownloadJobEvent.xml": {
+            id?: number;
+            event?: string | null;
+            source?: string | null;
+            workerIdentifier?: string | null;
+            updateMessage?: string | null;
+            exceptionMessage?: string | null;
+            context?: unknown[] | null;
+            metadata?: unknown[] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+        };
+        /** @description A job's events, oldest first. */
+        "AdminDownloadJobEvent.yaml": {
+            id?: number;
+            event?: string | null;
+            source?: string | null;
+            workerIdentifier?: string | null;
+            updateMessage?: string | null;
+            exceptionMessage?: string | null;
+            context?: unknown[] | null;
+            metadata?: unknown[] | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+        };
+        /** @description All downloaded files, including soft-deleted and hidden ones, newest first. */
+        AdminDownloadedFile: {
+            id?: number;
+            filename?: string | null;
+            /** @description Absolute path on the server (the directory's path joined with relativePath) */
+            path?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The download directory the file is stored in
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /** @description Path inside the directory */
+            relativePath?: string | null;
+            /**
+             * @description Whether the file still exists at its path
+             * @default false
+             */
+            existsOnDisk: boolean;
+            /**
+             * @description Hidden files (e.g. metadata files) are not listed to users
+             * @default false
+             */
+            visible: boolean;
+            /** @description Descriptive metadata (see DownloadedFileOutput::METADATA_KEYS). */
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            /**
+             * Format: date-time
+             * @description Set once no live job uses the file anymore, or by an admin
+             */
+            deletedAt?: string | null;
+            /** @description All jobs linked to the file, including soft-deleted ones. */
+            jobs?: components["schemas"]["AdminJobReferenceDTO"][];
+            /** @description Download URI through a live linked job, null if every linked job is deleted */
+            downloadUri?: string | null;
+        };
+        /** @description All downloaded files, including soft-deleted and hidden ones, newest first. */
+        "AdminDownloadedFile.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number;
+            filename?: string | null;
+            /** @description Absolute path on the server (the directory's path joined with relativePath) */
+            path?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The download directory the file is stored in
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /** @description Path inside the directory */
+            relativePath?: string | null;
+            /**
+             * @description Whether the file still exists at its path
+             * @default false
+             */
+            existsOnDisk: boolean;
+            /**
+             * @description Hidden files (e.g. metadata files) are not listed to users
+             * @default false
+             */
+            visible: boolean;
+            /** @description Descriptive metadata (see DownloadedFileOutput::METADATA_KEYS). */
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            /**
+             * Format: date-time
+             * @description Set once no live job uses the file anymore, or by an admin
+             */
+            deletedAt?: string | null;
+            /** @description All jobs linked to the file, including soft-deleted ones. */
+            jobs?: components["schemas"]["AdminJobReferenceDTO.jsonld"][];
+            /** @description Download URI through a live linked job, null if every linked job is deleted */
+            downloadUri?: string | null;
+        };
+        /** @description All downloaded files, including soft-deleted and hidden ones, newest first. */
+        "AdminDownloadedFile.xml": {
+            id?: number;
+            filename?: string | null;
+            /** @description Absolute path on the server (the directory's path joined with relativePath) */
+            path?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The download directory the file is stored in
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /** @description Path inside the directory */
+            relativePath?: string | null;
+            /**
+             * @description Whether the file still exists at its path
+             * @default false
+             */
+            existsOnDisk: boolean;
+            /**
+             * @description Hidden files (e.g. metadata files) are not listed to users
+             * @default false
+             */
+            visible: boolean;
+            /** @description Descriptive metadata (see DownloadedFileOutput::METADATA_KEYS). */
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            /**
+             * Format: date-time
+             * @description Set once no live job uses the file anymore, or by an admin
+             */
+            deletedAt?: string | null;
+            /** @description All jobs linked to the file, including soft-deleted ones. */
+            jobs?: components["schemas"]["AdminJobReferenceDTO.xml"][];
+            /** @description Download URI through a live linked job, null if every linked job is deleted */
+            downloadUri?: string | null;
+        };
+        /** @description All downloaded files, including soft-deleted and hidden ones, newest first. */
+        "AdminDownloadedFile.yaml": {
+            id?: number;
+            filename?: string | null;
+            /** @description Absolute path on the server (the directory's path joined with relativePath) */
+            path?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The download directory the file is stored in
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /** @description Path inside the directory */
+            relativePath?: string | null;
+            /**
+             * @description Whether the file still exists at its path
+             * @default false
+             */
+            existsOnDisk: boolean;
+            /**
+             * @description Hidden files (e.g. metadata files) are not listed to users
+             * @default false
+             */
+            visible: boolean;
+            /** @description Descriptive metadata (see DownloadedFileOutput::METADATA_KEYS). */
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            /**
+             * Format: date-time
+             * @description Set once no live job uses the file anymore, or by an admin
+             */
+            deletedAt?: string | null;
+            /** @description All jobs linked to the file, including soft-deleted ones. */
+            jobs?: components["schemas"]["AdminJobReferenceDTO.yaml"][];
+            /** @description Download URI through a live linked job, null if every linked job is deleted */
+            downloadUri?: string | null;
+        };
+        /** @description All failure reports, newest first. */
+        "AdminFailureReport-admin_failure_report.read": {
+            /** @default  */
+            id: string;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default  */
+            url: string;
+            /** @default  */
+            host: string;
+            /** @description Slug of the URL's site, null if unknown */
+            site?: string | null;
+            userAgent?: string | null;
+            referrer?: string | null;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics-admin_failure_report.read"] | null;
+            /** @description The reporter's comment */
+            comment?: string | null;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** @description Internal note, never shown to the reporter or sent anywhere */
+            adminNote?: string | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /** @description Triage: sets the status and the internal admin note, which the reporter never sees. */
+        "AdminFailureReport-admin_failure_report.write.jsonMergePatch": {
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** @description Internal note, never shown to the reporter or sent anywhere */
+            adminNote?: string | null;
+        };
+        /** @description All failure reports, newest first. */
+        "AdminFailureReport.jsonld-admin_failure_report.read": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @default  */
+            id: string;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default  */
+            url: string;
+            /** @default  */
+            host: string;
+            /** @description Slug of the URL's site, null if unknown */
+            site?: string | null;
+            userAgent?: string | null;
+            referrer?: string | null;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics.jsonld-admin_failure_report.read"] | null;
+            /** @description The reporter's comment */
+            comment?: string | null;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** @description Internal note, never shown to the reporter or sent anywhere */
+            adminNote?: string | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /** @description All failure reports, newest first. */
+        "AdminFailureReport.xml-admin_failure_report.read": {
+            /** @default  */
+            id: string;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default  */
+            url: string;
+            /** @default  */
+            host: string;
+            /** @description Slug of the URL's site, null if unknown */
+            site?: string | null;
+            userAgent?: string | null;
+            referrer?: string | null;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics.xml-admin_failure_report.read"] | null;
+            /** @description The reporter's comment */
+            comment?: string | null;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** @description Internal note, never shown to the reporter or sent anywhere */
+            adminNote?: string | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /** @description All failure reports, newest first. */
+        "AdminFailureReport.yaml-admin_failure_report.read": {
+            /** @default  */
+            id: string;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default  */
+            url: string;
+            /** @default  */
+            host: string;
+            /** @description Slug of the URL's site, null if unknown */
+            site?: string | null;
+            userAgent?: string | null;
+            referrer?: string | null;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics.yaml-admin_failure_report.read"] | null;
+            /** @description The reporter's comment */
+            comment?: string | null;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** @description Internal note, never shown to the reporter or sent anywhere */
+            adminNote?: string | null;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /** Format: date-time */
+            updatedAt?: string | null;
+        };
+        /** @description Report counts per host, site and kind, the most reported first. */
+        AdminFailureReportSummary: {
+            /** @default  */
+            host: string;
+            /** @description Slug of the site, null if unknown */
+            site?: string | null;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default 0 */
+            count: number;
+            /** Format: date-time */
+            lastReportedAt?: string | null;
+        };
+        /** @description Report counts per host, site and kind, the most reported first. */
+        "AdminFailureReportSummary.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @default  */
+            host: string;
+            /** @description Slug of the site, null if unknown */
+            site?: string | null;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default 0 */
+            count: number;
+            /** Format: date-time */
+            lastReportedAt?: string | null;
+        };
+        /** @description Report counts per host, site and kind, the most reported first. */
+        "AdminFailureReportSummary.xml": {
+            /** @default  */
+            host: string;
+            /** @description Slug of the site, null if unknown */
+            site?: string | null;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default 0 */
+            count: number;
+            /** Format: date-time */
+            lastReportedAt?: string | null;
+        };
+        /** @description Report counts per host, site and kind, the most reported first. */
+        "AdminFailureReportSummary.yaml": {
+            /** @default  */
+            host: string;
+            /** @description Slug of the site, null if unknown */
+            site?: string | null;
+            /**
+             * @default unsupported_url
+             * @enum {string}
+             */
+            kind: "job_failed" | "unsupported_url";
+            /** @default 0 */
+            count: number;
+            /** Format: date-time */
+            lastReportedAt?: string | null;
+        };
+        /** @description File move batches, newest first. */
+        "AdminFileMoveBatch-file_move.read": {
+            id?: number;
+            /** @enum {string} */
+            scope?: "site" | "directory";
+            /** @description The site's slug (site batches) */
+            site?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Directory batches: the directory the files are moved from
+             * @example https://example.com/
+             */
+            sourceDirectory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Null only if the directory was deleted since
+             * @example https://example.com/
+             */
+            targetDirectory?: string | null;
+            /** @enum {string} */
+            status?: "queued" | "running" | "completed" | "completed_with_errors" | "cancelled" | "failed";
+            /**
+             * @description Files in the batch, skipped ones included
+             * @default 0
+             */
+            total: number;
+            /** @default 0 */
+            moved: number;
+            /**
+             * @description Not moved on purpose: shared with another site, job in progress, in another batch, already at target, cancelled
+             * @default 0
+             */
+            skipped: number;
+            /** @default 0 */
+            failed: number;
+            /** @default 0 */
+            bytesTotal: number;
+            /** @default 0 */
+            bytesMoved: number;
+            /** @description The first errors (at most 50). */
+            errors?: {
+                fileId?: number;
+                path?: string;
+                error?: string;
+            }[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            /** @description The admin who started the batch */
+            requestedBy?: string | null;
+        };
+        /** @description Moves every file of the directory to the target, whatever its site; with reassignSites, the sites using the directory switch to the target. 409 if a batch touching either directory is active, 422 if the target is the same directory or not mounted. */
+        "AdminFileMoveBatch.DirectoryFileMoveRequest": {
+            /**
+             * Format: iri-reference
+             * @description The directory the files move to
+             * @example https://example.com/
+             */
+            targetDirectory: string | null;
+            /**
+             * @description Switch the sites that use the source directory to the target once the batch is planned
+             * @default true
+             */
+            reassignSites: boolean;
+        };
+        /** @description File move batches, newest first. */
+        "AdminFileMoveBatch.jsonld-file_move.read": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number;
+            /** @enum {string} */
+            scope?: "site" | "directory";
+            /** @description The site's slug (site batches) */
+            site?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Directory batches: the directory the files are moved from
+             * @example https://example.com/
+             */
+            sourceDirectory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Null only if the directory was deleted since
+             * @example https://example.com/
+             */
+            targetDirectory?: string | null;
+            /** @enum {string} */
+            status?: "queued" | "running" | "completed" | "completed_with_errors" | "cancelled" | "failed";
+            /**
+             * @description Files in the batch, skipped ones included
+             * @default 0
+             */
+            total: number;
+            /** @default 0 */
+            moved: number;
+            /**
+             * @description Not moved on purpose: shared with another site, job in progress, in another batch, already at target, cancelled
+             * @default 0
+             */
+            skipped: number;
+            /** @default 0 */
+            failed: number;
+            /** @default 0 */
+            bytesTotal: number;
+            /** @default 0 */
+            bytesMoved: number;
+            /** @description The first errors (at most 50). */
+            errors?: {
+                fileId?: number;
+                path?: string;
+                error?: string;
+            }[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            /** @description The admin who started the batch */
+            requestedBy?: string | null;
+        };
+        /** @description File move batches, newest first. */
+        "AdminFileMoveBatch.xml-file_move.read": {
+            id?: number;
+            /** @enum {string} */
+            scope?: "site" | "directory";
+            /** @description The site's slug (site batches) */
+            site?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Directory batches: the directory the files are moved from
+             * @example https://example.com/
+             */
+            sourceDirectory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Null only if the directory was deleted since
+             * @example https://example.com/
+             */
+            targetDirectory?: string | null;
+            /** @enum {string} */
+            status?: "queued" | "running" | "completed" | "completed_with_errors" | "cancelled" | "failed";
+            /**
+             * @description Files in the batch, skipped ones included
+             * @default 0
+             */
+            total: number;
+            /** @default 0 */
+            moved: number;
+            /**
+             * @description Not moved on purpose: shared with another site, job in progress, in another batch, already at target, cancelled
+             * @default 0
+             */
+            skipped: number;
+            /** @default 0 */
+            failed: number;
+            /** @default 0 */
+            bytesTotal: number;
+            /** @default 0 */
+            bytesMoved: number;
+            /** @description The first errors (at most 50). */
+            errors?: {
+                fileId?: number;
+                path?: string;
+                error?: string;
+            }[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            /** @description The admin who started the batch */
+            requestedBy?: string | null;
+        };
+        /** @description File move batches, newest first. */
+        "AdminFileMoveBatch.yaml-file_move.read": {
+            id?: number;
+            /** @enum {string} */
+            scope?: "site" | "directory";
+            /** @description The site's slug (site batches) */
+            site?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Directory batches: the directory the files are moved from
+             * @example https://example.com/
+             */
+            sourceDirectory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description Null only if the directory was deleted since
+             * @example https://example.com/
+             */
+            targetDirectory?: string | null;
+            /** @enum {string} */
+            status?: "queued" | "running" | "completed" | "completed_with_errors" | "cancelled" | "failed";
+            /**
+             * @description Files in the batch, skipped ones included
+             * @default 0
+             */
+            total: number;
+            /** @default 0 */
+            moved: number;
+            /**
+             * @description Not moved on purpose: shared with another site, job in progress, in another batch, already at target, cancelled
+             * @default 0
+             */
+            skipped: number;
+            /** @default 0 */
+            failed: number;
+            /** @default 0 */
+            bytesTotal: number;
+            /** @default 0 */
+            bytesMoved: number;
+            /** @description The first errors (at most 50). */
+            errors?: {
+                fileId?: number;
+                path?: string;
+                error?: string;
+            }[];
+            /** Format: date-time */
+            createdAt?: string;
+            /** Format: date-time */
+            startedAt?: string | null;
+            /** Format: date-time */
+            finishedAt?: string | null;
+            /** @description The admin who started the batch */
+            requestedBy?: string | null;
+        };
+        AdminJobReferenceDTO: {
+            uuid?: string;
+            owner?: components["schemas"]["AdminOwnerDTO"] | null;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            /** Format: date-time */
+            deletedAt?: string | null;
+        };
+        "AdminJobReferenceDTO.jsonld": {
+            uuid?: string;
+            owner?: components["schemas"]["AdminOwnerDTO.jsonld"] | null;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            /** Format: date-time */
+            deletedAt?: string | null;
+        };
+        "AdminJobReferenceDTO.xml": {
+            uuid?: string;
+            owner?: components["schemas"]["AdminOwnerDTO.xml"] | null;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            /** Format: date-time */
+            deletedAt?: string | null;
+        };
+        "AdminJobReferenceDTO.yaml": {
+            uuid?: string;
+            owner?: components["schemas"]["AdminOwnerDTO.yaml"] | null;
+            /** @enum {integer|null} */
+            state?: 0 | 1 | 2 | 3 | 4 | 5 | null;
+            /** Format: date-time */
+            deletedAt?: string | null;
+        };
+        AdminOwnerDTO: {
+            /** @description The user's UUID (also used in their Mercure topics) */
+            uuid?: string;
+            /** @description The user's OIDC subject */
+            subject?: string;
+        };
+        "AdminOwnerDTO.jsonld": {
+            /** @description The user's UUID (also used in their Mercure topics) */
+            uuid?: string;
+            /** @description The user's OIDC subject */
+            subject?: string;
+        };
+        "AdminOwnerDTO.xml": {
+            /** @description The user's UUID (also used in their Mercure topics) */
+            uuid?: string;
+            /** @description The user's OIDC subject */
+            subject?: string;
+        };
+        "AdminOwnerDTO.yaml": {
+            /** @description The user's UUID (also used in their Mercure topics) */
+            uuid?: string;
+            /** @description The user's OIDC subject */
+            subject?: string;
+        };
+        /**
+         * @description A site's admin override of its canonicalization profile (duplicate detection, #94). Null = inherit
+         *     from the site's config/sites.yaml settings and the code profiles. Path rewrites are code only.
+         */
+        "AdminSiteCanonicalization-site_canonicalization.read": {
+            /** @description The site's slug */
+            slug?: string;
+            /** @description The site's name */
+            name?: string;
+            /** @description Name of the code profile to start from (see availableProfiles) */
+            profile?: string | null;
+            /** @description Whether the extractor identity (yt-dlp ID, gallery-dl groups) wins over the URL */
+            useExtractorId?: boolean | null;
+            /** @description Query parameter globs to keep; all others are dropped. */
+            keepParams?: string[] | null;
+            /** @description Query parameter globs to drop, added to the inherited ones. */
+            dropParams?: string[] | null;
+            stripWww?: boolean | null;
+            stripTrailingSlash?: boolean | null;
+            /** @description gallery-dl subcategory ("*" for any) => indexes of the URL pattern groups identifying the media. */
+            idGroups?: {
+                [key: string]: number[];
+            } | null;
+            /** @description The site's settings from config/sites.yaml (read-only), null if none. */
+            siteSettings?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description The profile in effect for the site, with this override applied (read-only). */
+            effective?: {
+                [key: string]: unknown;
+            };
+            /** @description Names of the code profiles (read-only). */
+            availableProfiles?: string[];
+        };
+        /** @description Replaces the site's canonicalization override; omitted or null fields inherit. Takes effect for new submissions. */
+        "AdminSiteCanonicalization-site_canonicalization.write": {
+            /** @description Name of the code profile to start from (see availableProfiles) */
+            profile?: string | null;
+            /** @description Whether the extractor identity (yt-dlp ID, gallery-dl groups) wins over the URL */
+            useExtractorId?: boolean | null;
+            /** @description Query parameter globs to keep; all others are dropped. */
+            keepParams?: string[] | null;
+            /** @description Query parameter globs to drop, added to the inherited ones. */
+            dropParams?: string[] | null;
+            stripWww?: boolean | null;
+            stripTrailingSlash?: boolean | null;
+            /** @description gallery-dl subcategory ("*" for any) => indexes of the URL pattern groups identifying the media. */
+            idGroups?: {
+                [key: string]: number[];
+            } | null;
+        };
+        /**
+         * @description A site's admin override of its canonicalization profile (duplicate detection, #94). Null = inherit
+         *     from the site's config/sites.yaml settings and the code profiles. Path rewrites are code only.
+         */
+        "AdminSiteCanonicalization.jsonld-site_canonicalization.read": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @description The site's slug */
+            slug?: string;
+            /** @description The site's name */
+            name?: string;
+            /** @description Name of the code profile to start from (see availableProfiles) */
+            profile?: string | null;
+            /** @description Whether the extractor identity (yt-dlp ID, gallery-dl groups) wins over the URL */
+            useExtractorId?: boolean | null;
+            /** @description Query parameter globs to keep; all others are dropped. */
+            keepParams?: string[] | null;
+            /** @description Query parameter globs to drop, added to the inherited ones. */
+            dropParams?: string[] | null;
+            stripWww?: boolean | null;
+            stripTrailingSlash?: boolean | null;
+            /** @description gallery-dl subcategory ("*" for any) => indexes of the URL pattern groups identifying the media. */
+            idGroups?: {
+                [key: string]: number[];
+            } | null;
+            /** @description The site's settings from config/sites.yaml (read-only), null if none. */
+            siteSettings?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description The profile in effect for the site, with this override applied (read-only). */
+            effective?: {
+                [key: string]: unknown;
+            };
+            /** @description Names of the code profiles (read-only). */
+            availableProfiles?: string[];
+        };
+        /**
+         * @description A site's admin override of its canonicalization profile (duplicate detection, #94). Null = inherit
+         *     from the site's config/sites.yaml settings and the code profiles. Path rewrites are code only.
+         */
+        "AdminSiteCanonicalization.xml-site_canonicalization.read": {
+            /** @description The site's slug */
+            slug?: string;
+            /** @description The site's name */
+            name?: string;
+            /** @description Name of the code profile to start from (see availableProfiles) */
+            profile?: string | null;
+            /** @description Whether the extractor identity (yt-dlp ID, gallery-dl groups) wins over the URL */
+            useExtractorId?: boolean | null;
+            /** @description Query parameter globs to keep; all others are dropped. */
+            keepParams?: string[] | null;
+            /** @description Query parameter globs to drop, added to the inherited ones. */
+            dropParams?: string[] | null;
+            stripWww?: boolean | null;
+            stripTrailingSlash?: boolean | null;
+            /** @description gallery-dl subcategory ("*" for any) => indexes of the URL pattern groups identifying the media. */
+            idGroups?: {
+                [key: string]: number[];
+            } | null;
+            /** @description The site's settings from config/sites.yaml (read-only), null if none. */
+            siteSettings?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description The profile in effect for the site, with this override applied (read-only). */
+            effective?: {
+                [key: string]: unknown;
+            };
+            /** @description Names of the code profiles (read-only). */
+            availableProfiles?: string[];
+        };
+        /**
+         * @description A site's admin override of its canonicalization profile (duplicate detection, #94). Null = inherit
+         *     from the site's config/sites.yaml settings and the code profiles. Path rewrites are code only.
+         */
+        "AdminSiteCanonicalization.yaml-site_canonicalization.read": {
+            /** @description The site's slug */
+            slug?: string;
+            /** @description The site's name */
+            name?: string;
+            /** @description Name of the code profile to start from (see availableProfiles) */
+            profile?: string | null;
+            /** @description Whether the extractor identity (yt-dlp ID, gallery-dl groups) wins over the URL */
+            useExtractorId?: boolean | null;
+            /** @description Query parameter globs to keep; all others are dropped. */
+            keepParams?: string[] | null;
+            /** @description Query parameter globs to drop, added to the inherited ones. */
+            dropParams?: string[] | null;
+            stripWww?: boolean | null;
+            stripTrailingSlash?: boolean | null;
+            /** @description gallery-dl subcategory ("*" for any) => indexes of the URL pattern groups identifying the media. */
+            idGroups?: {
+                [key: string]: number[];
+            } | null;
+            /** @description The site's settings from config/sites.yaml (read-only), null if none. */
+            siteSettings?: {
+                [key: string]: unknown;
+            } | null;
+            /** @description The profile in effect for the site, with this override applied (read-only). */
+            effective?: {
+                [key: string]: unknown;
+            };
+            /** @description Names of the code profiles (read-only). */
+            availableProfiles?: string[];
+        };
+        /** @description Where a site's downloads are stored (ADR 0011). */
+        "AdminSiteStorage-site_storage.read": {
+            /**
+             * @description The site's slug
+             * @default
+             */
+            slug: string;
+            /**
+             * Format: iri-reference
+             * @description The site's own directory, null when it uses the default one
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The directory new downloads of the site go to (read-only)
+             * @example https://example.com/
+             */
+            effectiveDirectory?: string | null;
+            /**
+             * @description Files of the site's jobs (read-only)
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Of those, the files stored in another directory than the effective one (read-only)
+             * @default 0
+             */
+            filesElsewhere: number;
+            /**
+             * Format: iri-reference
+             * @description The site's queued or running file move batch (read-only)
+             * @example https://example.com/
+             */
+            activeMove?: string | null;
+        };
+        /** @description Sets the site's download directory (null: the default one). Applies to new downloads; jobs already started keep their directory. Existing files stay where they are, unless moveExisting starts a file move batch (409 while one of the site is active). */
+        "AdminSiteStorage-site_storage.write": {
+            /**
+             * Format: iri-reference
+             * @description The site's own directory, null when it uses the default one
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /**
+             * @description Also move the site's existing files to the directory, as a tracked batch (see activeMove). 409 while a batch of the site is active
+             * @default false
+             */
+            moveExisting: boolean;
+        };
+        /** @description Where a site's downloads are stored (ADR 0011). */
+        "AdminSiteStorage.jsonld-site_storage.read": components["schemas"]["HydraItemBaseSchema"] & {
+            /**
+             * @description The site's slug
+             * @default
+             */
+            slug: string;
+            /**
+             * Format: iri-reference
+             * @description The site's own directory, null when it uses the default one
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The directory new downloads of the site go to (read-only)
+             * @example https://example.com/
+             */
+            effectiveDirectory?: string | null;
+            /**
+             * @description Files of the site's jobs (read-only)
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Of those, the files stored in another directory than the effective one (read-only)
+             * @default 0
+             */
+            filesElsewhere: number;
+            /**
+             * Format: iri-reference
+             * @description The site's queued or running file move batch (read-only)
+             * @example https://example.com/
+             */
+            activeMove?: string | null;
+        };
+        /** @description Where a site's downloads are stored (ADR 0011). */
+        "AdminSiteStorage.xml-site_storage.read": {
+            /**
+             * @description The site's slug
+             * @default
+             */
+            slug: string;
+            /**
+             * Format: iri-reference
+             * @description The site's own directory, null when it uses the default one
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The directory new downloads of the site go to (read-only)
+             * @example https://example.com/
+             */
+            effectiveDirectory?: string | null;
+            /**
+             * @description Files of the site's jobs (read-only)
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Of those, the files stored in another directory than the effective one (read-only)
+             * @default 0
+             */
+            filesElsewhere: number;
+            /**
+             * Format: iri-reference
+             * @description The site's queued or running file move batch (read-only)
+             * @example https://example.com/
+             */
+            activeMove?: string | null;
+        };
+        /** @description Where a site's downloads are stored (ADR 0011). */
+        "AdminSiteStorage.yaml-site_storage.read": {
+            /**
+             * @description The site's slug
+             * @default
+             */
+            slug: string;
+            /**
+             * Format: iri-reference
+             * @description The site's own directory, null when it uses the default one
+             * @example https://example.com/
+             */
+            directory?: string | null;
+            /**
+             * Format: iri-reference
+             * @description The directory new downloads of the site go to (read-only)
+             * @example https://example.com/
+             */
+            effectiveDirectory?: string | null;
+            /**
+             * @description Files of the site's jobs (read-only)
+             * @default 0
+             */
+            fileCount: number;
+            /**
+             * @description Of those, the files stored in another directory than the effective one (read-only)
+             * @default 0
+             */
+            filesElsewhere: number;
+            /**
+             * Format: iri-reference
+             * @description The site's queued or running file move batch (read-only)
+             * @example https://example.com/
+             */
+            activeMove?: string | null;
+        };
         /**
          * @description A registered client (browser extension, app, ...) of a user. Clients send their id in the
          *     X-Client-Id header, which enables their per-client settings layer (/users/clients/{clientId}/settings).
@@ -874,6 +2747,54 @@ export interface components {
             value?: string;
             session?: boolean;
         };
+        /** @description The authenticated user and their effective roles (including the roles granted through the role hierarchy). */
+        CurrentUser: {
+            /** @description The user's OIDC subject */
+            subject?: string;
+            /** @description The user's UUID (also used in their Mercure topics); null until the user is known to the server */
+            uuid?: string | null;
+            /**
+             * @description Effective roles, sorted, e.g. ["ROLE_USER", "ROLE_VIEW_ALL_DOWNLOADS"]. Permission roles for the
+             *     /admin/... operations: ROLE_VIEW_ALL_DOWNLOADS (view) and ROLE_MANAGE_ALL_DOWNLOADS (restore, delete).
+             */
+            roles?: string[];
+        };
+        /** @description The authenticated user and their effective roles (including the roles granted through the role hierarchy). */
+        "CurrentUser.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @description The user's OIDC subject */
+            subject?: string;
+            /** @description The user's UUID (also used in their Mercure topics); null until the user is known to the server */
+            uuid?: string | null;
+            /**
+             * @description Effective roles, sorted, e.g. ["ROLE_USER", "ROLE_VIEW_ALL_DOWNLOADS"]. Permission roles for the
+             *     /admin/... operations: ROLE_VIEW_ALL_DOWNLOADS (view) and ROLE_MANAGE_ALL_DOWNLOADS (restore, delete).
+             */
+            roles?: string[];
+        };
+        /** @description The authenticated user and their effective roles (including the roles granted through the role hierarchy). */
+        "CurrentUser.xml": {
+            /** @description The user's OIDC subject */
+            subject?: string;
+            /** @description The user's UUID (also used in their Mercure topics); null until the user is known to the server */
+            uuid?: string | null;
+            /**
+             * @description Effective roles, sorted, e.g. ["ROLE_USER", "ROLE_VIEW_ALL_DOWNLOADS"]. Permission roles for the
+             *     /admin/... operations: ROLE_VIEW_ALL_DOWNLOADS (view) and ROLE_MANAGE_ALL_DOWNLOADS (restore, delete).
+             */
+            roles?: string[];
+        };
+        /** @description The authenticated user and their effective roles (including the roles granted through the role hierarchy). */
+        "CurrentUser.yaml": {
+            /** @description The user's OIDC subject */
+            subject?: string;
+            /** @description The user's UUID (also used in their Mercure topics); null until the user is known to the server */
+            uuid?: string | null;
+            /**
+             * @description Effective roles, sorted, e.g. ["ROLE_USER", "ROLE_VIEW_ALL_DOWNLOADS"]. Permission roles for the
+             *     /admin/... operations: ROLE_VIEW_ALL_DOWNLOADS (view) and ROLE_MANAGE_ALL_DOWNLOADS (restore, delete).
+             */
+            roles?: string[];
+        };
         DownloadJob: {
             readonly id?: number;
             /** Format: uuid */
@@ -883,7 +2804,6 @@ export interface components {
             state?: 0 | 1 | 2 | 3 | 4 | 5;
             downloader?: string | null;
             downloadJobEvents?: string[];
-            files?: string[];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -891,6 +2811,8 @@ export interface components {
             /** Format: date-time */
             deletedAt?: string | null;
             readonly url?: components["schemas"]["UriInterface"];
+            /** @description The job's files as its owner sees them: without server paths or other jobs' tokens. */
+            readonly files?: components["schemas"]["DownloadedFileOutput"][];
             /** @description Check if the entity has been soft deleted. */
             readonly deleted?: boolean;
         };
@@ -956,7 +2878,6 @@ export interface components {
             state?: 0 | 1 | 2 | 3 | 4 | 5;
             downloader?: string | null;
             downloadJobEvents?: string[];
-            files?: string[];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -964,6 +2885,8 @@ export interface components {
             /** Format: date-time */
             deletedAt?: string | null;
             readonly url?: components["schemas"]["UriInterface.jsonld"];
+            /** @description The job's files as its owner sees them: without server paths or other jobs' tokens. */
+            readonly files?: components["schemas"]["DownloadedFileOutput.jsonld"][];
             /** @description Check if the entity has been soft deleted. */
             readonly deleted?: boolean;
         };
@@ -976,7 +2899,6 @@ export interface components {
             state?: 0 | 1 | 2 | 3 | 4 | 5;
             downloader?: string | null;
             downloadJobEvents?: string[];
-            files?: string[];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -984,6 +2906,8 @@ export interface components {
             /** Format: date-time */
             deletedAt?: string | null;
             readonly url?: components["schemas"]["UriInterface.xml"];
+            /** @description The job's files as its owner sees them: without server paths or other jobs' tokens. */
+            readonly files?: components["schemas"]["DownloadedFileOutput.xml"][];
             /** @description Check if the entity has been soft deleted. */
             readonly deleted?: boolean;
         };
@@ -996,7 +2920,6 @@ export interface components {
             state?: 0 | 1 | 2 | 3 | 4 | 5;
             downloader?: string | null;
             downloadJobEvents?: string[];
-            files?: string[];
             /** Format: date-time */
             createdAt?: string;
             /** Format: date-time */
@@ -1004,6 +2927,8 @@ export interface components {
             /** Format: date-time */
             deletedAt?: string | null;
             readonly url?: components["schemas"]["UriInterface.yaml"];
+            /** @description The job's files as its owner sees them: without server paths or other jobs' tokens. */
+            readonly files?: components["schemas"]["DownloadedFileOutput.yaml"][];
             /** @description Check if the entity has been soft deleted. */
             readonly deleted?: boolean;
         };
@@ -1083,57 +3008,77 @@ export interface components {
             /** Format: date-time */
             updatedAt?: string;
         };
-        DownloadedFile: {
-            readonly id?: number;
-            downloadJob?: string[];
-            path?: string;
-            metadata?: unknown[];
+        "DownloadedFile.DownloadedFileOutput": {
+            id?: number;
+            filename?: string | null;
             visible?: boolean;
-            /** Format: date-time */
-            deletedAt?: string | null;
-            readonly filename?: string | null;
-            readonly downloadUri?: string | null;
-            /** @description Check if the entity has been soft deleted. */
-            readonly deleted?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
         };
-        "DownloadedFile.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            readonly id?: number;
-            downloadJob?: string[];
-            path?: string;
-            metadata?: unknown[];
+        "DownloadedFile.DownloadedFileOutput.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: number;
+            filename?: string | null;
             visible?: boolean;
-            /** Format: date-time */
-            deletedAt?: string | null;
-            readonly filename?: string | null;
-            readonly downloadUri?: string | null;
-            /** @description Check if the entity has been soft deleted. */
-            readonly deleted?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
         };
-        "DownloadedFile.xml": {
-            readonly id?: number;
-            downloadJob?: string[];
-            path?: string;
-            metadata?: unknown[];
+        "DownloadedFile.DownloadedFileOutput.xml": {
+            id?: number;
+            filename?: string | null;
             visible?: boolean;
-            /** Format: date-time */
-            deletedAt?: string | null;
-            readonly filename?: string | null;
-            readonly downloadUri?: string | null;
-            /** @description Check if the entity has been soft deleted. */
-            readonly deleted?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
         };
-        "DownloadedFile.yaml": {
-            readonly id?: number;
-            downloadJob?: string[];
-            path?: string;
-            metadata?: unknown[];
+        "DownloadedFile.DownloadedFileOutput.yaml": {
+            id?: number;
+            filename?: string | null;
             visible?: boolean;
-            /** Format: date-time */
-            deletedAt?: string | null;
-            readonly filename?: string | null;
-            readonly downloadUri?: string | null;
-            /** @description Check if the entity has been soft deleted. */
-            readonly deleted?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
+        };
+        DownloadedFileOutput: {
+            id?: number;
+            filename?: string | null;
+            visible?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
+        };
+        "DownloadedFileOutput.jsonld": {
+            id?: number;
+            filename?: string | null;
+            visible?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
+        };
+        "DownloadedFileOutput.xml": {
+            id?: number;
+            filename?: string | null;
+            visible?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
+        };
+        "DownloadedFileOutput.yaml": {
+            id?: number;
+            filename?: string | null;
+            visible?: boolean;
+            metadata?: {
+                [key: string]: boolean | number | string;
+            };
+            downloadUri?: string;
         };
         Downloader: {
             id?: string;
@@ -1146,38 +3091,6 @@ export interface components {
             enabled?: boolean;
             downloaderType?: components["schemas"]["DownloaderTypeEnum.jsonld"];
             supportedDomains?: unknown[];
-        };
-        /** @description Information about the current and latest versions of available downloaders. */
-        "Downloader.versions": {
-            id?: string;
-            /** @deprecated */
-            version?: string;
-            currentVersion?: string;
-            latestVersion?: string;
-        };
-        /** @description Information about the current and latest versions of available downloaders. */
-        "Downloader.versions.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
-            id?: string;
-            /** @deprecated */
-            version?: string;
-            currentVersion?: string;
-            latestVersion?: string;
-        };
-        /** @description Information about the current and latest versions of available downloaders. */
-        "Downloader.versions.xml": {
-            id?: string;
-            /** @deprecated */
-            version?: string;
-            currentVersion?: string;
-            latestVersion?: string;
-        };
-        /** @description Information about the current and latest versions of available downloaders. */
-        "Downloader.versions.yaml": {
-            id?: string;
-            /** @deprecated */
-            version?: string;
-            currentVersion?: string;
-            latestVersion?: string;
         };
         "Downloader.xml": {
             id?: string;
@@ -1403,6 +3316,38 @@ export interface components {
         "DownloaderTypeEnum.yaml": {
             readonly name?: string;
         };
+        /** @description Information about the current and latest versions of available downloaders. */
+        DownloaderVersion: {
+            id?: string;
+            /** @deprecated */
+            version?: string;
+            currentVersion?: string;
+            latestVersion?: string;
+        };
+        /** @description Information about the current and latest versions of available downloaders. */
+        "DownloaderVersion.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            id?: string;
+            /** @deprecated */
+            version?: string;
+            currentVersion?: string;
+            latestVersion?: string;
+        };
+        /** @description Information about the current and latest versions of available downloaders. */
+        "DownloaderVersion.xml": {
+            id?: string;
+            /** @deprecated */
+            version?: string;
+            currentVersion?: string;
+            latestVersion?: string;
+        };
+        /** @description Information about the current and latest versions of available downloaders. */
+        "DownloaderVersion.yaml": {
+            id?: string;
+            /** @deprecated */
+            version?: string;
+            currentVersion?: string;
+            latestVersion?: string;
+        };
         "EffectiveSettings.jsonld_noid": {
             sendCookies?: boolean;
             sendUserAgent?: boolean;
@@ -1503,6 +3448,221 @@ export interface components {
             downloader?: string;
             /** @description The downloader's extractor key, e.g. "twitter" */
             key?: string;
+        };
+        /** @description The user's failure reports, newest first. */
+        "FailureReport-failure_report.read": {
+            /** Format: uuid */
+            readonly id?: string;
+            /** @enum {string} */
+            kind: "job_failed" | "unsupported_url";
+            /** Format: uri */
+            url: string;
+            /** Format: iri-reference */
+            downloadJob?: string | null;
+            userAgent?: string | null;
+            /** Format: uri */
+            referrer?: string | null;
+            comment?: string | null;
+            /**
+             * @description Host of the URL, lowercased
+             * @default
+             */
+            host: string;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** Format: date-time */
+            createdAt?: string;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics-failure_report.read"] | null;
+            /** @description Slug of the URL's site, null if unknown */
+            readonly site?: string | null;
+        };
+        /** @description Reports a failed download job or an unsupported URL. Stored as sent, plus the derived host and site. 409 if the user reported the same media (canonical key) with the same kind within 24 hours, 422 for invalid reports, 429 above 20 reports per hour, 403 when the server disabled failure reports. */
+        "FailureReport-failure_report.write": {
+            /** @enum {string} */
+            kind: "job_failed" | "unsupported_url";
+            /** Format: uri */
+            url: string;
+            /** Format: iri-reference */
+            downloadJob?: string | null;
+            userAgent?: string | null;
+            /** Format: uri */
+            referrer?: string | null;
+            comment?: string | null;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics-failure_report.write"] | null;
+        };
+        /** @description The user's failure reports, newest first. */
+        "FailureReport.jsonld-failure_report.read": components["schemas"]["HydraItemBaseSchema"] & {
+            /** Format: uuid */
+            readonly id?: string;
+            /** @enum {string} */
+            kind: "job_failed" | "unsupported_url";
+            /** Format: uri */
+            url: string;
+            /** Format: iri-reference */
+            downloadJob?: string | null;
+            userAgent?: string | null;
+            /** Format: uri */
+            referrer?: string | null;
+            comment?: string | null;
+            /**
+             * @description Host of the URL, lowercased
+             * @default
+             */
+            host: string;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** Format: date-time */
+            createdAt?: string;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics.jsonld-failure_report.read"] | null;
+            /** @description Slug of the URL's site, null if unknown */
+            readonly site?: string | null;
+        };
+        /** @description The user's failure reports, newest first. */
+        "FailureReport.xml-failure_report.read": {
+            /** Format: uuid */
+            readonly id?: string;
+            /** @enum {string} */
+            kind: "job_failed" | "unsupported_url";
+            /** Format: uri */
+            url: string;
+            /** Format: iri-reference */
+            downloadJob?: string | null;
+            userAgent?: string | null;
+            /** Format: uri */
+            referrer?: string | null;
+            comment?: string | null;
+            /**
+             * @description Host of the URL, lowercased
+             * @default
+             */
+            host: string;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** Format: date-time */
+            createdAt?: string;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics.xml-failure_report.read"] | null;
+            /** @description Slug of the URL's site, null if unknown */
+            readonly site?: string | null;
+        };
+        /** @description The user's failure reports, newest first. */
+        "FailureReport.yaml-failure_report.read": {
+            /** Format: uuid */
+            readonly id?: string;
+            /** @enum {string} */
+            kind: "job_failed" | "unsupported_url";
+            /** Format: uri */
+            url: string;
+            /** Format: iri-reference */
+            downloadJob?: string | null;
+            userAgent?: string | null;
+            /** Format: uri */
+            referrer?: string | null;
+            comment?: string | null;
+            /**
+             * @description Host of the URL, lowercased
+             * @default
+             */
+            host: string;
+            /**
+             * @default new
+             * @enum {string}
+             */
+            status: "new" | "acknowledged" | "resolved" | "wont_fix";
+            /** Format: date-time */
+            createdAt?: string;
+            diagnostics?: components["schemas"]["FailureReportDiagnostics.yaml-failure_report.read"] | null;
+            /** @description Slug of the URL's site, null if unknown */
+            readonly site?: string | null;
+        };
+        "FailureReportDiagnostics-admin_failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics-failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics-failure_report.write": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics.jsonld-admin_failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics.jsonld-failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics.xml-admin_failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics.xml-failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics.yaml-admin_failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
+        };
+        "FailureReportDiagnostics.yaml-failure_report.read": {
+            /** @description The job's downloader, e.g. yt-dlp-cli */
+            downloader?: string | null;
+            downloaderVersion?: string | null;
+            /** @description The error message from the job's events, verbatim */
+            errorMessage?: string | null;
+            /** @description Version of the client that sent the report */
+            clientVersion?: string | null;
         };
         HydraCollectionBaseSchema: components["schemas"]["HydraCollectionBaseSchemaNoPagination"] & {
             /**
@@ -1664,6 +3824,8 @@ export interface components {
              * @default false
              */
             curated: boolean;
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO-site.read_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1684,6 +3846,8 @@ export interface components {
              */
             curated: boolean;
             extractors?: components["schemas"]["SiteExtractor-site.read_site.item_noid"][];
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO-site.read_site.item_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1703,6 +3867,8 @@ export interface components {
              * @default false
              */
             curated: boolean;
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO.jsonld-site.read_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1723,6 +3889,8 @@ export interface components {
              */
             curated: boolean;
             extractors?: components["schemas"]["SiteExtractor.jsonld-site.read_site.item_noid"][];
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO.jsonld-site.read_site.item_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1742,6 +3910,8 @@ export interface components {
              * @default false
              */
             curated: boolean;
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO.xml-site.read_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1762,6 +3932,8 @@ export interface components {
              */
             curated: boolean;
             extractors?: components["schemas"]["SiteExtractor.xml-site.read_site.item_noid"][];
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO.xml-site.read_site.item_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1781,6 +3953,8 @@ export interface components {
              * @default false
              */
             curated: boolean;
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO.yaml-site.read_noid"];
         };
         /**
          * @description A website, possibly with several domains, handled by one or more downloader extractors.
@@ -1801,6 +3975,64 @@ export interface components {
              */
             curated: boolean;
             extractors?: components["schemas"]["SiteExtractor.yaml-site.read_site.item_noid"][];
+            /** @description The site's default settings (admin-managed). Null fields have no site default and inherit. */
+            readonly defaults?: components["schemas"]["SiteDefaultsDTO.yaml-site.read_site.item_noid"];
+        };
+        "SiteDefaultsDTO-site.read_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO-site.read_site.item_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO.jsonld-site.read_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO.jsonld-site.read_site.item_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO.xml-site.read_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO.xml-site.read_site.item_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO.yaml-site.read_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
+        };
+        "SiteDefaultsDTO.yaml-site.read_site.item_noid": {
+            sendCookies?: boolean | null;
+            sendUserAgent?: boolean | null;
+            sendReferrer?: boolean | null;
+            /** @description Downloader identifier (see /downloaders) */
+            downloader?: string | null;
         };
         "SiteExtractor-site.read_site.item_noid": {
             /** @description Downloader identifier, e.g. "gallery-dl-cli" (see App\Factory\DownloaderFactory). */
@@ -2377,6 +4609,1592 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    api_admincanonicalize_get: {
+        parameters: {
+            query: {
+                /** @description The http(s) URL to canonicalize */
+                url: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminCanonicalization resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminCanonicalization.jsonld"];
+                    "application/json": components["schemas"]["AdminCanonicalization"];
+                    "application/xml": components["schemas"]["AdminCanonicalization.xml"];
+                    "text/xml": components["schemas"]["AdminCanonicalization.xml"];
+                    "application/x-yaml": components["schemas"]["AdminCanonicalization.yaml"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_directories_get_collection: {
+        parameters: {
+            query?: {
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadDirectory collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchemaNoPagination"] & {
+                        member: components["schemas"]["AdminDownloadDirectory.jsonld-download_directory.read"][];
+                    };
+                    "application/json": components["schemas"]["AdminDownloadDirectory-download_directory.read"][];
+                    "application/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"][];
+                    "text/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"][];
+                    "application/x-yaml": components["schemas"]["AdminDownloadDirectory.yaml-download_directory.read"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_directories_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The new AdminDownloadDirectory resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["AdminDownloadDirectory-download_directory.write"];
+                "application/json": components["schemas"]["AdminDownloadDirectory-download_directory.write"];
+                "application/xml": components["schemas"]["AdminDownloadDirectory-download_directory.write"];
+                "text/xml": components["schemas"]["AdminDownloadDirectory-download_directory.write"];
+                "application/x-yaml": components["schemas"]["AdminDownloadDirectory-download_directory.write"];
+            };
+        };
+        responses: {
+            /** @description AdminDownloadDirectory resource created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadDirectory.jsonld-download_directory.read"];
+                    "application/json": components["schemas"]["AdminDownloadDirectory-download_directory.read"];
+                    "application/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"];
+                    "text/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadDirectory.yaml-download_directory.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_admindownload_directories_id_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadDirectory identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadDirectory resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadDirectory.jsonld-download_directory.read"];
+                    "application/json": components["schemas"]["AdminDownloadDirectory-download_directory.read"];
+                    "application/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"];
+                    "text/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadDirectory.yaml-download_directory.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_directories_id_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadDirectory identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadDirectory resource deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_directories_id_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadDirectory identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description The updated AdminDownloadDirectory resource */
+        requestBody: {
+            content: {
+                "application/merge-patch+json": components["schemas"]["AdminDownloadDirectory-download_directory.write.jsonMergePatch"];
+            };
+        };
+        responses: {
+            /** @description AdminDownloadDirectory resource updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadDirectory.jsonld-download_directory.read"];
+                    "application/json": components["schemas"]["AdminDownloadDirectory-download_directory.read"];
+                    "application/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"];
+                    "text/xml": components["schemas"]["AdminDownloadDirectory.xml-download_directory.read"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadDirectory.yaml-download_directory.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_admindownload_jobs_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+                /** @description Only the jobs of this user (the owner's uuid) */
+                owner?: string;
+                /** @description Only jobs in this state (see DownloadStateEnum) */
+                state?: 0 | 1 | 2 | 3 | 4 | 5;
+                /** @description true: only soft-deleted jobs; false: only live jobs; omitted: both */
+                deleted?: boolean;
+                /** @description Only jobs whose URI contains this text */
+                uri?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadJob collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["AdminDownloadJob.jsonld"][];
+                    };
+                    "application/json": components["schemas"]["AdminDownloadJob"][];
+                    "application/xml": components["schemas"]["AdminDownloadJob.xml"][];
+                    "text/xml": components["schemas"]["AdminDownloadJob.xml"][];
+                    "application/x-yaml": components["schemas"]["AdminDownloadJob.yaml"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_jobs_uuid_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadJob identifier */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadJob resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadJob.jsonld"];
+                    "application/json": components["schemas"]["AdminDownloadJob"];
+                    "application/xml": components["schemas"]["AdminDownloadJob.xml"];
+                    "text/xml": components["schemas"]["AdminDownloadJob.xml"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadJob.yaml"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_jobs_uuid_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadJob identifier */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadJob resource deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_jobs_uuidrestore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadJob identifier */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadJob resource created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadJob.jsonld"];
+                    "application/json": components["schemas"]["AdminDownloadJob"];
+                    "application/xml": components["schemas"]["AdminDownloadJob.xml"];
+                    "text/xml": components["schemas"]["AdminDownloadJob.xml"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadJob.yaml"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_admindownload_jobs_uuidevents_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+            };
+            header?: never;
+            path: {
+                /** @description AdminDownloadJob identifier */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadJobEvent collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["AdminDownloadJobEvent.jsonld"][];
+                    };
+                    "application/json": components["schemas"]["AdminDownloadJobEvent"][];
+                    "application/xml": components["schemas"]["AdminDownloadJobEvent.xml"][];
+                    "text/xml": components["schemas"]["AdminDownloadJobEvent.xml"][];
+                    "application/x-yaml": components["schemas"]["AdminDownloadJobEvent.yaml"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownload_jobs_uuidfiles_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+            };
+            header?: never;
+            path: {
+                /** @description AdminDownloadJob identifier */
+                uuid: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadedFile collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["AdminDownloadedFile.jsonld"][];
+                    };
+                    "application/json": components["schemas"]["AdminDownloadedFile"][];
+                    "application/xml": components["schemas"]["AdminDownloadedFile.xml"][];
+                    "text/xml": components["schemas"]["AdminDownloadedFile.xml"][];
+                    "application/x-yaml": components["schemas"]["AdminDownloadedFile.yaml"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownloaded_files_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+                /** @description true: only soft-deleted files; false: only live files; omitted: both */
+                deleted?: boolean;
+                /** @description true: only files no live (non-deleted) job uses; false: only files a live job uses; omitted: both */
+                orphaned?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadedFile collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["AdminDownloadedFile.jsonld"][];
+                    };
+                    "application/json": components["schemas"]["AdminDownloadedFile"][];
+                    "application/xml": components["schemas"]["AdminDownloadedFile.xml"][];
+                    "text/xml": components["schemas"]["AdminDownloadedFile.xml"][];
+                    "application/x-yaml": components["schemas"]["AdminDownloadedFile.yaml"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownloaded_files_id_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadedFile identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadedFile resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadedFile.jsonld"];
+                    "application/json": components["schemas"]["AdminDownloadedFile"];
+                    "application/xml": components["schemas"]["AdminDownloadedFile.xml"];
+                    "text/xml": components["schemas"]["AdminDownloadedFile.xml"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadedFile.yaml"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_admindownloaded_files_idrestore_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadedFile identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminDownloadedFile resource created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminDownloadedFile.jsonld"];
+                    "application/json": components["schemas"]["AdminDownloadedFile"];
+                    "application/xml": components["schemas"]["AdminDownloadedFile.xml"];
+                    "text/xml": components["schemas"]["AdminDownloadedFile.xml"];
+                    "application/x-yaml": components["schemas"]["AdminDownloadedFile.yaml"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_adminfailure_reports_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+                /** @description AdminFailureReport kind */
+                kind?: "job_failed" | "unsupported_url";
+                /** @description AdminFailureReport status */
+                status?: "new" | "acknowledged" | "resolved" | "wont_fix";
+                /** @description Only reports of this site (slug) */
+                site?: string;
+                /** @description Only reports of this host */
+                host?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFailureReport collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["AdminFailureReport.jsonld-admin_failure_report.read"][];
+                    };
+                    "application/json": components["schemas"]["AdminFailureReport-admin_failure_report.read"][];
+                    "application/xml": components["schemas"]["AdminFailureReport.xml-admin_failure_report.read"][];
+                    "text/xml": components["schemas"]["AdminFailureReport.xml-admin_failure_report.read"][];
+                    "application/x-yaml": components["schemas"]["AdminFailureReport.yaml-admin_failure_report.read"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminfailure_reports_id_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminFailureReport identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFailureReport resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminFailureReport.jsonld-admin_failure_report.read"];
+                    "application/json": components["schemas"]["AdminFailureReport-admin_failure_report.read"];
+                    "application/xml": components["schemas"]["AdminFailureReport.xml-admin_failure_report.read"];
+                    "text/xml": components["schemas"]["AdminFailureReport.xml-admin_failure_report.read"];
+                    "application/x-yaml": components["schemas"]["AdminFailureReport.yaml-admin_failure_report.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminfailure_reports_id_patch: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminFailureReport identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description The updated AdminFailureReport resource */
+        requestBody: {
+            content: {
+                "application/merge-patch+json": components["schemas"]["AdminFailureReport-admin_failure_report.write.jsonMergePatch"];
+            };
+        };
+        responses: {
+            /** @description AdminFailureReport resource updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminFailureReport.jsonld-admin_failure_report.read"];
+                    "application/json": components["schemas"]["AdminFailureReport-admin_failure_report.read"];
+                    "application/xml": components["schemas"]["AdminFailureReport.xml-admin_failure_report.read"];
+                    "text/xml": components["schemas"]["AdminFailureReport.xml-admin_failure_report.read"];
+                    "application/x-yaml": components["schemas"]["AdminFailureReport.yaml-admin_failure_report.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_adminfailure_reportssummary_get_collection: {
+        parameters: {
+            query?: {
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+                /** @description Only count reports created at or after this time */
+                since?: string;
+                /** @description AdminFailureReportSummary kind */
+                kind?: "job_failed" | "unsupported_url";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFailureReportSummary collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchemaNoPagination"] & {
+                        member: components["schemas"]["AdminFailureReportSummary.jsonld"][];
+                    };
+                    "application/json": components["schemas"]["AdminFailureReportSummary"][];
+                    "application/xml": components["schemas"]["AdminFailureReportSummary.xml"][];
+                    "text/xml": components["schemas"]["AdminFailureReportSummary.xml"][];
+                    "application/x-yaml": components["schemas"]["AdminFailureReportSummary.yaml"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    move_directory_files: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminDownloadDirectory identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        /** @description The new AdminFileMoveBatch resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["AdminFileMoveBatch.DirectoryFileMoveRequest"];
+                "application/json": components["schemas"]["AdminFileMoveBatch.DirectoryFileMoveRequest"];
+                "application/xml": components["schemas"]["AdminFileMoveBatch.DirectoryFileMoveRequest"];
+                "text/xml": components["schemas"]["AdminFileMoveBatch.DirectoryFileMoveRequest"];
+                "application/x-yaml": components["schemas"]["AdminFileMoveBatch.DirectoryFileMoveRequest"];
+            };
+        };
+        responses: {
+            /** @description AdminFileMoveBatch resource created */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminFileMoveBatch.jsonld-file_move.read"];
+                    "application/json": components["schemas"]["AdminFileMoveBatch-file_move.read"];
+                    "application/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "text/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "application/x-yaml": components["schemas"]["AdminFileMoveBatch.yaml-file_move.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_adminfile_moves_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+                /** @description Only batches of this site (slug) */
+                site?: string;
+                /** @description AdminFileMoveBatch status */
+                status?: "queued" | "running" | "completed" | "completed_with_errors" | "cancelled" | "failed";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFileMoveBatch collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["AdminFileMoveBatch.jsonld-file_move.read"][];
+                    };
+                    "application/json": components["schemas"]["AdminFileMoveBatch-file_move.read"][];
+                    "application/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"][];
+                    "text/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"][];
+                    "application/x-yaml": components["schemas"]["AdminFileMoveBatch.yaml-file_move.read"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminfile_moves_id_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminFileMoveBatch identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFileMoveBatch resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminFileMoveBatch.jsonld-file_move.read"];
+                    "application/json": components["schemas"]["AdminFileMoveBatch-file_move.read"];
+                    "application/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "text/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "application/x-yaml": components["schemas"]["AdminFileMoveBatch.yaml-file_move.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    cancel_file_move: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminFileMoveBatch identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFileMoveBatch resource created */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminFileMoveBatch.jsonld-file_move.read"];
+                    "application/json": components["schemas"]["AdminFileMoveBatch-file_move.read"];
+                    "application/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "text/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "application/x-yaml": components["schemas"]["AdminFileMoveBatch.yaml-file_move.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    move_site_files: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminSiteStorage identifier */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminFileMoveBatch resource created */
+            202: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminFileMoveBatch.jsonld-file_move.read"];
+                    "application/json": components["schemas"]["AdminFileMoveBatch-file_move.read"];
+                    "application/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "text/xml": components["schemas"]["AdminFileMoveBatch.xml-file_move.read"];
+                    "application/x-yaml": components["schemas"]["AdminFileMoveBatch.yaml-file_move.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_adminsites_slugcanonicalization_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminSiteCanonicalization identifier */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminSiteCanonicalization resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminSiteCanonicalization.jsonld-site_canonicalization.read"];
+                    "application/json": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.read"];
+                    "application/xml": components["schemas"]["AdminSiteCanonicalization.xml-site_canonicalization.read"];
+                    "text/xml": components["schemas"]["AdminSiteCanonicalization.xml-site_canonicalization.read"];
+                    "application/x-yaml": components["schemas"]["AdminSiteCanonicalization.yaml-site_canonicalization.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminsites_slugcanonicalization_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminSiteCanonicalization identifier */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        /** @description The updated AdminSiteCanonicalization resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.write"];
+                "application/json": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.write"];
+                "application/xml": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.write"];
+                "text/xml": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.write"];
+                "application/x-yaml": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.write"];
+            };
+        };
+        responses: {
+            /** @description AdminSiteCanonicalization resource updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminSiteCanonicalization.jsonld-site_canonicalization.read"];
+                    "application/json": components["schemas"]["AdminSiteCanonicalization-site_canonicalization.read"];
+                    "application/xml": components["schemas"]["AdminSiteCanonicalization.xml-site_canonicalization.read"];
+                    "text/xml": components["schemas"]["AdminSiteCanonicalization.xml-site_canonicalization.read"];
+                    "application/x-yaml": components["schemas"]["AdminSiteCanonicalization.yaml-site_canonicalization.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_adminsites_slugcanonicalization_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminSiteCanonicalization identifier */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminSiteCanonicalization resource deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminsites_slugstorage_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminSiteStorage identifier */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminSiteStorage resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminSiteStorage.jsonld-site_storage.read"];
+                    "application/json": components["schemas"]["AdminSiteStorage-site_storage.read"];
+                    "application/xml": components["schemas"]["AdminSiteStorage.xml-site_storage.read"];
+                    "text/xml": components["schemas"]["AdminSiteStorage.xml-site_storage.read"];
+                    "application/x-yaml": components["schemas"]["AdminSiteStorage.yaml-site_storage.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminsites_slugstorage_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminSiteStorage identifier */
+                slug: string;
+            };
+            cookie?: never;
+        };
+        /** @description The updated AdminSiteStorage resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["AdminSiteStorage-site_storage.write"];
+                "application/json": components["schemas"]["AdminSiteStorage-site_storage.write"];
+                "application/xml": components["schemas"]["AdminSiteStorage-site_storage.write"];
+                "text/xml": components["schemas"]["AdminSiteStorage-site_storage.write"];
+                "application/x-yaml": components["schemas"]["AdminSiteStorage-site_storage.write"];
+            };
+        };
+        responses: {
+            /** @description AdminSiteStorage resource updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminSiteStorage.jsonld-site_storage.read"];
+                    "application/json": components["schemas"]["AdminSiteStorage-site_storage.read"];
+                    "application/xml": components["schemas"]["AdminSiteStorage.xml-site_storage.read"];
+                    "text/xml": components["schemas"]["AdminSiteStorage.xml-site_storage.read"];
+                    "application/x-yaml": components["schemas"]["AdminSiteStorage.yaml-site_storage.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
     api_usersclients_get_collection: {
         parameters: {
             query?: {
@@ -3075,6 +6893,52 @@ export interface operations {
             };
         };
     };
+    api_usersme_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CurrentUser resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["CurrentUser.jsonld"];
+                    "application/json": components["schemas"]["CurrentUser"];
+                    "application/xml": components["schemas"]["CurrentUser.xml"];
+                    "text/xml": components["schemas"]["CurrentUser.xml"];
+                    "application/x-yaml": components["schemas"]["CurrentUser.yaml"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     api_download_jobs_get_collection: {
         parameters: {
             query?: {
@@ -3317,12 +7181,12 @@ export interface operations {
                 };
                 content: {
                     "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
-                        member: components["schemas"]["DownloadedFile.jsonld"][];
+                        member: components["schemas"]["DownloadedFile.DownloadedFileOutput.jsonld"][];
                     };
-                    "application/json": components["schemas"]["DownloadedFile"][];
-                    "application/xml": components["schemas"]["DownloadedFile.xml"][];
-                    "text/xml": components["schemas"]["DownloadedFile.xml"][];
-                    "application/x-yaml": components["schemas"]["DownloadedFile.yaml"][];
+                    "application/json": components["schemas"]["DownloadedFile.DownloadedFileOutput"][];
+                    "application/xml": components["schemas"]["DownloadedFile.DownloadedFileOutput.xml"][];
+                    "text/xml": components["schemas"]["DownloadedFile.DownloadedFileOutput.xml"][];
+                    "application/x-yaml": components["schemas"]["DownloadedFile.DownloadedFileOutput.yaml"][];
                 };
             };
         };
@@ -3383,77 +7247,6 @@ export interface operations {
                     "application/xml": components["schemas"]["Downloader.xml"];
                     "text/xml": components["schemas"]["Downloader.xml"];
                     "application/x-yaml": components["schemas"]["Downloader.yaml"];
-                };
-            };
-            /** @description Not found */
-            404: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/ld+json": components["schemas"]["Error.jsonld"];
-                    "application/problem+json": components["schemas"]["Error"];
-                    "application/json": components["schemas"]["Error"];
-                };
-            };
-        };
-    };
-    api_versions_get_collection: {
-        parameters: {
-            query?: {
-                /** @description The collection page number */
-                page?: number;
-                /** @description The number of items per page */
-                itemsPerPage?: number;
-                /** @description Enable or disable pagination */
-                pagination?: boolean;
-            };
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Downloader versions collection */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
-                        member: components["schemas"]["Downloader.versions.jsonld"][];
-                    };
-                    "application/json": components["schemas"]["Downloader.versions"][];
-                    "application/xml": components["schemas"]["Downloader.versions.xml"][];
-                    "text/xml": components["schemas"]["Downloader.versions.xml"][];
-                    "application/x-yaml": components["schemas"]["Downloader.versions.yaml"][];
-                };
-            };
-        };
-    };
-    api_versions_id_get: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path: {
-                /** @description Downloader versions identifier */
-                id: string;
-            };
-            cookie?: never;
-        };
-        requestBody?: never;
-        responses: {
-            /** @description Downloader versions resource */
-            200: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/ld+json": components["schemas"]["Downloader.versions.jsonld"];
-                    "application/json": components["schemas"]["Downloader.versions"];
-                    "application/xml": components["schemas"]["Downloader.versions.xml"];
-                    "text/xml": components["schemas"]["Downloader.versions.xml"];
-                    "application/x-yaml": components["schemas"]["Downloader.versions.yaml"];
                 };
             };
             /** @description Not found */
@@ -3771,6 +7564,279 @@ export interface operations {
                     "text/xml": components["schemas"]["DownloaderOptionsSchema.xml-downloader_options_schema.read"];
                     "application/x-yaml": components["schemas"]["DownloaderOptionsSchema.yaml-downloader_options_schema.read"];
                 };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_versions_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description DownloaderVersion collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["DownloaderVersion.jsonld"][];
+                    };
+                    "application/json": components["schemas"]["DownloaderVersion"][];
+                    "application/xml": components["schemas"]["DownloaderVersion.xml"][];
+                    "text/xml": components["schemas"]["DownloaderVersion.xml"][];
+                    "application/x-yaml": components["schemas"]["DownloaderVersion.yaml"][];
+                };
+            };
+        };
+    };
+    api_versions_id_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description DownloaderVersion identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description DownloaderVersion resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["DownloaderVersion.jsonld"];
+                    "application/json": components["schemas"]["DownloaderVersion"];
+                    "application/xml": components["schemas"]["DownloaderVersion.xml"];
+                    "text/xml": components["schemas"]["DownloaderVersion.xml"];
+                    "application/x-yaml": components["schemas"]["DownloaderVersion.yaml"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_usersfailure_reports_get_collection: {
+        parameters: {
+            query?: {
+                /** @description The collection page number */
+                page?: number;
+                /** @description The number of items per page */
+                itemsPerPage?: number;
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FailureReport collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchema"] & {
+                        member: components["schemas"]["FailureReport.jsonld-failure_report.read"][];
+                    };
+                    "application/json": components["schemas"]["FailureReport-failure_report.read"][];
+                    "application/xml": components["schemas"]["FailureReport.xml-failure_report.read"][];
+                    "text/xml": components["schemas"]["FailureReport.xml-failure_report.read"][];
+                    "application/x-yaml": components["schemas"]["FailureReport.yaml-failure_report.read"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_usersfailure_reports_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The new FailureReport resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["FailureReport-failure_report.write"];
+                "application/json": components["schemas"]["FailureReport-failure_report.write"];
+                "application/xml": components["schemas"]["FailureReport-failure_report.write"];
+                "text/xml": components["schemas"]["FailureReport-failure_report.write"];
+                "application/x-yaml": components["schemas"]["FailureReport-failure_report.write"];
+            };
+        };
+        responses: {
+            /** @description FailureReport resource created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["FailureReport.jsonld-failure_report.read"];
+                    "application/json": components["schemas"]["FailureReport-failure_report.read"];
+                    "application/xml": components["schemas"]["FailureReport.xml-failure_report.read"];
+                    "text/xml": components["schemas"]["FailureReport.xml-failure_report.read"];
+                    "application/x-yaml": components["schemas"]["FailureReport.yaml-failure_report.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_usersfailure_reports_id_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FailureReport identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FailureReport resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["FailureReport.jsonld-failure_report.read"];
+                    "application/json": components["schemas"]["FailureReport-failure_report.read"];
+                    "application/xml": components["schemas"]["FailureReport.xml-failure_report.read"];
+                    "text/xml": components["schemas"]["FailureReport.xml-failure_report.read"];
+                    "application/x-yaml": components["schemas"]["FailureReport.yaml-failure_report.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_usersfailure_reports_id_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description FailureReport identifier */
+                id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description FailureReport resource deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Forbidden */
             403: {

@@ -22,7 +22,8 @@ import {
     CommandSeparator,
     CommandShortcut,
 } from "@/components/ui/command"
-import { NAV_ITEMS } from "@/components/dashboard/navItems"
+import { availableNavItems } from "@/components/dashboard/navItems"
+import { useServerFeatures } from "@/lib/useServerFeatures"
 import { matchesCombo, comboToParts } from "@/components/ui/key-combo-input"
 import optionsStorage from "@/utils/optionsStorage"
 import { sendMessage } from "@/lib/messaging"
@@ -38,6 +39,7 @@ interface CommandPaletteProps {
 
 export function CommandPalette({ onNavigate, openRef }: CommandPaletteProps) {
     const [open, setOpen] = React.useState(false)
+    const navItems = availableNavItems(useServerFeatures())
     const [shortcut, setShortcut] = React.useState(DEFAULT_SHORTCUT)
     const [theme, setTheme] = useTheme()
 
@@ -123,7 +125,7 @@ export function CommandPalette({ onNavigate, openRef }: CommandPaletteProps) {
                             {!onNavigate && <CommandShortcut><ExternalLink className="w-3 h-3" /></CommandShortcut>}
                         </CommandItem>
 
-                        {NAV_ITEMS.map(item => (
+                        {navItems.map(item => (
                             <CommandItem
                                 key={item.id}
                                 value={`dashboard ${item.label} ${item.description ?? ""}`}

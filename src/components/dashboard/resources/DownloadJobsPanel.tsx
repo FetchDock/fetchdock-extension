@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Download, ChevronDown, ChevronRight, Trash2 } from 'lucide-react';
+import { Download, ChevronDown, ChevronRight, Trash2, Flag } from 'lucide-react';
+import { i18n } from '#imports';
 import { ResourcePanel, type ColumnDef } from '@/components/dashboard/ResourcePanel';
 import { usePagedResource } from '@/components/dashboard/useResource';
 import { Pagination } from '@/components/dashboard/Pagination';
@@ -8,6 +9,8 @@ import { Button } from '@/components/ui/button';
 import { DownloadJobDetail } from '@/components/dashboard/resources/DownloadJobDetail';
 import { DeleteDownloadJobDialog } from '@/components/dashboard/resources/DeleteDownloadJobDialog';
 import { apiService } from '@/service/apiService';
+import { sendMessage } from '@/lib/messaging';
+import { useServerFeatures } from '@/lib/useServerFeatures';
 
 interface DownloadJobLD {
     '@id'?: string;
@@ -36,6 +39,11 @@ export function DownloadJobsPanel() {
     const [pendingDelete, setPendingDelete] = useState<{ uuid: string; uri?: string } | null>(null);
     /** Deleted jobs, hidden right away until the reload confirms it */
     const [deletedUuids, setDeletedUuids] = useState<Set<string>>(new Set());
+
+    const { failureReports } = useServerFeatures();
+    const report = (uuid: string) => {
+        sendMessage('openReportForm', { jobUuid: uuid }).catch(err => console.error('Failed to open the report form', err));
+    };
 
     const toggle = (uuid: string) =>
         setExpandedUuid(prev => (prev === uuid ? null : uuid));
@@ -108,8 +116,20 @@ export function DownloadJobsPanel() {
         {
             key: 'actions',
             header: '',
-            width: 'w-12',
+            width: 'w-20',
             render: row => (
+                <div className="flex items-center gap-1 justify-end">
+                {failureReports && row.uuid && stateFromNumber(row.state) === 'failed' && (
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-6 w-6 text-muted-foreground"
+                        onClick={() => report(row.uuid!)}
+                        title={i18n.t('report.actionTitle')}
+                    >
+                        <Flag className="w-4 h-4" />
+                    </Button>
+                )}
                 <Button
                     variant="ghost"
                     size="icon"
@@ -120,6 +140,7 @@ export function DownloadJobsPanel() {
                 >
                     <Trash2 className="w-4 h-4" />
                 </Button>
+                </div>
             ),
         },
     ];
@@ -144,6 +165,7 @@ export function DownloadJobsPanel() {
                         uuid={row.uuid}
                         onClose={() => setExpandedUuid(null)}
                         onDelete={setPendingDelete}
+                        onReport={failureReports ? report : undefined}
                     />
                 ) : null
             }

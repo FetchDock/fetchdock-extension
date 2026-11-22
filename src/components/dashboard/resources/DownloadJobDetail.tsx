@@ -1,5 +1,6 @@
 import React from 'react';
-import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle, DownloadIcon, Trash2 } from 'lucide-react';
+import { X, ExternalLink, Copy, Check, RefreshCw, AlertCircle, DownloadIcon, Trash2, Flag } from 'lucide-react';
+import { i18n } from '#imports';
 import optionsStorage from '@/utils/optionsStorage';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -331,9 +332,11 @@ interface DownloadJobDetailProps {
     onClose: () => void;
     /** Asks to delete the job (the caller confirms); hidden when omitted */
     onDelete?: (job: { uuid: string; uri?: string }) => void;
+    /** Opens the failure report form; only offered for FAILED jobs, hidden when omitted */
+    onReport?: (uuid: string) => void;
 }
 
-export function DownloadJobDetail({ uuid, onClose, onDelete }: DownloadJobDetailProps) {
+export function DownloadJobDetail({ uuid, onClose, onDelete, onReport }: DownloadJobDetailProps) {
     const { data, status, error, reload } = useResource<DownloadJobFull>(
         () => apiService.getDownloadJob(uuid)
     );
@@ -359,6 +362,12 @@ export function DownloadJobDetail({ uuid, onClose, onDelete }: DownloadJobDetail
                         onClick={reload} disabled={status === 'loading'} title="Refresh">
                         <RefreshCw className={cn('w-3.5 h-3.5', status === 'loading' && 'animate-spin')} />
                     </Button>
+                    {onReport && status === 'success' && stateFromNumber(job?.state) === 'failed' && (
+                        <Button variant="ghost" size="sm" className="h-7"
+                            onClick={() => onReport(uuid)} title={i18n.t('report.actionTitle')}>
+                            <Flag className="w-3.5 h-3.5" /> {i18n.t('report.action')}
+                        </Button>
+                    )}
                     {onDelete && (
                         <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive hover:text-destructive"
                             onClick={() => onDelete({ uuid, uri: job?.uri })} title="Delete job">
