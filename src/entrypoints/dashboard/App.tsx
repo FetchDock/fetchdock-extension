@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Settings, LayoutDashboard } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { NAV_ITEMS } from '@/components/dashboard/navItems';
+import { NAV_ITEMS, availableNavItems } from '@/components/dashboard/navItems';
+import { useServerFeatures } from '@/lib/useServerFeatures';
 import { CommandPalette } from '@/components/CommandPalette';
 import { comboToParts } from '@/components/ui/key-combo-input';
 import { ThemeToggle } from '@/components/ui/theme-toggle';
@@ -19,7 +20,8 @@ function getInitialId(): string {
 function App() {
     const [activeId, setActiveId] = useState<string>(getInitialId);
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const active = NAV_ITEMS.find(n => n.id === activeId) ?? NAV_ITEMS[0];
+    const navItems = availableNavItems(useServerFeatures());
+    const active = navItems.find(n => n.id === activeId) ?? navItems[0];
     const [shortcut, setShortcut] = useState('ctrl+k');
     const [theme, setTheme] = useTheme();
     const paletteOpenRef = React.useRef<(() => void) | null>(null);
@@ -72,13 +74,13 @@ function App() {
 
                 {/* Nav items */}
                 <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
-                    {NAV_ITEMS.map(item => (
+                    {navItems.map(item => (
                         <button
                             key={item.id}
                             onClick={() => setActiveId(item.id)}
                             className={cn(
                                 'w-full flex items-center gap-2.5 rounded-md px-3 py-2 text-sm font-medium transition-colors text-left',
-                                activeId === item.id
+                                active.id === item.id
                                     ? 'bg-primary text-primary-foreground'
                                     : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
                             )}
@@ -123,10 +125,10 @@ function App() {
 
                 {/* Panel area */}
                 <div className="flex-1 overflow-y-auto p-6">
-                    {NAV_ITEMS.map(item => (
+                    {navItems.map(item => (
                         <div
                             key={item.id}
-                            className={cn('h-full', activeId === item.id ? 'block' : 'hidden')}
+                            className={cn('h-full', active.id === item.id ? 'block' : 'hidden')}
                         >
                             {item.panel}
                         </div>

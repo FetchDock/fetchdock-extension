@@ -67,18 +67,23 @@ export function mergeRequestContext(
     };
 }
 
-/**
- * Builds the download job for `uri`: resolves the site, then attaches cookies, user agent and referrer
- * (the page the URL was found on) as the effective request context allows.
- */
-export async function buildDownloadJob(uri: string, pageUrl?: string): Promise<DownloadJobDTO> {
+/** What may be sent for `uri`: the resolved site settings combined with the local toggles (see mergeRequestContext). */
+export async function effectiveRequestContext(uri: string): Promise<Required<RequestContext>> {
     const [config, resolution, localSites] = await Promise.all([
         getMergedAppConfig(),
         resolveSite(uri),
         localSiteSettingsItem.getValue(),
     ]);
     const localSite = findLocalSiteSettings(localSites, uri, resolution?.site?.slug);
-    const context = mergeRequestContext(resolution?.requestContext, config, localSite);
+    return mergeRequestContext(resolution?.requestContext, config, localSite);
+}
+
+/**
+ * Builds the download job for `uri`: resolves the site, then attaches cookies, user agent and referrer
+ * (the page the URL was found on) as the effective request context allows.
+ */
+export async function buildDownloadJob(uri: string, pageUrl?: string): Promise<DownloadJobDTO> {
+    const context = await effectiveRequestContext(uri);
 
     const job: DownloadJobDTO = { uri };
     if (context.cookies) {

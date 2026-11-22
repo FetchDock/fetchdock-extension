@@ -45,3 +45,11 @@ export interface CollectionPage<T> {
 
 /** Client type this extension registers as (Client.type / client-preferences path) */
 export const CLIENT_TYPE = 'browser-extension';
+
+export type FailureReport = Schemas['FailureReport-failure_report.read'];
+export type FailureReportWrite = Schemas['FailureReport-failure_report.write'];
+export type FailureReportKind = FailureReportWrite['kind'];
+export type FailureReportDiagnostics = Schemas['FailureReportDiagnostics-failure_report.write'];
+
+export type DownloadJobEvent = Schemas['DownloadJobEvent'];
+export type DownloaderVersion = Schemas['DownloaderVersion'];

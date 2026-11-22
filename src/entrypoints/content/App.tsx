@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Toast } from "radix-ui";
-import { onMessage } from "@/lib/messaging";
+import { i18n } from "#imports";
+import { onMessage, sendMessage } from "@/lib/messaging";
 import optionsStorage from "@/utils/optionsStorage";
 import "./style.css";
 
@@ -15,6 +16,8 @@ interface ToastItem {
     type: ToastType;
     title: string;
     description?: string;
+    /** Offers "Report" for this job or URL (only when the server accepts failure reports) */
+    report?: { jobUuid?: string; url?: string };
     open: boolean;
 }
 
@@ -24,6 +27,17 @@ const TOAST_DURATION = 5000;
 // ---------------------------------------------------------------------------
 // Helper
 // ---------------------------------------------------------------------------
+
+/** Rejections that are about authentication, not the URL */
+const AUTH_REJECTIONS = [401, 403];
+
+async function failureReportsEnabled(): Promise<boolean> {
+    try {
+        return (await sendMessage("getServerFeatures", undefined)).failureReports;
+    } catch {
+        return false;
+    }
+}
 
 function createId(): string {
     return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
@@ -67,10 +81,12 @@ const ToastManager: React.FC = () => {
             if (!opts.notifyOnRejected) return;
 
             const { status, message: serverMsg, uri } = message.data;
+            const reportable = !!uri && status >= 400 && status < 500 && !AUTH_REJECTIONS.includes(status) && await failureReportsEnabled();
             addToast({
                 type: "rejected",
                 title: `Link rejected (${status})`,
                 description: serverMsg ?? uri,
+                report: reportable ? { url: uri } : undefined,
             });
         });
 
@@ -81,7 +97,9 @@ const ToastManager: React.FC = () => {
             const opts = await optionsStorage.getAll();
             if (!opts.notifyOnJobFinished) return;
 
-            const { state, uri, error } = message.data;
+            const { state, uri, error, jobUuid } = message.data;
+            const failed = state === "failed" || state === 3;
+            const reportable = failed && !!jobUuid && await failureReportsEnabled();
             // Servers >= 0.7 send "completed" / "failed"; older servers use numeric states
             const stateLabel: Record<number | string, string> = {
                 completed: "completed",
@@ -95,6 +113,7 @@ const ToastManager: React.FC = () => {
                 type: "finished",
                 title: `Download ${stateLabel[state] ?? "finished"}`,
                 description: error ? `${uri ?? ""}\n${error}`.trim() : uri,
+                report: reportable ? { jobUuid } : undefined,
             });
         });
 
@@ -120,6 +139,20 @@ const ToastManager: React.FC = () => {
                         <Toast.Description className="ToastDescription">
                             {toast.description}
                         </Toast.Description>
+                    )}
+                    {toast.report && (
+                        <Toast.Action asChild altText={i18n.t("report.actionTitle")}>
+                            <button
+                                type="button"
+                                className="ToastAction ToastReportButton"
+                                onClick={() => {
+                                    sendMessage("openReportForm", toast.report!)
+                                        .catch((err) => console.error("Failed to open the report form", err));
+                                }}
+                            >
+                                {i18n.t("report.action")}
+                            </button>
+                        </Toast.Action>
                     )}
                     <Toast.Close aria-label="Close" className="ToastClose">
                         <span aria-hidden>×</span>

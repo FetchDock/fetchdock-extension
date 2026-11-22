@@ -3,30 +3,7 @@ import { apiService } from '@/service/apiService';
 import { clearSiteResolveCache, invalidateSite, resolveSite } from '@/service/siteResolver';
 import { ensureClientRegistered, reregisterClient } from '@/service/clientRegistry';
 import { serverUserSettingsItem } from '@/lib/storageItems';
-
-/**
- * Turns the API service's `{ status, body }` rejections into Errors with a readable message,
- * since messaging only carries an Error's message across contexts.
- */
-function toError(err: any): Error {
-    if (err instanceof Error) {
-        return err;
-    }
-    const body = err?.body;
-    const violations: string | undefined = Array.isArray(body?.violations)
-        ? body.violations.map((v: any) => (v.propertyPath ? `${v.propertyPath}: ${v.message}` : v.message)).join('\n')
-        : undefined;
-    const detail = violations ?? body?.detail ?? body?.description ?? body?.title ?? (typeof body === 'string' ? body : undefined);
-    return new Error(detail ? `${detail} (${err?.status})` : `Request failed (${err?.status ?? 'network error'})`);
-}
-
-async function call<T>(fn: () => Promise<T>): Promise<T> {
-    try {
-        return await fn();
-    } catch (err) {
-        throw toError(err);
-    }
-}
+import { call } from '@/service/apiErrors';
 
 /** Message handlers for sites and the settings layers. Every change invalidates the affected resolutions. */
 export function registerSettingsHandlers(): void {

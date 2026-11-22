@@ -15,6 +15,7 @@ import {ensureClientRegistered} from "@/service/clientRegistry";
 import {clearSiteResolveCache} from "@/service/siteResolver";
 import {preferencesChanged, pushPreferences, syncPreferences} from "@/service/preferencesSync";
 import {registerSettingsHandlers} from "@/service/settingsHandlers";
+import {openReportForm, registerFailureReportHandlers, REPORT_PAGE_MENU_ID, updateReportMenu} from "@/service/failureReports";
 
 export default defineBackground(() => {
   browser.runtime.onInstalled.addListener(async ({reason}) => {
@@ -52,6 +53,9 @@ export default defineBackground(() => {
     if (hostChanged) {
       await clearSiteResolveCache();
     }
+    if (hostChanged || (authenticated && !oldConfig.oauth2AccessToken)) {
+      void updateReportMenu();
+    }
     if (authenticated && (hostChanged || !oldConfig.oauth2AccessToken)) {
       await ensureClientRegistered();
     }
@@ -71,6 +75,7 @@ export default defineBackground(() => {
   });
 
   registerSettingsHandlers();
+  registerFailureReportHandlers();
 
   if(typeof browser !== 'undefined') {
     if(typeof browser.contextMenus !== 'undefined') {
@@ -93,10 +98,28 @@ export default defineBackground(() => {
         contexts: ['image']
       });
 
+      // Shown once the server announces failure reports (updateReportMenu)
+      browser.contextMenus.create({
+        id: REPORT_PAGE_MENU_ID,
+        title: 'Report a problem with this page',
+        contexts: ['page'],
+        visible: false,
+      });
+      void updateReportMenu();
+
       browser.contextMenus.onClicked.addListener(async (
           info: Browser.contextMenus.OnClickData,
           tab?: Browser.tabs.Tab
       ) => {
+        if (info.menuItemId === REPORT_PAGE_MENU_ID) {
+          const url = info.frameUrl ?? info.pageUrl ?? tab?.url;
+          if (url) {
+            openReportForm({ url, tabId: info.frameUrl ? undefined : tab?.id })
+                .catch((err) => console.error('Failed to open the report form', err));
+          }
+          return;
+        }
+
         if(info.menuItemId) {
           console.debug('Context menu item clicked', info);
 

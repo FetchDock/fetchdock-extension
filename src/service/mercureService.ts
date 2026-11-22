@@ -264,6 +264,7 @@ class MercureService {
     private notifyFinished(tracked: TrackedJob, state: number | string): void {
         const payload: DownloadJobFinished = {
             jobToken: tracked.token,
+            jobUuid: tracked.uuid,
             state,
             uri: tracked.uri,
             error: state === 'failed' ? tracked.lastError : undefined,

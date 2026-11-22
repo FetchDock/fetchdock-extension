@@ -140,6 +140,8 @@ export interface RejectedDownloadJob {
 export interface DownloadJobFinished {
     /** The unique token of the finished job */
     jobToken: string;
+    /** UUID of the finished job, when the server returned it on creation */
+    jobUuid?: string;
     /**
      * Final state: "completed" or "failed" (servers >= 0.7, structured progress events), or a numeric state from
      * older servers.
