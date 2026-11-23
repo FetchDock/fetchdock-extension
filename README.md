@@ -103,10 +103,10 @@ Open the extension's **Settings** page (click the toolbar popup → *Settings*).
 - [x] Full-page dashboard
 - [x] Light / Dark / System theme support
 - [x] Add support for [PHP FetchDock](https://github.com/PBXg33k/php-download-router)
-- [ ] Send downloads to server from popup / context menu (partially implemented/WIP)
-  - [ ] Send (optional) cookies along with a download job
-  - [ ] Send (optional) user agent along with a download job
-  - [ ] Send (optional) referrer along with a download job
+- [x] Send downloads to server from popup / context menu (partially implemented/WIP)
+  - [x] Send (optional) cookies along with a download job
+  - [x] Send (optional) user agent along with a download job
+  - [x] Send (optional) referrer along with a download job
 - [ ] Automatically send downloads to server based on rules
 - [ ] Add a visual indicator for downloaded pages
 - [ ] Add a context menu to send download jobs to the server
