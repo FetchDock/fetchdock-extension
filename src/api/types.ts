@@ -404,6 +404,90 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/instance_integrity": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminInstanceIntegrity resource.
+         * @description Retrieves a AdminInstanceIntegrity resource.
+         */
+        get: operations["api_admininstance_integrity_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/privacy_policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminPrivacyPolicy resource.
+         * @description Retrieves a AdminPrivacyPolicy resource.
+         */
+        get: operations["api_adminprivacy_policy_get"];
+        /**
+         * Replaces the AdminPrivacyPolicy resource.
+         * @description Replaces the AdminPrivacyPolicy resource.
+         */
+        put: operations["api_adminprivacy_policy_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/privacy_policy/revisions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves the collection of AdminPrivacyPolicyRevision resources.
+         * @description Retrieves the collection of AdminPrivacyPolicyRevision resources.
+         */
+        get: operations["api_adminprivacy_policyrevisions_get_collection"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/admin/privacy_policy/revisions/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a AdminPrivacyPolicyRevision resource.
+         * @description Retrieves a AdminPrivacyPolicyRevision resource.
+         */
+        get: operations["api_adminprivacy_policyrevisions_number_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/sites/{slug}/canonicalization": {
         parameters: {
             query?: never;
@@ -928,6 +1012,26 @@ export interface paths {
          * @description Retrieves a OidcSubjectIdentifier resource.
          */
         get: operations["api_oidc_subject_identifiers_id_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/privacy_policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Retrieves a PrivacyPolicy resource.
+         * @description Retrieves a PrivacyPolicy resource.
+         */
+        get: operations["api_privacy_policy_get"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2134,6 +2238,198 @@ export interface components {
             /** @description The admin who started the batch */
             requestedBy?: string | null;
         };
+        /** @description The effective status (the worst check of the last 48 hours) and the latest check of each api and worker container in that period, with the paths that differ from the manifest. */
+        AdminInstanceIntegrity: {
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /**
+             * @description The FetchDock version this container runs
+             * @default
+             */
+            appVersion: string;
+            /** @description sha256 of this container's integrity manifest, null without one (development builds) */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from */
+            gitSha?: string | null;
+            /**
+             * @description Whether the check compares the manifest with the digest published on GitHub (INTEGRITY_CHECK_ONLINE)
+             * @default true
+             */
+            checkOnline: boolean;
+            /** @description newest first */
+            checks?: components["schemas"]["AdminInstanceIntegrityCheck"][];
+        };
+        /** @description The effective status (the worst check of the last 48 hours) and the latest check of each api and worker container in that period, with the paths that differ from the manifest. */
+        "AdminInstanceIntegrity.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /**
+             * @description The FetchDock version this container runs
+             * @default
+             */
+            appVersion: string;
+            /** @description sha256 of this container's integrity manifest, null without one (development builds) */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from */
+            gitSha?: string | null;
+            /**
+             * @description Whether the check compares the manifest with the digest published on GitHub (INTEGRITY_CHECK_ONLINE)
+             * @default true
+             */
+            checkOnline: boolean;
+            /** @description newest first */
+            checks?: components["schemas"]["AdminInstanceIntegrityCheck.jsonld"][];
+        };
+        /** @description The effective status (the worst check of the last 48 hours) and the latest check of each api and worker container in that period, with the paths that differ from the manifest. */
+        "AdminInstanceIntegrity.xml": {
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /**
+             * @description The FetchDock version this container runs
+             * @default
+             */
+            appVersion: string;
+            /** @description sha256 of this container's integrity manifest, null without one (development builds) */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from */
+            gitSha?: string | null;
+            /**
+             * @description Whether the check compares the manifest with the digest published on GitHub (INTEGRITY_CHECK_ONLINE)
+             * @default true
+             */
+            checkOnline: boolean;
+            /** @description newest first */
+            checks?: components["schemas"]["AdminInstanceIntegrityCheck.xml"][];
+        };
+        /** @description The effective status (the worst check of the last 48 hours) and the latest check of each api and worker container in that period, with the paths that differ from the manifest. */
+        "AdminInstanceIntegrity.yaml": {
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /**
+             * @description The FetchDock version this container runs
+             * @default
+             */
+            appVersion: string;
+            /** @description sha256 of this container's integrity manifest, null without one (development builds) */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from */
+            gitSha?: string | null;
+            /**
+             * @description Whether the check compares the manifest with the digest published on GitHub (INTEGRITY_CHECK_ONLINE)
+             * @default true
+             */
+            checkOnline: boolean;
+            /** @description newest first */
+            checks?: components["schemas"]["AdminInstanceIntegrityCheck.yaml"][];
+        };
+        AdminInstanceIntegrityCheck: {
+            /**
+             * @description The container's host name
+             * @default
+             */
+            host: string;
+            /**
+             * @default api
+             * @enum {string}
+             */
+            role: "api" | "worker";
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            manifestDigest?: string | null;
+            /** @default  */
+            appVersion: string;
+            /** @description Paths that differ from the manifest (at most 50). */
+            mismatches?: string[];
+            /** Format: date-time */
+            checkedAt?: string | null;
+        };
+        "AdminInstanceIntegrityCheck.jsonld": {
+            /**
+             * @description The container's host name
+             * @default
+             */
+            host: string;
+            /**
+             * @default api
+             * @enum {string}
+             */
+            role: "api" | "worker";
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            manifestDigest?: string | null;
+            /** @default  */
+            appVersion: string;
+            /** @description Paths that differ from the manifest (at most 50). */
+            mismatches?: string[];
+            /** Format: date-time */
+            checkedAt?: string | null;
+        };
+        "AdminInstanceIntegrityCheck.xml": {
+            /**
+             * @description The container's host name
+             * @default
+             */
+            host: string;
+            /**
+             * @default api
+             * @enum {string}
+             */
+            role: "api" | "worker";
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            manifestDigest?: string | null;
+            /** @default  */
+            appVersion: string;
+            /** @description Paths that differ from the manifest (at most 50). */
+            mismatches?: string[];
+            /** Format: date-time */
+            checkedAt?: string | null;
+        };
+        "AdminInstanceIntegrityCheck.yaml": {
+            /**
+             * @description The container's host name
+             * @default
+             */
+            host: string;
+            /**
+             * @default api
+             * @enum {string}
+             */
+            role: "api" | "worker";
+            /**
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            manifestDigest?: string | null;
+            /** @default  */
+            appVersion: string;
+            /** @description Paths that differ from the manifest (at most 50). */
+            mismatches?: string[];
+            /** Format: date-time */
+            checkedAt?: string | null;
+        };
         AdminJobReferenceDTO: {
             uuid?: string;
             owner?: components["schemas"]["AdminOwnerDTO"] | null;
@@ -2189,6 +2485,370 @@ export interface components {
             uuid?: string;
             /** @description The user's OIDC subject */
             subject?: string;
+        };
+        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        "AdminPrivacyPolicy-privacy_policy.read": {
+            /** @description The instance's name, used as the policy's title (required) */
+            instanceName?: string | null;
+            operator?: components["schemas"]["PrivacyPolicyOperator-privacy_policy.read"];
+            identityProvider?: components["schemas"]["PrivacyPolicyIdentityProvider-privacy_policy.read"];
+            hosting?: components["schemas"]["PrivacyPolicyHosting-privacy_policy.read"];
+            /** @description Other service providers that process data for the operator. */
+            processors?: components["schemas"]["PrivacyPolicyProcessor-privacy_policy.read"][];
+            retention?: components["schemas"]["PrivacyPolicyRetention-privacy_policy.read"];
+            /**
+             * @description contract, or legitimate_interest (personal and family installs) (required)
+             * @enum {string|null}
+             */
+            legalBasis?: "contract" | "legitimate_interest" | null;
+            /** @description The supervisory authority users can complain to */
+            supervisoryAuthority?: string | null;
+            /** @description Markdown, appended as its own section (raw HTML is shown as text) */
+            additionalText?: string | null;
+            /** @description Required answers that are still empty, as dotted paths, e.g. "operator.contactEmail" (read-only). */
+            missing?: string[];
+            /**
+             * @description Which policy the instance publishes (read-only)
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why none is published (read-only)
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description The published revision of the generated policy (read-only) */
+            revision?: number | null;
+            /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
+            integrity?: components["schemas"]["IntegritySummary-privacy_policy.read"];
+        };
+        /** @description Replaces the answers. Incomplete answers can be saved; the policy stays unavailable until the required ones (see missing) are set. While the generated policy is published, a change creates a new revision. */
+        "AdminPrivacyPolicy-privacy_policy.write": {
+            /** @description The instance's name, used as the policy's title (required) */
+            instanceName?: string | null;
+            operator?: components["schemas"]["PrivacyPolicyOperator-privacy_policy.write"];
+            identityProvider?: components["schemas"]["PrivacyPolicyIdentityProvider-privacy_policy.write"];
+            hosting?: components["schemas"]["PrivacyPolicyHosting-privacy_policy.write"];
+            /** @description Other service providers that process data for the operator. */
+            processors?: components["schemas"]["PrivacyPolicyProcessor-privacy_policy.write"][];
+            retention?: components["schemas"]["PrivacyPolicyRetention-privacy_policy.write"];
+            /**
+             * @description contract, or legitimate_interest (personal and family installs) (required)
+             * @enum {string|null}
+             */
+            legalBasis?: "contract" | "legitimate_interest" | null;
+            /** @description The supervisory authority users can complain to */
+            supervisoryAuthority?: string | null;
+            /** @description Markdown, appended as its own section (raw HTML is shown as text) */
+            additionalText?: string | null;
+        };
+        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        "AdminPrivacyPolicy.jsonld-privacy_policy.read": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @description The instance's name, used as the policy's title (required) */
+            instanceName?: string | null;
+            operator?: components["schemas"]["PrivacyPolicyOperator.jsonld-privacy_policy.read"];
+            identityProvider?: components["schemas"]["PrivacyPolicyIdentityProvider.jsonld-privacy_policy.read"];
+            hosting?: components["schemas"]["PrivacyPolicyHosting.jsonld-privacy_policy.read"];
+            /** @description Other service providers that process data for the operator. */
+            processors?: components["schemas"]["PrivacyPolicyProcessor.jsonld-privacy_policy.read"][];
+            retention?: components["schemas"]["PrivacyPolicyRetention.jsonld-privacy_policy.read"];
+            /**
+             * @description contract, or legitimate_interest (personal and family installs) (required)
+             * @enum {string|null}
+             */
+            legalBasis?: "contract" | "legitimate_interest" | null;
+            /** @description The supervisory authority users can complain to */
+            supervisoryAuthority?: string | null;
+            /** @description Markdown, appended as its own section (raw HTML is shown as text) */
+            additionalText?: string | null;
+            /** @description Required answers that are still empty, as dotted paths, e.g. "operator.contactEmail" (read-only). */
+            missing?: string[];
+            /**
+             * @description Which policy the instance publishes (read-only)
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why none is published (read-only)
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description The published revision of the generated policy (read-only) */
+            revision?: number | null;
+            /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
+            integrity?: components["schemas"]["IntegritySummary.jsonld-privacy_policy.read"];
+        };
+        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        "AdminPrivacyPolicy.xml-privacy_policy.read": {
+            /** @description The instance's name, used as the policy's title (required) */
+            instanceName?: string | null;
+            operator?: components["schemas"]["PrivacyPolicyOperator.xml-privacy_policy.read"];
+            identityProvider?: components["schemas"]["PrivacyPolicyIdentityProvider.xml-privacy_policy.read"];
+            hosting?: components["schemas"]["PrivacyPolicyHosting.xml-privacy_policy.read"];
+            /** @description Other service providers that process data for the operator. */
+            processors?: components["schemas"]["PrivacyPolicyProcessor.xml-privacy_policy.read"][];
+            retention?: components["schemas"]["PrivacyPolicyRetention.xml-privacy_policy.read"];
+            /**
+             * @description contract, or legitimate_interest (personal and family installs) (required)
+             * @enum {string|null}
+             */
+            legalBasis?: "contract" | "legitimate_interest" | null;
+            /** @description The supervisory authority users can complain to */
+            supervisoryAuthority?: string | null;
+            /** @description Markdown, appended as its own section (raw HTML is shown as text) */
+            additionalText?: string | null;
+            /** @description Required answers that are still empty, as dotted paths, e.g. "operator.contactEmail" (read-only). */
+            missing?: string[];
+            /**
+             * @description Which policy the instance publishes (read-only)
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why none is published (read-only)
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description The published revision of the generated policy (read-only) */
+            revision?: number | null;
+            /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
+            integrity?: components["schemas"]["IntegritySummary.xml-privacy_policy.read"];
+        };
+        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        "AdminPrivacyPolicy.yaml-privacy_policy.read": {
+            /** @description The instance's name, used as the policy's title (required) */
+            instanceName?: string | null;
+            operator?: components["schemas"]["PrivacyPolicyOperator.yaml-privacy_policy.read"];
+            identityProvider?: components["schemas"]["PrivacyPolicyIdentityProvider.yaml-privacy_policy.read"];
+            hosting?: components["schemas"]["PrivacyPolicyHosting.yaml-privacy_policy.read"];
+            /** @description Other service providers that process data for the operator. */
+            processors?: components["schemas"]["PrivacyPolicyProcessor.yaml-privacy_policy.read"][];
+            retention?: components["schemas"]["PrivacyPolicyRetention.yaml-privacy_policy.read"];
+            /**
+             * @description contract, or legitimate_interest (personal and family installs) (required)
+             * @enum {string|null}
+             */
+            legalBasis?: "contract" | "legitimate_interest" | null;
+            /** @description The supervisory authority users can complain to */
+            supervisoryAuthority?: string | null;
+            /** @description Markdown, appended as its own section (raw HTML is shown as text) */
+            additionalText?: string | null;
+            /** @description Required answers that are still empty, as dotted paths, e.g. "operator.contactEmail" (read-only). */
+            missing?: string[];
+            /**
+             * @description Which policy the instance publishes (read-only)
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why none is published (read-only)
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description The published revision of the generated policy (read-only) */
+            revision?: number | null;
+            /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
+            integrity?: components["schemas"]["IntegritySummary.yaml-privacy_policy.read"];
+        };
+        /** @description All revisions, newest first, without their text. */
+        "AdminPrivacyPolicyRevision-privacy_policy_revision.read": {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+        };
+        /** @description One revision with its text (Markdown and HTML). */
+        "AdminPrivacyPolicyRevision-privacy_policy_revision.read_privacy_policy_revision.text": {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+            /** @default  */
+            markdown: string;
+            /**
+             * @description An HTML fragment
+             * @default
+             */
+            html: string;
+        };
+        /** @description All revisions, newest first, without their text. */
+        "AdminPrivacyPolicyRevision.jsonld-privacy_policy_revision.read": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+        };
+        /** @description One revision with its text (Markdown and HTML). */
+        "AdminPrivacyPolicyRevision.jsonld-privacy_policy_revision.read_privacy_policy_revision.text": components["schemas"]["HydraItemBaseSchema"] & {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+            /** @default  */
+            markdown: string;
+            /**
+             * @description An HTML fragment
+             * @default
+             */
+            html: string;
+        };
+        /** @description All revisions, newest first, without their text. */
+        "AdminPrivacyPolicyRevision.xml-privacy_policy_revision.read": {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+        };
+        /** @description One revision with its text (Markdown and HTML). */
+        "AdminPrivacyPolicyRevision.xml-privacy_policy_revision.read_privacy_policy_revision.text": {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+            /** @default  */
+            markdown: string;
+            /**
+             * @description An HTML fragment
+             * @default
+             */
+            html: string;
+        };
+        /** @description All revisions, newest first, without their text. */
+        "AdminPrivacyPolicyRevision.yaml-privacy_policy_revision.read": {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+        };
+        /** @description One revision with its text (Markdown and HTML). */
+        "AdminPrivacyPolicyRevision.yaml-privacy_policy_revision.read_privacy_policy_revision.text": {
+            /** @default 0 */
+            number: number;
+            /**
+             * @default initial
+             * @enum {string}
+             */
+            reason: "initial" | "answers" | "app_version" | "configuration";
+            /** @default  */
+            textVersion: string;
+            /** @default  */
+            appVersion: string;
+            /** Format: date-time */
+            createdAt?: string | null;
+            /**
+             * @description Whether this is the revision in force (false while no generated policy is published)
+             * @default false
+             */
+            current: boolean;
+            /** @default  */
+            markdown: string;
+            /**
+             * @description An HTML fragment
+             * @default
+             */
+            html: string;
         };
         /**
          * @description A site's admin override of its canonicalization profile (duplicate detection, #94). Null = inherit
@@ -3714,6 +4374,142 @@ export interface components {
             "@id": string;
             "@type": string;
         };
+        IntegritySummary: {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary-privacy_policy.read": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary.jsonld": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary.jsonld-privacy_policy.read": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary.xml": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary.xml-privacy_policy.read": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary.yaml": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
+        "IntegritySummary.yaml-privacy_policy.read": {
+            /**
+             * @description The worst check of the last 48 hours; unknown without one
+             * @default unknown
+             * @enum {string}
+             */
+            status: "verified" | "modified" | "unknown";
+            /** @description sha256 of the image's integrity manifest; compare it with the release asset integrity-manifest.sha256 */
+            manifestDigest?: string | null;
+            /** @description The commit the image was built from, from the manifest */
+            gitSha?: string | null;
+            /**
+             * Format: date-time
+             * @description The latest check
+             */
+            checkedAt?: string | null;
+        };
         JobTypeEnum: {
             readonly name?: string;
         };
@@ -3773,6 +4569,331 @@ export interface components {
             downloadJobs?: string[];
             userSetting?: components["schemas"]["UserSetting.yaml"] | null;
             userSiteSettings?: components["schemas"]["UserSiteSetting.yaml"][];
+        };
+        /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
+        PrivacyPolicy: {
+            /**
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why no policy is published, null otherwise
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
+            url?: string | null;
+            /** @description The generated policy's current revision */
+            revision?: number | null;
+            /** @description The generated policy's text version (privacy/policy-version.yaml) */
+            textVersion?: string | null;
+            /**
+             * @description The FetchDock version the instance runs
+             * @default
+             */
+            appVersion: string;
+            /**
+             * Format: date-time
+             * @description When the current revision was created
+             */
+            updatedAt?: string | null;
+            integrity?: components["schemas"]["IntegritySummary"];
+        };
+        /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
+        "PrivacyPolicy.jsonld": components["schemas"]["HydraItemBaseSchema"] & {
+            /**
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why no policy is published, null otherwise
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
+            url?: string | null;
+            /** @description The generated policy's current revision */
+            revision?: number | null;
+            /** @description The generated policy's text version (privacy/policy-version.yaml) */
+            textVersion?: string | null;
+            /**
+             * @description The FetchDock version the instance runs
+             * @default
+             */
+            appVersion: string;
+            /**
+             * Format: date-time
+             * @description When the current revision was created
+             */
+            updatedAt?: string | null;
+            integrity?: components["schemas"]["IntegritySummary.jsonld"];
+        };
+        /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
+        "PrivacyPolicy.xml": {
+            /**
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why no policy is published, null otherwise
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
+            url?: string | null;
+            /** @description The generated policy's current revision */
+            revision?: number | null;
+            /** @description The generated policy's text version (privacy/policy-version.yaml) */
+            textVersion?: string | null;
+            /**
+             * @description The FetchDock version the instance runs
+             * @default
+             */
+            appVersion: string;
+            /**
+             * Format: date-time
+             * @description When the current revision was created
+             */
+            updatedAt?: string | null;
+            integrity?: components["schemas"]["IntegritySummary.xml"];
+        };
+        /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
+        "PrivacyPolicy.yaml": {
+            /**
+             * @default unavailable
+             * @enum {string}
+             */
+            status: "generated" | "custom" | "unavailable";
+            /**
+             * @description Why no policy is published, null otherwise
+             * @enum {string|null}
+             */
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
+            url?: string | null;
+            /** @description The generated policy's current revision */
+            revision?: number | null;
+            /** @description The generated policy's text version (privacy/policy-version.yaml) */
+            textVersion?: string | null;
+            /**
+             * @description The FetchDock version the instance runs
+             * @default
+             */
+            appVersion: string;
+            /**
+             * Format: date-time
+             * @description When the current revision was created
+             */
+            updatedAt?: string | null;
+            integrity?: components["schemas"]["IntegritySummary.yaml"];
+        };
+        "PrivacyPolicyHosting-privacy_policy.read": {
+            /** @description The hosting provider, or "self-hosted" (required) */
+            provider?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case, e.g. "NL" (required) */
+            country?: string | null;
+        };
+        "PrivacyPolicyHosting-privacy_policy.write": {
+            /** @description The hosting provider, or "self-hosted" (required) */
+            provider?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case, e.g. "NL" (required) */
+            country?: string | null;
+        };
+        "PrivacyPolicyHosting.jsonld-privacy_policy.read": {
+            /** @description The hosting provider, or "self-hosted" (required) */
+            provider?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case, e.g. "NL" (required) */
+            country?: string | null;
+        };
+        "PrivacyPolicyHosting.xml-privacy_policy.read": {
+            /** @description The hosting provider, or "self-hosted" (required) */
+            provider?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case, e.g. "NL" (required) */
+            country?: string | null;
+        };
+        "PrivacyPolicyHosting.yaml-privacy_policy.read": {
+            /** @description The hosting provider, or "self-hosted" (required) */
+            provider?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case, e.g. "NL" (required) */
+            country?: string | null;
+        };
+        "PrivacyPolicyIdentityProvider-privacy_policy.read": {
+            /** @description For example "Authentik, run by the operator" (required) */
+            name?: string | null;
+            /** Format: uri */
+            privacyPolicyUrl?: string | null;
+        };
+        "PrivacyPolicyIdentityProvider-privacy_policy.write": {
+            /** @description For example "Authentik, run by the operator" (required) */
+            name?: string | null;
+            /** Format: uri */
+            privacyPolicyUrl?: string | null;
+        };
+        "PrivacyPolicyIdentityProvider.jsonld-privacy_policy.read": {
+            /** @description For example "Authentik, run by the operator" (required) */
+            name?: string | null;
+            /** Format: uri */
+            privacyPolicyUrl?: string | null;
+        };
+        "PrivacyPolicyIdentityProvider.xml-privacy_policy.read": {
+            /** @description For example "Authentik, run by the operator" (required) */
+            name?: string | null;
+            /** Format: uri */
+            privacyPolicyUrl?: string | null;
+        };
+        "PrivacyPolicyIdentityProvider.yaml-privacy_policy.read": {
+            /** @description For example "Authentik, run by the operator" (required) */
+            name?: string | null;
+            /** Format: uri */
+            privacyPolicyUrl?: string | null;
+        };
+        "PrivacyPolicyOperator-privacy_policy.read": {
+            /** @description Person or organization running the instance (required) */
+            name?: string | null;
+            /** @description Postal address; line breaks are kept */
+            address?: string | null;
+            /**
+             * Format: email
+             * @description Where users send privacy requests (required)
+             */
+            contactEmail?: string | null;
+            /** @description Data protection officer, if there is one */
+            dpoContact?: string | null;
+        };
+        "PrivacyPolicyOperator-privacy_policy.write": {
+            /** @description Person or organization running the instance (required) */
+            name?: string | null;
+            /** @description Postal address; line breaks are kept */
+            address?: string | null;
+            /**
+             * Format: email
+             * @description Where users send privacy requests (required)
+             */
+            contactEmail?: string | null;
+            /** @description Data protection officer, if there is one */
+            dpoContact?: string | null;
+        };
+        "PrivacyPolicyOperator.jsonld-privacy_policy.read": {
+            /** @description Person or organization running the instance (required) */
+            name?: string | null;
+            /** @description Postal address; line breaks are kept */
+            address?: string | null;
+            /**
+             * Format: email
+             * @description Where users send privacy requests (required)
+             */
+            contactEmail?: string | null;
+            /** @description Data protection officer, if there is one */
+            dpoContact?: string | null;
+        };
+        "PrivacyPolicyOperator.xml-privacy_policy.read": {
+            /** @description Person or organization running the instance (required) */
+            name?: string | null;
+            /** @description Postal address; line breaks are kept */
+            address?: string | null;
+            /**
+             * Format: email
+             * @description Where users send privacy requests (required)
+             */
+            contactEmail?: string | null;
+            /** @description Data protection officer, if there is one */
+            dpoContact?: string | null;
+        };
+        "PrivacyPolicyOperator.yaml-privacy_policy.read": {
+            /** @description Person or organization running the instance (required) */
+            name?: string | null;
+            /** @description Postal address; line breaks are kept */
+            address?: string | null;
+            /**
+             * Format: email
+             * @description Where users send privacy requests (required)
+             */
+            contactEmail?: string | null;
+            /** @description Data protection officer, if there is one */
+            dpoContact?: string | null;
+        };
+        "PrivacyPolicyProcessor-privacy_policy.read": {
+            name: string | null;
+            purpose?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case */
+            country?: string | null;
+        };
+        "PrivacyPolicyProcessor-privacy_policy.write": {
+            name: string | null;
+            purpose?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case */
+            country?: string | null;
+        };
+        "PrivacyPolicyProcessor.jsonld-privacy_policy.read": {
+            name: string | null;
+            purpose?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case */
+            country?: string | null;
+        };
+        "PrivacyPolicyProcessor.xml-privacy_policy.read": {
+            name: string | null;
+            purpose?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case */
+            country?: string | null;
+        };
+        "PrivacyPolicyProcessor.yaml-privacy_policy.read": {
+            name: string | null;
+            purpose?: string | null;
+            /** @description ISO 3166-1 alpha-2 code in upper case */
+            country?: string | null;
+        };
+        "PrivacyPolicyRetention-privacy_policy.read": {
+            /** @description Days the operator keeps container and web server logs (required) */
+            logsDays?: number | null;
+            /** @description How backups are made and kept, in a sentence */
+            backups?: string | null;
+            /** @description Days after which the operator erases jobs users deleted, if they do */
+            softDeletedJobsDays?: number | null;
+            /** @description Days after which the operator deletes failure reports, if they do */
+            reportsDays?: number | null;
+        };
+        "PrivacyPolicyRetention-privacy_policy.write": {
+            /** @description Days the operator keeps container and web server logs (required) */
+            logsDays?: number | null;
+            /** @description How backups are made and kept, in a sentence */
+            backups?: string | null;
+            /** @description Days after which the operator erases jobs users deleted, if they do */
+            softDeletedJobsDays?: number | null;
+            /** @description Days after which the operator deletes failure reports, if they do */
+            reportsDays?: number | null;
+        };
+        "PrivacyPolicyRetention.jsonld-privacy_policy.read": {
+            /** @description Days the operator keeps container and web server logs (required) */
+            logsDays?: number | null;
+            /** @description How backups are made and kept, in a sentence */
+            backups?: string | null;
+            /** @description Days after which the operator erases jobs users deleted, if they do */
+            softDeletedJobsDays?: number | null;
+            /** @description Days after which the operator deletes failure reports, if they do */
+            reportsDays?: number | null;
+        };
+        "PrivacyPolicyRetention.xml-privacy_policy.read": {
+            /** @description Days the operator keeps container and web server logs (required) */
+            logsDays?: number | null;
+            /** @description How backups are made and kept, in a sentence */
+            backups?: string | null;
+            /** @description Days after which the operator erases jobs users deleted, if they do */
+            softDeletedJobsDays?: number | null;
+            /** @description Days after which the operator deletes failure reports, if they do */
+            reportsDays?: number | null;
+        };
+        "PrivacyPolicyRetention.yaml-privacy_policy.read": {
+            /** @description Days the operator keeps container and web server logs (required) */
+            logsDays?: number | null;
+            /** @description How backups are made and kept, in a sentence */
+            backups?: string | null;
+            /** @description Days after which the operator erases jobs users deleted, if they do */
+            softDeletedJobsDays?: number | null;
+            /** @description Days after which the operator deletes failure reports, if they do */
+            reportsDays?: number | null;
         };
         "RequestContextDTO.jsonld_noid": {
             /** @description Send the user's cookies for the site */
@@ -5894,6 +7015,264 @@ export interface operations {
             };
         };
     };
+    api_admininstance_integrity_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminInstanceIntegrity resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminInstanceIntegrity.jsonld"];
+                    "application/json": components["schemas"]["AdminInstanceIntegrity"];
+                    "application/xml": components["schemas"]["AdminInstanceIntegrity.xml"];
+                    "text/xml": components["schemas"]["AdminInstanceIntegrity.xml"];
+                    "application/x-yaml": components["schemas"]["AdminInstanceIntegrity.yaml"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminprivacy_policy_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminPrivacyPolicy resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminPrivacyPolicy.jsonld-privacy_policy.read"];
+                    "application/json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.read"];
+                    "application/xml": components["schemas"]["AdminPrivacyPolicy.xml-privacy_policy.read"];
+                    "text/xml": components["schemas"]["AdminPrivacyPolicy.xml-privacy_policy.read"];
+                    "application/x-yaml": components["schemas"]["AdminPrivacyPolicy.yaml-privacy_policy.read"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminprivacy_policy_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The updated AdminPrivacyPolicy resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "application/json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "application/xml": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "text/xml": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "application/x-yaml": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+            };
+        };
+        responses: {
+            /** @description AdminPrivacyPolicy resource updated */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminPrivacyPolicy.jsonld-privacy_policy.read"];
+                    "application/json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.read"];
+                    "application/xml": components["schemas"]["AdminPrivacyPolicy.xml-privacy_policy.read"];
+                    "text/xml": components["schemas"]["AdminPrivacyPolicy.xml-privacy_policy.read"];
+                    "application/x-yaml": components["schemas"]["AdminPrivacyPolicy.yaml-privacy_policy.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
+    api_adminprivacy_policyrevisions_get_collection: {
+        parameters: {
+            query?: {
+                /** @description Enable or disable pagination */
+                pagination?: boolean;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminPrivacyPolicyRevision collection */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["HydraCollectionBaseSchemaNoPagination"] & {
+                        member: components["schemas"]["AdminPrivacyPolicyRevision.jsonld-privacy_policy_revision.read"][];
+                    };
+                    "application/json": components["schemas"]["AdminPrivacyPolicyRevision-privacy_policy_revision.read"][];
+                    "application/xml": components["schemas"]["AdminPrivacyPolicyRevision.xml-privacy_policy_revision.read"][];
+                    "text/xml": components["schemas"]["AdminPrivacyPolicyRevision.xml-privacy_policy_revision.read"][];
+                    "application/x-yaml": components["schemas"]["AdminPrivacyPolicyRevision.yaml-privacy_policy_revision.read"][];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_adminprivacy_policyrevisions_number_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                /** @description AdminPrivacyPolicyRevision identifier */
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description AdminPrivacyPolicyRevision resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminPrivacyPolicyRevision.jsonld-privacy_policy_revision.read_privacy_policy_revision.text"];
+                    "application/json": components["schemas"]["AdminPrivacyPolicyRevision-privacy_policy_revision.read_privacy_policy_revision.text"];
+                    "application/xml": components["schemas"]["AdminPrivacyPolicyRevision.xml-privacy_policy_revision.read_privacy_policy_revision.text"];
+                    "text/xml": components["schemas"]["AdminPrivacyPolicyRevision.xml-privacy_policy_revision.read_privacy_policy_revision.text"];
+                    "application/x-yaml": components["schemas"]["AdminPrivacyPolicyRevision.yaml-privacy_policy_revision.read_privacy_policy_revision.text"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
     api_adminsites_slugcanonicalization_get: {
         parameters: {
             query?: never;
@@ -7970,6 +9349,41 @@ export interface operations {
                     "application/ld+json": components["schemas"]["Error.jsonld"];
                     "application/problem+json": components["schemas"]["Error"];
                     "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_privacy_policy_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description PrivacyPolicy resource */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["PrivacyPolicy.jsonld"];
+                    "application/json": components["schemas"]["PrivacyPolicy"];
+                    "application/xml": components["schemas"]["PrivacyPolicy.xml"];
+                    "text/xml": components["schemas"]["PrivacyPolicy.xml"];
+                    "application/x-yaml": components["schemas"]["PrivacyPolicy.yaml"];
                 };
             };
             /** @description Not found */

@@ -2,6 +2,7 @@ import React from 'react';
 import { i18n } from '#imports';
 import { AlertCircle, CheckCircle2, Flag, Loader2, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { ServerPrivacyInfo } from '@/components/ServerPrivacyInfo';
 import { sendMessage } from '@/lib/messaging';
 import { useTheme } from '@/lib/useTheme';
 import optionsStorage from '@/utils/optionsStorage';
@@ -230,15 +231,12 @@ function ReportForm({ context, features, server }: { context: FailureReportConte
                         </pre>
                     </div>
                     <Note>{i18n.t('report.serverAdds')}</Note>
-                    <p className="text-xs">
-                        {features.privacyPolicyUrl ? (
-                            <a href={features.privacyPolicyUrl} target="_blank" rel="noreferrer" className="underline">
-                                {i18n.t('report.policy')}
-                            </a>
-                        ) : (
-                            <span className="text-muted-foreground">{i18n.t('report.noPolicy')}</span>
-                        )}
-                    </p>
+                    <ServerPrivacyInfo
+                        privacyPolicyUrl={features.privacyPolicyUrl}
+                        integrity={features.integrity}
+                        host={server}
+                        variant="inline"
+                    />
                 </div>
             </Section>
 

@@ -219,6 +219,8 @@ export default defineBackground(() => {
         host: host,
         authMode: result?.authMode,
         version: result?.version,
+        privacyPolicyUrl: result?.privacyPolicyUrl ?? null,
+        integrity: result?.integrity ?? null,
         // supportedFeatures: result?.supportedFeatures,
         // supportedDownloaders: result?.supportedDownloaders,
         // supportedSites: result?.supportedSites,
@@ -235,6 +237,10 @@ export default defineBackground(() => {
       }
     }
   })
+
+  onMessage("getPrivacyPolicy", async ({ data }) => {
+    return await apiService.getPrivacyPolicy(data?.host);
+  });
 
   onMessage("getOAuth2AuthorizationUrl", async (message) => {
     const host = message.data as string;

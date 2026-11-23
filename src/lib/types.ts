@@ -1,3 +1,5 @@
+import type { WellKnownIntegrity } from '@/lib/wellKnown';
+
 export type Theme = 'light' | 'dark' | 'system';
 
 // ─── Cookie ───────────────────────────────────────────────────────────────────
@@ -118,6 +120,8 @@ export interface ApiTestResult {
     host: string;
     authMode?: string;
     version?: string;
+    privacyPolicyUrl?: string | null;
+    integrity?: WellKnownIntegrity | null;
     message: string;
 }
 
