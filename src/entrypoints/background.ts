@@ -11,7 +11,7 @@ import {Browser} from "@wxt-dev/browser";
 import {mercureService} from "@/service/mercureService.ts";
 import {migrateOptionsToLocalStorage} from "@/utils/optionsStorage";
 import {buildDownloadJob} from "@/service/downloadJobBuilder";
-import {ensureClientRegistered} from "@/service/clientRegistry";
+import {registerAccountHandlers, startSignedInSession} from "@/service/account";
 import {clearSiteResolveCache} from "@/service/siteResolver";
 import {preferencesChanged, pushPreferences, syncPreferences} from "@/service/preferencesSync";
 import {registerSettingsHandlers} from "@/service/settingsHandlers";
@@ -34,7 +34,9 @@ export default defineBackground(() => {
     .then(async (cfg) => {
       console.log('Loaded runtime app config in background:', cfg);
       if (cfg.oauth2AccessToken) {
-        await ensureClientRegistered();
+        if (!await startSignedInSession()) {
+          return;
+        }
         if (cfg.useServerSettings) {
           await syncPreferences();
         }
@@ -56,8 +58,13 @@ export default defineBackground(() => {
     if (hostChanged || (authenticated && !oldConfig.oauth2AccessToken)) {
       void updateReportMenu();
     }
+    if (!authenticated && oldConfig.oauth2AccessToken) {
+      mercureService.setSignedIn(false);
+    }
     if (authenticated && (hostChanged || !oldConfig.oauth2AccessToken)) {
-      await ensureClientRegistered();
+      if (!await startSignedInSession({ freshSignIn: !oldConfig.oauth2AccessToken })) {
+        return;
+      }
     }
     if (!authenticated || !newConfig.useServerSettings) {
       return;
@@ -76,6 +83,7 @@ export default defineBackground(() => {
 
   registerSettingsHandlers();
   registerFailureReportHandlers();
+  registerAccountHandlers();
 
   if(typeof browser !== 'undefined') {
     if(typeof browser.contextMenus !== 'undefined') {

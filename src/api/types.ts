@@ -448,6 +448,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/admin/privacy_policy/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Creates a AdminPrivacyPolicy resource.
+         * @description Creates a AdminPrivacyPolicy resource.
+         */
+        post: operations["api_adminprivacy_policypublish_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/admin/privacy_policy/revisions": {
         parameters: {
             query?: never;
@@ -666,7 +686,11 @@ export interface paths {
         get: operations["api_usersme_get"];
         put?: never;
         post?: never;
-        delete?: never;
+        /**
+         * Removes the CurrentUser resource.
+         * @description Removes the CurrentUser resource.
+         */
+        delete: operations["api_usersme_delete"];
         options?: never;
         head?: never;
         patch?: never;
@@ -2486,7 +2510,7 @@ export interface components {
             /** @description The user's OIDC subject */
             subject?: string;
         };
-        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        /** @description The answers, what is still missing, whether the generated policy is published, and whether a review/publish is pending. The rendered text: GET /admin/privacy_policy/preview (HTML). */
         "AdminPrivacyPolicy-privacy_policy.read": {
             /** @description The instance's name, used as the policy's title (required) */
             instanceName?: string | null;
@@ -2512,18 +2536,41 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why none is published (read-only)
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description The published revision of the generated policy (read-only) */
             revision?: number | null;
+            /** @description Policy text version of the last published revision (read-only) */
+            publishedTextVersion?: string | null;
+            /**
+             * @description Policy text version bundled with this FetchDock build (read-only)
+             * @default
+             */
+            currentTextVersion: string;
+            /**
+             * @description True when the published generated policy no longer reflects the running software's policy text or configuration (read-only)
+             * @default false
+             */
+            outdated: boolean;
+            /**
+             * @description True when an admin review and explicit publish is pending (initial publish or any change since the last revision) (read-only)
+             * @default false
+             */
+            pendingPublish: boolean;
+            /** @description Why a publish is pending: "initial", or any subset of "policy_text", "configuration", "answers" (read-only). */
+            pendingReasons?: string[];
+            /** @description Entries added to privacy/policy-version.yaml since publishedTextVersion (read-only). */
+            pendingTextChanges?: {
+                [key: string]: string;
+            }[];
             /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
             integrity?: components["schemas"]["IntegritySummary-privacy_policy.read"];
         };
-        /** @description Replaces the answers. Incomplete answers can be saved; the policy stays unavailable until the required ones (see missing) are set. While the generated policy is published, a change creates a new revision. */
+        /** @description Replaces the saved answers without changing the published policy. Incomplete answers can be saved. Call POST /admin/privacy_policy/publish after reviewing the preview to publish a new revision. */
         "AdminPrivacyPolicy-privacy_policy.write": {
             /** @description The instance's name, used as the policy's title (required) */
             instanceName?: string | null;
@@ -2543,7 +2590,7 @@ export interface components {
             /** @description Markdown, appended as its own section (raw HTML is shown as text) */
             additionalText?: string | null;
         };
-        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        /** @description The answers, what is still missing, whether the generated policy is published, and whether a review/publish is pending. The rendered text: GET /admin/privacy_policy/preview (HTML). */
         "AdminPrivacyPolicy.jsonld-privacy_policy.read": components["schemas"]["HydraItemBaseSchema"] & {
             /** @description The instance's name, used as the policy's title (required) */
             instanceName?: string | null;
@@ -2569,18 +2616,41 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why none is published (read-only)
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description The published revision of the generated policy (read-only) */
             revision?: number | null;
+            /** @description Policy text version of the last published revision (read-only) */
+            publishedTextVersion?: string | null;
+            /**
+             * @description Policy text version bundled with this FetchDock build (read-only)
+             * @default
+             */
+            currentTextVersion: string;
+            /**
+             * @description True when the published generated policy no longer reflects the running software's policy text or configuration (read-only)
+             * @default false
+             */
+            outdated: boolean;
+            /**
+             * @description True when an admin review and explicit publish is pending (initial publish or any change since the last revision) (read-only)
+             * @default false
+             */
+            pendingPublish: boolean;
+            /** @description Why a publish is pending: "initial", or any subset of "policy_text", "configuration", "answers" (read-only). */
+            pendingReasons?: string[];
+            /** @description Entries added to privacy/policy-version.yaml since publishedTextVersion (read-only). */
+            pendingTextChanges?: {
+                [key: string]: string;
+            }[];
             /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
             integrity?: components["schemas"]["IntegritySummary.jsonld-privacy_policy.read"];
         };
-        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        /** @description The answers, what is still missing, whether the generated policy is published, and whether a review/publish is pending. The rendered text: GET /admin/privacy_policy/preview (HTML). */
         "AdminPrivacyPolicy.xml-privacy_policy.read": {
             /** @description The instance's name, used as the policy's title (required) */
             instanceName?: string | null;
@@ -2606,18 +2676,41 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why none is published (read-only)
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description The published revision of the generated policy (read-only) */
             revision?: number | null;
+            /** @description Policy text version of the last published revision (read-only) */
+            publishedTextVersion?: string | null;
+            /**
+             * @description Policy text version bundled with this FetchDock build (read-only)
+             * @default
+             */
+            currentTextVersion: string;
+            /**
+             * @description True when the published generated policy no longer reflects the running software's policy text or configuration (read-only)
+             * @default false
+             */
+            outdated: boolean;
+            /**
+             * @description True when an admin review and explicit publish is pending (initial publish or any change since the last revision) (read-only)
+             * @default false
+             */
+            pendingPublish: boolean;
+            /** @description Why a publish is pending: "initial", or any subset of "policy_text", "configuration", "answers" (read-only). */
+            pendingReasons?: string[];
+            /** @description Entries added to privacy/policy-version.yaml since publishedTextVersion (read-only). */
+            pendingTextChanges?: {
+                [key: string]: string;
+            }[];
             /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
             integrity?: components["schemas"]["IntegritySummary.xml-privacy_policy.read"];
         };
-        /** @description The answers, what is still missing, and whether the generated policy is published. The rendered text: GET /admin/privacy_policy/preview (HTML). */
+        /** @description The answers, what is still missing, whether the generated policy is published, and whether a review/publish is pending. The rendered text: GET /admin/privacy_policy/preview (HTML). */
         "AdminPrivacyPolicy.yaml-privacy_policy.read": {
             /** @description The instance's name, used as the policy's title (required) */
             instanceName?: string | null;
@@ -2643,14 +2736,37 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why none is published (read-only)
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description The published revision of the generated policy (read-only) */
             revision?: number | null;
+            /** @description Policy text version of the last published revision (read-only) */
+            publishedTextVersion?: string | null;
+            /**
+             * @description Policy text version bundled with this FetchDock build (read-only)
+             * @default
+             */
+            currentTextVersion: string;
+            /**
+             * @description True when the published generated policy no longer reflects the running software's policy text or configuration (read-only)
+             * @default false
+             */
+            outdated: boolean;
+            /**
+             * @description True when an admin review and explicit publish is pending (initial publish or any change since the last revision) (read-only)
+             * @default false
+             */
+            pendingPublish: boolean;
+            /** @description Why a publish is pending: "initial", or any subset of "policy_text", "configuration", "answers" (read-only). */
+            pendingReasons?: string[];
+            /** @description Entries added to privacy/policy-version.yaml since publishedTextVersion (read-only). */
+            pendingTextChanges?: {
+                [key: string]: string;
+            }[];
             /** @description The integrity status; the generated policy is only published while it reads verified (read-only) */
             integrity?: components["schemas"]["IntegritySummary.yaml-privacy_policy.read"];
         };
@@ -4576,12 +4692,12 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why no policy is published, null otherwise
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
             url?: string | null;
             /** @description The generated policy's current revision */
@@ -4598,6 +4714,11 @@ export interface components {
              * @description When the current revision was created
              */
             updatedAt?: string | null;
+            /**
+             * @description True when the generated policy is published, but the running software or configuration changed since the operator last approved it
+             * @default false
+             */
+            outdated: boolean;
             integrity?: components["schemas"]["IntegritySummary"];
         };
         /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
@@ -4606,12 +4727,12 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why no policy is published, null otherwise
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
             url?: string | null;
             /** @description The generated policy's current revision */
@@ -4628,6 +4749,11 @@ export interface components {
              * @description When the current revision was created
              */
             updatedAt?: string | null;
+            /**
+             * @description True when the generated policy is published, but the running software or configuration changed since the operator last approved it
+             * @default false
+             */
+            outdated: boolean;
             integrity?: components["schemas"]["IntegritySummary.jsonld"];
         };
         /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
@@ -4636,12 +4762,12 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why no policy is published, null otherwise
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
             url?: string | null;
             /** @description The generated policy's current revision */
@@ -4658,6 +4784,11 @@ export interface components {
              * @description When the current revision was created
              */
             updatedAt?: string | null;
+            /**
+             * @description True when the generated policy is published, but the running software or configuration changed since the operator last approved it
+             * @default false
+             */
+            outdated: boolean;
             integrity?: components["schemas"]["IntegritySummary.xml"];
         };
         /** @description Which privacy policy the instance publishes and the integrity status of its code. Public. The generated policy is at /privacy (HTML, ?revision=N for earlier revisions); it is only published while the integrity check reads verified and the operator's answers are complete. */
@@ -4666,12 +4797,12 @@ export interface components {
              * @default unavailable
              * @enum {string}
              */
-            status: "generated" | "custom" | "unavailable";
+            status: "generated" | "custom" | "disabled" | "unavailable";
             /**
              * @description Why no policy is published, null otherwise
              * @enum {string|null}
              */
-            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | null;
+            reason?: "integrity_modified" | "integrity_unknown" | "incomplete" | "not_published" | null;
             /** @description /privacy (absolute) for the generated policy, the operator's URL for a custom one, null when unavailable */
             url?: string | null;
             /** @description The generated policy's current revision */
@@ -4688,6 +4819,11 @@ export interface components {
              * @description When the current revision was created
              */
             updatedAt?: string | null;
+            /**
+             * @description True when the generated policy is published, but the running software or configuration changed since the operator last approved it
+             * @default false
+             */
+            outdated: boolean;
             integrity?: components["schemas"]["IntegritySummary.yaml"];
         };
         "PrivacyPolicyHosting-privacy_policy.read": {
@@ -7184,6 +7320,72 @@ export interface operations {
             };
         };
     };
+    api_adminprivacy_policypublish_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description The new AdminPrivacyPolicy resource */
+        requestBody: {
+            content: {
+                "application/ld+json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "application/json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "application/xml": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "text/xml": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+                "application/x-yaml": components["schemas"]["AdminPrivacyPolicy-privacy_policy.write"];
+            };
+        };
+        responses: {
+            /** @description AdminPrivacyPolicy resource created */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["AdminPrivacyPolicy.jsonld-privacy_policy.read"];
+                    "application/json": components["schemas"]["AdminPrivacyPolicy-privacy_policy.read"];
+                    "application/xml": components["schemas"]["AdminPrivacyPolicy.xml-privacy_policy.read"];
+                    "text/xml": components["schemas"]["AdminPrivacyPolicy.xml-privacy_policy.read"];
+                    "application/x-yaml": components["schemas"]["AdminPrivacyPolicy.yaml-privacy_policy.read"];
+                };
+            };
+            /** @description Invalid input */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description An error occurred */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["ConstraintViolation.jsonld"];
+                    "application/problem+json": components["schemas"]["ConstraintViolation"];
+                    "application/json": components["schemas"]["ConstraintViolation"];
+                };
+            };
+        };
+    };
     api_adminprivacy_policyrevisions_get_collection: {
         parameters: {
             query?: {
@@ -8293,6 +8495,49 @@ export interface operations {
                     "text/xml": components["schemas"]["CurrentUser.xml"];
                     "application/x-yaml": components["schemas"]["CurrentUser.yaml"];
                 };
+            };
+            /** @description Forbidden */
+            403: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+            /** @description Not found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/ld+json": components["schemas"]["Error.jsonld"];
+                    "application/problem+json": components["schemas"]["Error"];
+                    "application/json": components["schemas"]["Error"];
+                };
+            };
+        };
+    };
+    api_usersme_delete: {
+        parameters: {
+            query: {
+                /** @description The user's subject (from GET /users/me), to confirm the deletion; 400 otherwise */
+                confirm: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description CurrentUser resource deleted */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Forbidden */
             403: {

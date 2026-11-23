@@ -12,6 +12,8 @@ export type SiteResolution = Schemas['SiteResolution'];
 export type RequestContext = NonNullable<SiteResolution['requestContext']>;
 export type EffectiveSettings = NonNullable<SiteResolution['effectiveSettings']>;
 
+export type CurrentUser = Schemas['CurrentUser'];
+
 export type Client = Schemas['Client-client.read'];
 export type ClientCreate = Schemas['Client-client.write_client.create'];
 

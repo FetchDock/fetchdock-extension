@@ -38,3 +38,27 @@ export interface ClientPreferencesSyncState {
 export const clientPreferencesSyncItem = storage.defineItem<ClientPreferencesSyncState>('local:clientPreferencesSync', {
     fallback: { updatedAt: null, data: null },
 });
+
+/** The server account this device last saw (GET /users/me), to notice when it was deleted while the worker slept. */
+export interface KnownAccount {
+    server: string;
+    subject: string;
+    uuid: string;
+}
+
+export const knownAccountItem = storage.defineItem<KnownAccount | null>('local:knownAccount', {
+    fallback: null,
+});
+
+/** Set when the extension signed out because the account was deleted; shown in the options page until the next sign-in. */
+export interface AccountDeletedNotice {
+    server: string;
+    /** ISO 8601 time the extension signed out */
+    at: string;
+    /** Deleted from this device (options page) rather than elsewhere */
+    fromThisDevice: boolean;
+}
+
+export const accountDeletedNoticeItem = storage.defineItem<AccountDeletedNotice | null>('local:accountDeletedNotice', {
+    fallback: null,
+});

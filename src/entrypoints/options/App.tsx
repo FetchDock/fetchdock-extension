@@ -8,6 +8,7 @@ import { ServerPrivacyInfo } from "@/components/ServerPrivacyInfo";
 import { useTheme } from "@/lib/useTheme";
 import type { WellKnownIntegrity } from "@/lib/wellKnown";
 import { ServerSettings } from "./ServerSettings";
+import { AccountDeletedBanner, DeleteAccount } from "@/components/AccountDeletion";
 
 interface ServerInfo {
     host: string;
@@ -179,6 +180,7 @@ function App() {
                 </h1>
                 <ThemeToggle value={theme} onChange={setTheme} variant="full" />
             </div>
+            <AccountDeletedBanner />
             <form ref={formRef}>
                 <div className="mb-4">
                     <label htmlFor="downloadRouterServerHost" className="block text-gray-900 dark:text-white mt-5 text-base font-medium tracking-tight">
@@ -372,6 +374,7 @@ function App() {
                     <span className="text-sm text-gray-600 mt-1">
                         {i18n.t('forms.options.help.authentication')}
                     </span>
+                    {isAuthenticated && <div className="mt-2"><DeleteAccount /></div>}
                 </div>
 
                 {/* Hidden fields so optionsStorage can sync them */}
