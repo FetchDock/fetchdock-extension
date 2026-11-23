@@ -21,6 +21,7 @@ import type {
     ClientSettings,
     ClientSettingsWrite,
     CollectionPage,
+    CurrentUser,
     DownloaderOptionsSchema,
     DownloaderVersion,
     DownloadJobEvent,
@@ -466,6 +467,16 @@ class ApiService {
     /** POST /users/clients */
     public async registerClient(client: ClientCreate): Promise<Client> {
         return this.requestJson<Client>('POST', '/users/clients', { body: client });
+    }
+
+    /** GET /users/me: the authenticated user (`uuid` is null until the server knows the user) */
+    public async getCurrentUser(): Promise<CurrentUser> {
+        return this.requestJson<CurrentUser>('GET', '/users/me');
+    }
+
+    /** DELETE /users/me: deletes the user's account and data; `confirm` must be the user's subject */
+    public async deleteCurrentUser(confirm: string): Promise<void> {
+        await this.requestJson<null>('DELETE', '/users/me', { query: { confirm } });
     }
 
     /** GET /users/clients/{id} */

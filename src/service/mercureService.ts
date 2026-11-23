@@ -19,7 +19,9 @@ import { getMergedAppConfig } from '@/lib/config';
  *      originating tab when a tracked job completes or fails
  *   4. renews the token before it expires and reconnects; on a connection error it requests a new token, with backoff
  *
- *  The stream is only open while jobs are being tracked. The token is kept in memory only.
+ *  The stream is open while the user is signed in (`setSignedIn`) or jobs are being tracked. Besides job progress, it
+ *  carries `{type: "account_deleted"}` on `/users/{uuid}/account`, which is passed to the `onAccountDeleted` listener.
+ *  The token is kept in memory only.
  *
  * ## Older servers (fallback)
  *
@@ -64,6 +66,10 @@ class MercureService {
 
     private mode: Mode = 'unknown';
 
+    /** Keep the user stream open without tracked jobs, for account events */
+    private signedIn = false;
+    private accountDeletedListener: (() => void) | null = null;
+
     // Servers >= 0.7: one stream for all of the user's updates
     private userStream: EventSource | null = null;
     private connecting: Promise<void> | null = null;
@@ -99,14 +105,44 @@ class MercureService {
         void this.ensureSubscribed(job.token);
     }
 
-    /** Stop tracking a job; closes the connection when no jobs are left. */
+    /** Keeps the user stream open while signed in (servers >= 0.7), so account events arrive without tracked jobs. */
+    public setSignedIn(signedIn: boolean): void {
+        this.signedIn = signedIn;
+        if (signedIn) {
+            if (this.mode !== 'legacy') {
+                void this.ensureUserStream();
+            }
+        } else if (!this.wantsUserStream()) {
+            this.closeUserStream();
+        }
+    }
+
+    /** Called when the server publishes `account_deleted` for the user. */
+    public onAccountDeleted(listener: () => void): void {
+        this.accountDeletedListener = listener;
+    }
+
+    /** Forgets all tracked jobs and closes every connection (sign-out after the account was deleted). */
+    public async reset(): Promise<void> {
+        this.signedIn = false;
+        this.trackedJobs.clear();
+        for (const es of this.legacyStreams.values()) {
+            es.close();
+        }
+        this.legacyStreams.clear();
+        this.closeUserStream();
+        this.reconnectAttempts = 0;
+        await this.persist();
+    }
+
+    /** Stop tracking a job; closes the connection when no jobs are left and the user isn't signed in. */
     public untrackJob(token: string): void {
         this.trackedJobs.delete(token);
         this.legacyStreams.get(token)?.close();
         this.legacyStreams.delete(token);
         void this.persist();
 
-        if (this.trackedJobs.size === 0) {
+        if (!this.wantsUserStream()) {
             this.closeUserStream();
         }
     }
@@ -136,7 +172,7 @@ class MercureService {
 
     /** Opens the user stream if it isn't open (or being opened) yet. */
     private ensureUserStream(): Promise<void> {
-        if (this.userStream || this.trackedJobs.size === 0) {
+        if (this.userStream || !this.wantsUserStream()) {
             return Promise.resolve();
         }
         this.connecting ??= this.openUserStream().finally(() => {
@@ -205,8 +241,12 @@ class MercureService {
         }, Math.max(renewIn, 0));
     }
 
+    private wantsUserStream(): boolean {
+        return this.signedIn || this.trackedJobs.size > 0;
+    }
+
     private scheduleReconnect(): void {
-        if (this.reconnectTimer || this.trackedJobs.size === 0) {
+        if (this.reconnectTimer || !this.wantsUserStream()) {
             return;
         }
         const delay = Math.min(RECONNECT_BASE_DELAY_MS * 2 ** this.reconnectAttempts, RECONNECT_MAX_DELAY_MS);
@@ -224,7 +264,7 @@ class MercureService {
             clearTimeout(this.renewTimer);
             this.renewTimer = null;
         }
-        if (this.trackedJobs.size === 0 && this.reconnectTimer) {
+        if (!this.wantsUserStream() && this.reconnectTimer) {
             clearTimeout(this.reconnectTimer);
             this.reconnectTimer = null;
         }
@@ -236,9 +276,14 @@ class MercureService {
 
     /**
      * Handles an event of the user stream. Besides progress events, the stream also carries other updates of the user
-     * (e.g. job resources); only progress events of tracked jobs are used here.
+     * (e.g. job resources); only progress events of tracked jobs and `account_deleted` are used here.
      */
     private handleUserStreamEvent(data: unknown): void {
+        if ((data as { type?: unknown } | null)?.type === 'account_deleted') {
+            console.info('[MercureService] The account was deleted');
+            this.accountDeletedListener?.();
+            return;
+        }
         const event = data as Partial<DownloadJobProgressEvent>;
         if (typeof event?.job !== 'string' || typeof event.type !== 'string') {
             return;

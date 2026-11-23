@@ -5,6 +5,7 @@ import type {
     ClientSettings,
     ClientSettingsWrite,
     CollectionPage,
+    CurrentUser,
     DownloaderOptionsSchema,
     FailureReport,
     FailureReportWrite,
@@ -56,6 +57,11 @@ interface ProtocolMap {
     revokeOAuth2Tokens(): boolean;
 
     refreshOAuth2Tokens(): Promise<boolean>;
+
+    /** GET /users/me */
+    getCurrentUser(): CurrentUser;
+    /** DELETE /users/me?confirm={subject}, then signs out and clears the account's local state */
+    deleteAccount(data: { confirm: string }): boolean;
 
     /** Fired by the oauth-callback content script once it has stored tokens; result mirrors OAuth2AuthResult */
     oauth2CallbackReceived(result: OAuth2AuthResult): void;
