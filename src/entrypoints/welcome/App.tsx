@@ -16,8 +16,13 @@ import {  CircleCheckBig, CircleX} from "lucide-react";
 import { Button } from "@/components/ui/button"
 import { Field } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
+import { ServerPrivacyInfo } from "@/components/ServerPrivacyInfo"
 import { ApiTestResult } from "@/lib/types";
 import { type CarouselApi } from "@/components/ui/carousel";
+
+function normalizeHost(host?: string): string {
+    return (host ?? '').trim().replace(/\/+$/, '');
+}
 
 function App() {
     const formRef = useRef<HTMLFormElement | null>(null);
@@ -27,11 +32,51 @@ function App() {
     const popupRef = useRef<Window | null>(null)
     const [carousel, setCarousel] = useState<CarouselApi>();
     const [validUrl, setValidUrl] = useState<boolean>(false);
+    const checkedHostRef = useRef<string>('');
+    const probeSeqRef = useRef<number>(0);
 
     const openDashboard = async () => {
         const url = await sendMessage("getExtensionPageUrl", "/dashboard.html");
         window.open(url);
     }
+
+    const probeHost = async (rawHost: string, showFailure = false): Promise<boolean> => {
+        const host = normalizeHost(rawHost);
+        checkedHostRef.current = host;
+        const seq = ++probeSeqRef.current;
+
+        try {
+            const parsed = new URL(host);
+            if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+                throw new Error('Unsupported protocol');
+            }
+        } catch {
+            if (seq === probeSeqRef.current) {
+                setValidUrl(false);
+                if (!showFailure) setApiStatus(null);
+            }
+            return false;
+        }
+
+        try {
+            const response = await sendMessage("testApiServiceHostV2", host);
+            if (seq !== probeSeqRef.current) return response.success;
+            setValidUrl(response.success);
+            if (response.success || showFailure) {
+                setApiStatus(response);
+            } else {
+                setApiStatus(null);
+            }
+            return response.success;
+        } catch (err) {
+            console.error('Error testing server connection:', err);
+            if (seq === probeSeqRef.current) {
+                setValidUrl(false);
+                if (!showFailure) setApiStatus(null);
+            }
+            return false;
+        }
+    };
 
     useEffect(() => {
         const form = formRef.current;
@@ -43,9 +88,12 @@ function App() {
 
         optionsStorage.getAll().then((opts) => {
             setIsAuthenticated(!!opts.oauth2AccessToken);
+            if (opts.downloadRouterServerHost) {
+                void probeHost(opts.downloadRouterServerHost, false);
+            }
         });
 
-        // React to token changes written by the background worker.
+        // React to token and host changes written by the background worker or form sync.
         optionsStorage.onChanged(async (newOpts) => {
             const authenticated = !!newOpts.oauth2AccessToken;
             setIsAuthenticated(authenticated);
@@ -54,7 +102,10 @@ function App() {
                 carousel?.scrollNext(false)
             }
 
-            setValidUrl(await isValidUrl(newOpts.downloadRouterServerHost || ''));
+            const host = normalizeHost(newOpts.downloadRouterServerHost);
+            if (host !== checkedHostRef.current) {
+                await probeHost(host, false);
+            }
         });
 
         const onSaveError = (e: Event) => {
@@ -95,23 +146,6 @@ function App() {
             popupRef.current?.close();
         })
     };
-
-    const isValidUrl = async (urlString: string): Promise<boolean> => {
-        console.log("isValidUrl", urlString);
-        try {
-            new URL(urlString);
-
-            // try to fetch the well-known/browser-extension endpoint
-            const response = await fetch(`${urlString}/.well-known/browser-extension`);
-            if (!response.ok) {
-                return false;
-            }
-
-            return true;
-        } catch (err) {
-            return false;
-        }
-    }
 
     return (
         <div className="relative dark:bg-gray-800 isolate px-6 pt-14 lg:px-8">
@@ -182,57 +216,48 @@ function App() {
                                                             placeholder="https://demo.fetchdock.dev"
                                                         />
                                                         <Button
+                                                            type="button"
                                                             variant="outline"
                                                             disabled={!validUrl}
                                                             onClick={
                                                                 async () => {
                                                                     const hostInput = formRef.current?.elements.namedItem('downloadRouterServerHost') as HTMLInputElement;
                                                                     const host = hostInput.value;
-
-                                                                    try {
-                                                                        const response = await sendMessage("testApiServiceHostV2", host);
-                                                                        setApiStatus(response);
-                                                                    } catch (err) {
-                                                                        console.error('Error testing server connection:', err);
-                                                                    }
-
+                                                                    await probeHost(host, true);
                                                                 }
                                                             }
                                                         >Test</Button>
                                                     </Field>
                                                 </div>
-                                                <div className={"grid gap-2 size-full"}>
-                                                <span className="text-sm text-gray-600 mt-1">
-                                                    {apiStatus?.success != null ? (
-                                                        apiStatus?.success == true ? (
-                                                            <span className="text-green-600">
-                                                                <div className={"flex-col gap-1"}>
-                                                                    <CircleCheckBig className="inline-block h-5 w-5 mr-1 accent-green-600 float-left" aria-hidden="true" />
+                                                {apiStatus?.success != null && (
+                                                    <div className={"grid gap-3 size-full text-sm mt-1"}>
+                                                        {apiStatus.success ? (
+                                                            <>
+                                                                <div className="flex items-start gap-2 text-green-600 dark:text-green-400">
+                                                                    <CircleCheckBig className="h-5 w-5 mt-0.5 shrink-0" aria-hidden="true" />
+                                                                    <div className="flex flex-col gap-0.5">
+                                                                        <span>Version: {apiStatus.version}</span>
+                                                                        <span>Auth mode: {apiStatus.authMode}</span>
+                                                                    </div>
                                                                 </div>
-                                                                <div className={"flex flex-col gap-1"}>
-                                                                    <span className={"grid gap-2"}>
-                                                                        Version: {apiStatus.version}
-                                                                    </span>
-                                                                    <span className={"grid gap-2"}>
-                                                                        Auth mode: {apiStatus.authMode}
-                                                                    </span>
-                                                                </div>
-                                                            </span>
+                                                                <ServerPrivacyInfo
+                                                                    privacyPolicyUrl={apiStatus.privacyPolicyUrl ?? null}
+                                                                    integrity={apiStatus.integrity ?? null}
+                                                                    host={apiStatus.host}
+                                                                    variant="card"
+                                                                />
+                                                            </>
                                                         ) : (
-                                                            <span className="text-red-600">
-                                                                <div className={"flex-col gap-1"}>
-                                                                    <CircleX className="inline-block h-5 w-5 mr-1 accent-red-600 float-left" aria-hidden="true" />
-                                                                </div>
-                                                                <div className={"flex flex-col gap-1"}>
-                                                                    <span className="text-red-600">{apiStatus?.message}</span>
-                                                                </div>
-                                                            </span>
-                                                        )
-                                                    ):(<></>)}
-                                                </span>
-                                                </div>
+                                                            <div className="flex items-start gap-2 text-red-600 dark:text-red-400">
+                                                                <CircleX className="h-5 w-5 mt-0.5 shrink-0" aria-hidden="true" />
+                                                                <span>{apiStatus.message}</span>
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
                                                 <div className={"grid gap-2"}>
                                                     <Button
+                                                        type="button"
                                                         variant="outline"
                                                         disabled={!validUrl || isAuthenticated}
                                                         onClick={handleAuthenticate}

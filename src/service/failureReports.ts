@@ -31,7 +31,7 @@ export async function getServerFeatures(force = false): Promise<ServerFeatures> 
     try {
         const res = await fetchDiscovery(`${server}/.well-known/browser-extension`);
         if (res.ok) {
-            const features = parseServerFeatures(await res.json());
+            const features = parseServerFeatures(await res.json(), server);
             featuresCache = { server, fetchedAt: Date.now(), features };
             return features;
         }

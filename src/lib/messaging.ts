@@ -8,6 +8,7 @@ import type {
     DownloaderOptionsSchema,
     FailureReport,
     FailureReportWrite,
+    PrivacyPolicy,
     Site,
     SiteDetail,
     SiteResolution,
@@ -98,6 +99,8 @@ interface ProtocolMap {
 
     /** Optional features from the server's well-known document (cached briefly) */
     getServerFeatures(data?: { force?: boolean }): ServerFeatures;
+    /** Public GET /privacy_policy detail for the given host (or configured server); null on older/unreachable servers */
+    getPrivacyPolicy(data?: { host?: string }): PrivacyPolicy | null;
     /** Opens the report form window for a FAILED job, or for a page URL (`tabId` lets it read the page's referrer) */
     openReportForm(data: { jobUuid?: string; url?: string; tabId?: number }): void;
     /** Gathers what can be reported for a job or URL; the form decides with the user what is sent */

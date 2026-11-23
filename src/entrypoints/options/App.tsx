@@ -4,8 +4,20 @@ import optionsStorage from "@/utils/optionsStorage";
 import {sendMessage} from "@/lib/messaging";
 import { KeyComboInput } from "@/components/ui/key-combo-input";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { ServerPrivacyInfo } from "@/components/ServerPrivacyInfo";
 import { useTheme } from "@/lib/useTheme";
+import type { WellKnownIntegrity } from "@/lib/wellKnown";
 import { ServerSettings } from "./ServerSettings";
+
+interface ServerInfo {
+    host: string;
+    privacyPolicyUrl: string | null;
+    integrity: WellKnownIntegrity | null;
+}
+
+function normalizeHost(host?: string): string {
+    return (host ?? '').trim().replace(/\/+$/, '');
+}
 
 function App() {
     const formRef = useRef<HTMLFormElement | null>(null);
@@ -13,8 +25,40 @@ function App() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
     const [shortcut, setShortcut] = useState<string>('ctrl+k');
     const [useServerSettings, setUseServerSettings] = useState<boolean>(false);
+    const [serverInfo, setServerInfo] = useState<ServerInfo | null>(null);
     const [theme, setTheme] = useTheme();
     const popupRef = useRef<Window | null>(null);
+    const checkedHostRef = useRef<string>('');
+    const probeSeqRef = useRef<number>(0);
+
+    const probeServer = async (rawHost: string) => {
+        const host = normalizeHost(rawHost);
+        checkedHostRef.current = host;
+        const seq = ++probeSeqRef.current;
+        if (!host) {
+            setServerInfo(null);
+            return null;
+        }
+        try {
+            const response = await sendMessage("testApiServiceHostV2", host);
+            if (seq !== probeSeqRef.current) return response;
+            if (response.success) {
+                setServerInfo({
+                    host,
+                    privacyPolicyUrl: response.privacyPolicyUrl ?? null,
+                    integrity: response.integrity ?? null,
+                });
+            } else {
+                setServerInfo(null);
+            }
+            return response;
+        } catch {
+            if (seq === probeSeqRef.current) {
+                setServerInfo(null);
+            }
+            return null;
+        }
+    };
 
     useEffect(() => {
         const form = formRef.current;
@@ -26,19 +70,25 @@ function App() {
             setStatus(i18n.t('messages.options.initializationFailed'));
         });
 
-        // Reflect initial auth state
+        // Reflect initial auth state and load server privacy/integrity info
         optionsStorage.getAll().then((opts) => {
             setIsAuthenticated(!!opts.oauth2AccessToken);
             setUseServerSettings(!!opts.useServerSettings);
             if (opts.commandPaletteShortcut) setShortcut(opts.commandPaletteShortcut);
+            if (opts.downloadRouterServerHost) {
+                void probeServer(opts.downloadRouterServerHost);
+            }
         });
 
-        // React to token changes written by the background worker.
+        // React to token and host changes written by the background worker or form sync.
         optionsStorage.onChanged((newOpts) => {
             const authenticated = !!newOpts.oauth2AccessToken;
             setIsAuthenticated(authenticated);
             setUseServerSettings(!!newOpts.useServerSettings);
             if (newOpts.commandPaletteShortcut) setShortcut(newOpts.commandPaletteShortcut);
+            if (normalizeHost(newOpts.downloadRouterServerHost) !== checkedHostRef.current) {
+                void probeServer(newOpts.downloadRouterServerHost ?? '');
+            }
             if (authenticated) {
                 popupRef.current = null;
                 setStatus(i18n.t('messages.options.oauth2Success'));
@@ -147,8 +197,14 @@ function App() {
 
                         setStatus(i18n.t('messages.options.testingServerConnection'));
                         try {
-                            const response = await sendMessage("testApiServiceHost", host);
-                            setStatus(response);
+                            const response = await probeServer(host);
+                            if (response?.success) {
+                                setStatus(i18n.t('messages.background.testApiServiceHost.success', [host, response.authMode ?? '', response.version ?? '']));
+                            } else if (response) {
+                                setStatus(response.message);
+                            } else {
+                                setStatus(i18n.t('messages.options.serverConnectionFailed'));
+                            }
                         } catch (err) {
                             setStatus(i18n.t('messages.options.serverConnectionFailed', { error: String(err) }));
                         }
@@ -156,9 +212,19 @@ function App() {
                     }}>
                         {i18n.t('forms.buttons.testConnection')}
                     </button>
-                    <span className="text-sm text-gray-600 mt-1">
+                    <span className="block text-sm text-gray-600 mt-1">
                         {i18n.t('forms.options.help.downloadRouterServerHost')}
                     </span>
+                    {serverInfo && (
+                        <div className="mt-3">
+                            <ServerPrivacyInfo
+                                privacyPolicyUrl={serverInfo.privacyPolicyUrl}
+                                integrity={serverInfo.integrity}
+                                host={serverInfo.host}
+                                variant="card"
+                            />
+                        </div>
+                    )}
                 </div>
 
                 {/* Local toggles stay in the DOM (synced by optionsStorage) but are replaced by the server settings when enabled */}

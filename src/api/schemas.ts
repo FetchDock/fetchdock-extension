@@ -53,3 +53,7 @@ export type FailureReportDiagnostics = Schemas['FailureReportDiagnostics-failure
 
 export type DownloadJobEvent = Schemas['DownloadJobEvent'];
 export type DownloaderVersion = Schemas['DownloaderVersion'];
+
+export type PrivacyPolicy = Schemas['PrivacyPolicy'];
+export type IntegritySummary = Schemas['IntegritySummary'];
+export type IntegrityStatus = IntegritySummary['status'];

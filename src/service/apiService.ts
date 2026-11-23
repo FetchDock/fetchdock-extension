@@ -26,6 +26,7 @@ import type {
     DownloadJobEvent,
     FailureReport,
     FailureReportWrite,
+    PrivacyPolicy,
     Site,
     SiteDetail,
     SiteResolution,
@@ -598,6 +599,35 @@ class ApiService {
     public async listDownloaderVersions(): Promise<DownloaderVersion[]> {
         const res = await this.requestJson<{ member?: DownloaderVersion[] }>('GET', '/versions', { accept: 'application/ld+json' });
         return res.member ?? [];
+    }
+
+    // ---------------------------------------------------------------------------
+    // Privacy policy & integrity (ADR 0013, public)
+    // ---------------------------------------------------------------------------
+
+    /**
+     * GET /privacy_policy (public metadata for privacy policy and integrity details).
+     * Returns null when unavailable (older servers, unreachable, or no host configured).
+     */
+    public async getPrivacyPolicy(host?: string): Promise<PrivacyPolicy | null> {
+        await this.ready();
+        const base = (host?.trim() || await this.getServerBase()).replace(/\/+$/, '');
+        if (!base) {
+            return null;
+        }
+        try {
+            const res = await this.getRuntimeFetch()(`${base}/privacy_policy`, {
+                method: 'GET',
+                headers: { Accept: 'application/json' },
+                redirect: 'follow',
+            });
+            if (!res.ok) {
+                return null;
+            }
+            return await res.json() as PrivacyPolicy;
+        } catch {
+            return null;
+        }
     }
 
     // ---------------------------------------------------------------------------

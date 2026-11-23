@@ -147,7 +147,7 @@ export class DownloadJobApi extends BaseAPI {
         return fetch(this.basePath + '/.well-known/browser-extension', options)
             .then(async response => {
                 if (response.ok) {
-                    const info = parseWellKnown(await response.json());
+                    const info = parseWellKnown(await response.json(), this.basePath);
                     if (!info) {
                         throw new Error('Invalid response format');
                     }
